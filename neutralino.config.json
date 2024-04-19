@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "defaultMode": "window",
   "port": 0,
-  "documentRoot": "/resources/",
+  "documentRoot": "/ireti-src/public/",
   "url": "/",
   "enableServer": true,
   "enableNativeAPI": true,
@@ -16,7 +16,8 @@
   "nativeAllowList": [
     "app.*",
     "os.*",
-    "debug.log"
+    "debug.log",
+    "window.show"
   ],
   "globalVariables": {
     "TEST1": "Hello",
@@ -40,13 +41,13 @@
       "center": true,
       "fullScreen": false,
       "alwaysOnTop": false,
-      "icon": "/resources/icons/appIcon.png",
+      "icon": "/ireti-src/assets/favicon.png",
       "enableInspector": true,
       "borderless": false,
       "maximize": false,
-      "hidden": false,
+      "hidden": true,
       "resizable": true,
-      "exitProcessOnClose": false
+      "exitProcessOnClose": true
     },
     "browser": {
       "globalVariables": {
@@ -74,10 +75,17 @@
   },
   "cli": {
     "binaryName": "ireti",
-    "resourcesPath": "/resources/",
-    "extensionsPath": "/extensions/",
-    "clientLibrary": "/resources/js/neutralino.js",
+    "resourcesPath": "/ireti-src/public/",
+    "extensionsPath": "/extensions/",    
     "binaryVersion": "5.1.0",
-    "clientVersion": "5.1.0"
+    "clientVersion": "5.1.0",
+    "frontendLibrary": {
+      "patchFile": "/ireti-src/public/index.html",
+      "devUrl": "http://localhost:8081",
+      "projectPath": "/ireti-src/",
+      "initCommand": "",
+      "devCommand": "npx expo start",
+      "buildCommand": ""
+  }
   }
 }
