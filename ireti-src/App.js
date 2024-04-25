@@ -1,6 +1,24 @@
 import "@expo/metro-runtime";
 import { StyleSheet, Text, View, Linking, Platform, Pressable } from 'react-native';
 import { init, events, os, app, window as neutrawindow } from "@neutralinojs/lib";
+import {useReducer, useState} from "react";
+
+import {
+  DefaultTheme,  
+  Provider as PaperProvider,  
+} from 'react-native-paper';
+
+const theme = {
+  ...DefaultTheme,
+  //...DarkTheme,
+};
+
+import { DispatchContext } from "./context/app";
+import {navigationReducer} from "./reducer/navigation";
+import {useCombinedReducers} from "./services/hook";
+import Accounting from "./screen/Accounting";
+import Book from "./screen/Book";
+import TopBar from "./component/TopBar";
 
 init();
 
@@ -55,31 +73,36 @@ events.on("ready", async () => {
     
 });
 
-export default function App() {
+export default function App() {  
+  const store = {
+    navigation: useReducer(navigationReducer, {
+      showHelp: false,
+      screen: 'accounting',
+    })
+  };
+
+  const [state, dispatch] = useCombinedReducers(store);
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text>{NL_APPID} is running on port {NL_PORT}  inside {NL_OS}</Text>
-      <Text>server: v{NL_VERSION} . client: v{NL_CVERSION}</Text>		  
-	  <View style={styles.fixToText}>
-		  <Pressable onPress={(event) => onOpenLink("https://neutralino.js.org/docs")} style={styles.pressable}>
-			<Text>Docs</Text>
-		  </Pressable>
-		  <Pressable onPress={(event) => onOpenLink("https://www.youtube.com/c/CodeZri")} style={styles.pressable}>
-			<Text>Video tutorial</Text>
-		  </Pressable>
-	  </View>
-    </View>
+    <DispatchContext.Provider value={[state, dispatch]}>
+      <PaperProvider theme={theme}>
+        <View style={styles.container}>
+          <TopBar />
+          {state.navigation.screen === 'accounting' && <Accounting />}
+          {state.navigation.screen === 'book' && <Book />}
+        </View>
+      </PaperProvider>
+    </DispatchContext.Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  /*container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  },*/
   pressable: {
 	borderRadius: 8,
     padding: 6,
