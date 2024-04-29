@@ -18,6 +18,7 @@ import { navigationReducer } from "./reducer/navigation";
 import { useCombinedReducers } from "./services/hook";
 import Accounting from "./screen/Accounting";
 import Book from "./screen/Book";
+import LiterarySubgenre from "./screen/LiterarySubgenre";
 import TopBar from "./component/TopBar";
 
 init();
@@ -86,30 +87,15 @@ export default function App() {
   return (
     <DispatchContext.Provider value={[state, dispatch]}>
       <PaperProvider theme={theme}>
-        <View style={styles.container}>
+        <View>
           <TopBar />
-          {state.navigation.screen === 'accounting' && <Accounting />}
-          {state.navigation.screen === 'book' && <Book />}
+          <View style={{flex:1, padding:10}}>
+            {state.navigation.screen === 'accounting' && <Accounting />}
+            {state.navigation.screen === 'book' && <Book />}
+            {state.navigation.screen === 'subgenre' && <LiterarySubgenre />}
+          </View>
         </View>
       </PaperProvider>
     </DispatchContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  /*container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },*/
-  pressable: {
-    borderRadius: 8,
-    padding: 6,
-    backgroundColor: 'rgb(210, 230, 255)'
-  },
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});
