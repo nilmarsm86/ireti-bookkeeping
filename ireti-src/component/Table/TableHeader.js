@@ -13,5 +13,7 @@ export default ({ metadata }) => (
                 </DataTable.Title>
             );
         })}
+        <DataTable.Title numeric={true}>            
+        </DataTable.Title>        
     </DataTable.Header>
 );

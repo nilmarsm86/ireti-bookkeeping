@@ -1,7 +1,7 @@
 import "@expo/metro-runtime";
-import { StyleSheet, Text, View, Linking, Platform, Pressable } from 'react-native';
+import { View, Linking, Platform } from 'react-native';
 import { init, events, os, app, window as neutrawindow } from "@neutralinojs/lib";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import {
   DefaultTheme,
@@ -74,7 +74,7 @@ events.on("ready", async () => {
 
 });
 
-export default function App() {
+export default () => {
   const store = {
     navigation: useReducer(navigationReducer, {
       showHelp: false,
@@ -82,14 +82,34 @@ export default function App() {
     })
   };
 
-  const [state, dispatch] = useCombinedReducers(store);
+  const [state, dispatch] = useCombinedReducers(store);  
+  const [worker, setWorker] = useState(new Worker('db.js'));
+
+  const [connect, setConnect] = useState(false);
+  const [createDb, setCreateDb] = useState(false);
+
+  worker.onmessage = function (e) {
+    switch (e.data.action) {
+      case 'connect':
+        worker.postMessage({ action: 'createDataBase' });
+        setConnect(e.data.result);
+        break;
+        case 'createDataBase':          
+          setCreateDb(e.data.result);
+          break;  
+    }
+  };
+
+  if (!connect) {
+    worker.postMessage({ action: 'connect', args: ['/mydb.sqlite3'] });
+  }
 
   return (
-    <DispatchContext.Provider value={[state, dispatch]}>
+    <DispatchContext.Provider value={[state, dispatch, worker]}>
       <PaperProvider theme={theme}>
-        <View>
+        <View style={{ flex: 1 }}>
           <TopBar />
-          <View style={{flex:1, padding:10}}>
+          <View style={{ flex: 1, padding: 10 }}>
             {state.navigation.screen === 'accounting' && <Accounting />}
             {state.navigation.screen === 'book' && <Book />}
             {state.navigation.screen === 'subgenre' && <LiterarySubgenre />}
