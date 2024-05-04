@@ -4,7 +4,7 @@ import TableHeader from "./TableHeader";
 import TablePagination from "./TablePagination";
 import TableRow from "./TableRow";
 
-export default ({ metadata, data, onRowPress }) => {
+export default ({ metadata, data, buttons }) => {
     const [page, setPage] = useState(0);
     const numberOfItemsPerPageList = [2, 3, 4];
     const [itemsPerPage, onItemsPerPageChange] = useState(
@@ -22,7 +22,7 @@ export default ({ metadata, data, onRowPress }) => {
         <Card>
             <DataTable>
                 <TableHeader metadata={metadata} />
-                <TableRow data={data.slice(from, to)} metadata={metadata} onRowPress={onRowPress}/>
+                <TableRow data={data.slice(from, to)} metadata={metadata} buttons={buttons}/>
                 <TablePagination
                     dataLength={data.length}
                     page={page}

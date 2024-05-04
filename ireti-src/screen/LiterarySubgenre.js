@@ -10,8 +10,9 @@ import { DispatchContext } from '../context/app';
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
+
     const [data, setData] = useState([]);
-    const [c, setC] = useState(0);
+    const [c, setC] = useState(data.length);
     worker.onmessage = function (e) {
         switch (e.data.action) {
             case 'findAllLiterarySubgenre':
@@ -27,7 +28,7 @@ export default () => {
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
         { name: 'name', title: 'Name', show: true, sortDirection: '', numeric: false },
-        { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: false },
+        { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: true },
     ];
 
     useEffect(() => {
@@ -64,14 +65,19 @@ export default () => {
     return (
         <>
             <View style={styles.container}>
-                <View style={{ flex: 'auto', width: '49%', minWidth: '300px' }}>
-                    <Table metadata={metadata} data={data} onRowPress={() => { }} />
+                <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
+                    <Table metadata={metadata} data={data} buttons={
+                        {
+                            save: { press: () => { }, icon: 'pencil' },
+                            delete: { icon: 'delete', press: () => console.log('eliminar') },
+                        }
+                    } />
                 </View>
-                <View style={{ flex: 'auto', width: '49%' }}>
+                <View style={{ flex: 'auto', width: '39%' }}>
                     <Form title='Agregar genrero literaio:' buttons={
                         {
                             save: { label: 'Salvar', press: onSave, icon: 'content-save' },
-                            delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
+                            //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
                         }
                     }>
                         <Input

@@ -2,13 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
   "applicationId": "js.neutralino.sample",
   "version": "1.0.0",
-  "defaultMode": "window",
+  "defaultMode": "chrome",
   "port": 0,
   "documentRoot": "/ireti-src/public/",
   "url": "/",
   "enableServer": true,
   "enableNativeAPI": true,
-  "tokenSecurity": "one-time",
+  "tokenSecurity": "none",
   "logging": {
     "enabled": true,
     "writeToLogFile": true
@@ -66,7 +66,7 @@
     "chrome": {
       "width": 800,
       "height": 500,
-      "args": "--user-agent=\"Neutralinojs chrome mode\"",
+      "args": "--user-agent=\"Neutralinojs chrome mode\" --window-size=\"400,200\" --start-maximized --start-fullscreen --force-devtools-available --desktop-window-1080p",
       "nativeBlockList": [
         "filesystem.*",
         "os.*"

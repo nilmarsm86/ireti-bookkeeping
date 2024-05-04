@@ -1,17 +1,16 @@
-import { DataTable, IconButton, Text } from "react-native-paper";
+import { Button, DataTable, IconButton, Text } from "react-native-paper";
 
-export default ({ data, metadata, onRowPress }) => {
-    return data.length === 0 ?
+export default ({ data, metadata, buttons }) => {
+    return data.length === 0
+        ?
         (<DataTable.Row>
             <DataTable.Cell style={{ alignItems: 'center', flexDirection: "column", justifyContent: 'center' }}>
                 <Text>Cargando datos...</Text>
             </DataTable.Cell>
-        </DataTable.Row>) :
+        </DataTable.Row>)
+        :
         data.map((item) => (
-            <DataTable.Row
-                key={item['id']}
-                
-            >
+            <DataTable.Row key={item['id']}>
                 {metadata.map((meta) => {
                     return meta.show && (
                         <DataTable.Cell
@@ -22,12 +21,19 @@ export default ({ data, metadata, onRowPress }) => {
                         </DataTable.Cell>
                     );
                 })}
-                <DataTable.Cell
-                    numeric={true}
-                >
-                    <IconButton icon='delete' size={20} mode='contained' onPress={() => {}}/>
-                    <IconButton icon='delete' size={20} mode='contained' onPress={() => {}} style={{backgroundColor:'red'}}/>
-                </DataTable.Cell>                
+                <DataTable.Cell numeric={true} >
+                    {Object.entries(buttons).map(([key, value]) => (
+                        <IconButton
+                            key={key}
+                            icon={value.icon}
+                            size={20}
+                            mode={key === 'delete' ? 'contained' : 'outlined'}
+                            onPress={value.press}
+                            style={key === 'delete' ? { backgroundColor: 'red', marginRight: 0 } : { marginRight: 0 }}
+                            iconColor={key === 'delete' ? 'white' : '#49454f'}
+                        />
+                    ))}
+                </DataTable.Cell>
             </DataTable.Row>
         ))
 
