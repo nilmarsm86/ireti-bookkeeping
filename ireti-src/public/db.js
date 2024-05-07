@@ -15,7 +15,7 @@ self.connect = async (path) => {
     });
 
     console.log('Done initializing. Running demo...');
-    try {        
+    try {
         console.log('Running SQLite3 version', sqlite3.version.libVersion);
         if ('opfs' in sqlite3) {
             db = new sqlite3.oo1.OpfsDb(path);
@@ -30,21 +30,6 @@ self.connect = async (path) => {
         return false
     }
 };
-
-/*self.connect = async (sqlite3) => {
-    try {
-        console.log('Running SQLite3 version', sqlite3.version.libVersion);
-        if ('opfs' in sqlite3) {
-            db = new sqlite3.oo1.OpfsDb('/mydb.sqlite3');
-            console.log('OPFS is available, created persisted database at', db.filename);
-        } else {
-            db = new sqlite3.oo1.DB('/mydb.sqlite3', 'ct');
-            console.log('OPFS is not available, created transient database', db.filename);
-        }
-    } catch (e) {
-        console.error(err);
-    }
-};*/
 
 self.createDataBase = async function () {
     await db.exec(`
@@ -66,7 +51,6 @@ CREATE TABLE IF NOT EXISTS author (
                         DEFAULT NULL
 );
 
-
 -- Tabla: book
 DROP TABLE IF EXISTS book;
 
@@ -85,7 +69,6 @@ CREATE TABLE IF NOT EXISTS book (
                                  NOT NULL
 );
 
-
 -- Tabla: book_author
 DROP TABLE IF EXISTS book_author;
 
@@ -95,7 +78,6 @@ CREATE TABLE IF NOT EXISTS book_author (
     author_id INTEGER REFERENCES author (id) 
                       NOT NULL
 );
-
 
 -- Tabla: country
 DROP TABLE IF EXISTS country;
@@ -107,7 +89,6 @@ CREATE TABLE IF NOT EXISTS country (
     name TEXT    NOT NULL
                  UNIQUE
 );
-
 
 -- Tabla: literary_subgenre
 DROP TABLE IF EXISTS literary_subgenre;
@@ -122,7 +103,6 @@ CREATE TABLE IF NOT EXISTS literary_subgenre (
                  NOT NULL
 );
 
-
 -- Tabla: province
 DROP TABLE IF EXISTS province;
 
@@ -136,7 +116,6 @@ CREATE TABLE IF NOT EXISTS province (
                        NOT NULL
 );
 
-
 -- Tabla: sale
 DROP TABLE IF EXISTS sale;
 
@@ -149,7 +128,6 @@ CREATE TABLE IF NOT EXISTS sale (
                     NOT NULL
 );
 
-
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
     `);
@@ -157,7 +135,6 @@ PRAGMA foreign_keys = on;
 };
 
 self.addLiterarySubgenre = async (data) => {
-    console.log("INSERT INTO literary_subgenre(name, num) VALUES (" + Object.keys(data).join(',') + ")");
     return await db.exec({
         sql: "INSERT INTO literary_subgenre(name, num) VALUES (" + Object.keys(data).join(',') + ") RETURNING *",
         // bind by parameter index...
@@ -176,8 +153,8 @@ self.findAllLiterarySubgenre = async () => {
 };
 
 self.onmessage = async (e) => {
-    let args = e.data.args || [];    
-    const result = await self[e.data.action].apply(self, args);    
+    let args = e.data.args || [];
+    const result = await self[e.data.action].apply(self, args);
     if (result) {
         self.postMessage({ action: e.data.action, result: result });
     }

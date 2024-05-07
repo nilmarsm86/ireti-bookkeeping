@@ -20,6 +20,7 @@ import Accounting from "./screen/Accounting";
 import Book from "./screen/Book";
 import LiterarySubgenre from "./screen/LiterarySubgenre";
 import TopBar from "./component/TopBar";
+import { useConnectDb } from "./services/app";
 
 init();
 
@@ -82,27 +83,11 @@ export default () => {
     })
   };
 
-  const [state, dispatch] = useCombinedReducers(store);  
+  const [state, dispatch] = useCombinedReducers(store);
+
   const [worker, setWorker] = useState(new Worker('db.js'));
-
-  const [connect, setConnect] = useState(false);
-  const [createDb, setCreateDb] = useState(false);
-
-  worker.onmessage = function (e) {
-    switch (e.data.action) {
-      case 'connect':
-        worker.postMessage({ action: 'createDataBase' });
-        setConnect(e.data.result);
-        break;
-        case 'createDataBase':          
-          setCreateDb(e.data.result);
-          break;  
-    }
-  };
-
-  if (!connect) {
-    worker.postMessage({ action: 'connect', args: ['/mydb.sqlite3'] });
-  }
+  const [connect, setConnect] = useState(false);  
+  useConnectDb('/mydb.sqlite3', worker, connect, setConnect);
 
   return (
     <DispatchContext.Provider value={[state, dispatch, worker]}>

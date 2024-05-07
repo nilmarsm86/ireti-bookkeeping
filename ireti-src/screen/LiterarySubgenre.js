@@ -5,11 +5,13 @@ import Form from '../component/Form/Form';
 import Input from '../component/Form/Input';
 
 import { useNativeFormModel, validateNativeFormModel } from "../hook/form";
-import { FAB } from 'react-native-paper';
+import { FAB, Snackbar } from 'react-native-paper';
 import { DispatchContext } from '../context/app';
+import { onSave } from '../controller/literary_sybgenre';
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
+    const [showSnackBar, setShowSnackar] = useState(false);
 
     const [data, setData] = useState([]);
     const [c, setC] = useState(data.length);
@@ -46,19 +48,13 @@ export default () => {
         setNewGenreData(initialData);
     };
 
-    const onSave = async () => {
-        if (!validateNativeFormModel(genreAttr, {
-            name: "",
-            num: ""
-        }, setError)) {
-            try {
-                worker.postMessage({ action: 'addLiterarySubgenre', args: [{ ':name': newGenreData.name, ':num': Number(newGenreData.num) }] });
-                //TODO: mostrar mensaje de que se agrego el nuevo genero
-                console.log('mostrar mensaje de que se agrego el nuevo genero');
-                resetForm();
-            } catch (e) {
-                console.error(e);
-            }
+    //const onSave = newFunction(genreAttr, setError, newGenreData, worker, resetForm);
+    const onAdd = () => {
+        if (onSave(genreAttr, setError, newGenreData, worker)) {
+            //TODO: mostrar mensaje de que se agrego el nuevo genero
+            
+            //console.log('mostrar mensaje de que se agrego el nuevo genero');
+            resetForm();
         }
     };
 
@@ -76,7 +72,7 @@ export default () => {
                 <View style={{ flex: 'auto', width: '39%' }}>
                     <Form title='Agregar genrero literaio:' buttons={
                         {
-                            save: { label: 'Salvar', press: onSave, icon: 'content-save' },
+                            save: { label: 'Salvar', press: onAdd, icon: 'content-save' },
                             //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
                         }
                     }>

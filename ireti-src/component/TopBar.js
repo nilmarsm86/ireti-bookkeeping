@@ -26,23 +26,27 @@ export default () => {
                 icon="book"
                 onPress={goBook}
                 active={state.navigation.screen === 'book'}
+                amount={5}
             />
             <AppBarAction
                 title="Autores"
                 icon="account-edit"
                 onPress={() => { }}
+                amount={5}
             />
             <AppBarAction
                 title="Géneros literarios"
                 icon="format-list-bulleted"
                 onPress={goSubgenre}
                 active={state.navigation.screen === 'subgenre'}
+                amount={5}
             />
             <AppBarAction
                 title="Localización"
                 icon="earth"
                 onPress={() => { }}
                 active={state.navigation.screen === ''}
+                amount={5}
             />
             <AppBarAction
                 title="Ayuda"
