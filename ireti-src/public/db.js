@@ -144,6 +144,24 @@ self.addLiterarySubgenre = async (data) => {
     });
 };
 
+self.updateLiterarySubgenre = async (id, data) => {
+    return await db.exec({
+        sql: "UPDATE literary_subgenre SET name = :name, num = :num WHERE id = :id RETURNING *",
+        bind: data,
+        rowMode: 'object',
+        returnValue: 'resultRows'
+    });
+};
+
+self.removeLiterarySubgenre = async (data) => {
+    return await db.exec({
+        sql: "DELETE FROM literary_subgenre WHERE id = :id RETURNING *",
+        bind: data,
+        rowMode: 'object',
+        returnValue: 'resultRows'
+    });
+};
+
 self.findAllLiterarySubgenre = async () => {
     return await db.exec({
         sql: "SELECT * FROM literary_subgenre",

@@ -21,15 +21,14 @@ function useFormModel(initialValue) {
 }
 
 function useNativeFormModel(initialValue) {
-  let [model, setModel] = useState(initialValue);
-
+  let [model, setModel] = useState(initialValue);  
   let attrs = {};
   let errors = {};
 
   for (let field in model) {
     attrs[field] = fieldModel(model[field]);    
     attrs[field]["onChangeText"] = function (e) {
-      model[field] = e;
+      model[field] = e;      
       setModel({ ...model });
     };
     errors[field] = false;

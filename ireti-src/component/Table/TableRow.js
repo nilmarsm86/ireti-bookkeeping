@@ -28,7 +28,7 @@ export default ({ data, metadata, buttons }) => {
                             icon={value.icon}
                             size={20}
                             mode={key === 'delete' ? 'contained' : 'outlined'}
-                            onPress={value.press}
+                            onPress={() => value.press(item)}
                             style={key === 'delete' ? { backgroundColor: 'red', marginRight: 0 } : { marginRight: 0 }}
                             iconColor={key === 'delete' ? 'white' : '#49454f'}
                         />

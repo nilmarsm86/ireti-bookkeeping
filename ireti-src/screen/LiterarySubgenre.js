@@ -1,41 +1,31 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import Table from '../component/Table/Table';
 import { StyleSheet, View } from 'react-native';
 import Form from '../component/Form/Form';
 import Input from '../component/Form/Input';
 
 import { useNativeFormModel, validateNativeFormModel } from "../hook/form";
-import { FAB, Snackbar } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import { DispatchContext } from '../context/app';
-import { onSave } from '../controller/literary_sybgenre';
+import { onSave } from '../controller/literary_subgenre';
+import { useLiterarySubgenre } from '../services/literary_subgenre';
+import DismissAlert from '../component/DismissAlert';
+import ModalAlert from '../component/ModalAlert';
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
-    const [showSnackBar, setShowSnackar] = useState(false);
+    const [showDismissAlert, setShowDismissAlert] = useState(false);
+    const [showModalAlert, setShowModalAlert] = useState(false);
+    const [removeItem, setRemoveItem] = useState(null);
 
     const [data, setData] = useState([]);
-    const [c, setC] = useState(data.length);
-    worker.onmessage = function (e) {
-        switch (e.data.action) {
-            case 'findAllLiterarySubgenre':
-                setData(e.data.result);
-                setC(e.data.result.length);
-                break;
-            case 'addLiterarySubgenre':
-                setC(c + 1);
-                break;
-        }
-    };
+    useLiterarySubgenre(worker, data, setData);
 
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
         { name: 'name', title: 'Name', show: true, sortDirection: '', numeric: false },
         { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: true },
     ];
-
-    useEffect(() => {
-        worker.postMessage({ action: 'findAllLiterarySubgenre' });
-    }, [c]);
 
     const initialData = {
         id: null,
@@ -44,28 +34,35 @@ export default () => {
     };
     const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel(initialData);
 
-    const resetForm = () => {
-        setNewGenreData(initialData);
-    };
+    const resetForm = () => setNewGenreData(initialData);
 
-    //const onSave = newFunction(genreAttr, setError, newGenreData, worker, resetForm);
     const onAdd = () => {
         if (onSave(genreAttr, setError, newGenreData, worker)) {
-            //TODO: mostrar mensaje de que se agrego el nuevo genero
-            
-            //console.log('mostrar mensaje de que se agrego el nuevo genero');
+            setShowDismissAlert(true);
             resetForm();
         }
     };
+
+    const onRemove = (item) => {        
+        setShowModalAlert(true);
+        setRemoveItem(item);
+    };
+
+    const onModalClose = () => setShowModalAlert(false);
+    const onModalOk = () => { 
+        //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
+        worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ ':id': removeItem.id }] }); 
+        setShowModalAlert(false);
+    }
 
     return (
         <>
             <View style={styles.container}>
                 <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
-                    <Table metadata={metadata} data={data} buttons={
+                    <Table metadata={metadata} data={[...data]} buttons={
                         {
-                            save: { press: () => { }, icon: 'pencil' },
-                            delete: { icon: 'delete', press: () => console.log('eliminar') },
+                            save: { press: setNewGenreData, icon: 'pencil' },
+                            delete: { icon: 'delete', press: onRemove },
                         }
                     } />
                 </View>
@@ -91,9 +88,17 @@ export default () => {
                             onChangeText={genreAttr.num.onChangeText} />
                     </Form>
                 </View>
-            </View>
 
+
+            </View>
             <FAB icon='plus' style={styles.fab} onPress={resetForm} />
+            <DismissAlert label='Registro salvado' onClose={setShowDismissAlert} visible={showDismissAlert} />
+            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={showModalAlert} onDismiss={onModalClose} buttons={
+                {
+                    cancel: { label: 'No', press: onModalClose },
+                    ok: { label: 'Si', press: onModalOk },
+                }
+            } />
         </>
     );
 };
