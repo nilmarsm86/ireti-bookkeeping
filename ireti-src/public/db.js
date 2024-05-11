@@ -129,6 +129,10 @@ CREATE TABLE IF NOT EXISTS sale (
 );
 
 COMMIT TRANSACTION;
+
+-- INSERT INTO literary_subgenre (name,num) VALUES ('name1',1);
+-- INSERT INTO literary_subgenre (name,num) VALUES ('name2',2);
+-- INSERT INTO literary_subgenre (name,num) VALUES ('name3',3);
 PRAGMA foreign_keys = on;
     `);
     return true;

@@ -2,16 +2,12 @@ import { useEffect, useRef } from 'react';
 
 /**
  * State y dispath global
- * @param {*} combinedReducers
- * @param {*} middlewareBefore
- * @param {*} middlewareAfter
+ * @param {Object} combinedReducers
+ * @param {Array} middlewareBefore
+ * @param {Array} middlewareAfter
  * @returns
  */
-const useCombinedReducers = (
-  combinedReducers,
-  middlewareBefore = [],
-  middlewareAfter = []
-) => {
+export const useCombinedReducers = (combinedReducers, middlewareBefore = [], middlewareAfter = []) => {
   // Global State
   const state = Object.keys(combinedReducers).reduce(
     (acc, cur) => ({ ...acc, [cur]: combinedReducers[cur][0] }),
@@ -49,5 +45,3 @@ const useCombinedReducers = (
 
   return [state, dispatchWithMiddleware];
 };
-
-export { useCombinedReducers };

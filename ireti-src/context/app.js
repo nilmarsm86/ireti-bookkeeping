@@ -1,5 +1,3 @@
 import { createContext } from 'react';
 
 export const DispatchContext = createContext(null); //dispatch generico
-
-//export { DispatchContext };

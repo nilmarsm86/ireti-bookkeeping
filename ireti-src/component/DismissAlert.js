@@ -4,7 +4,8 @@ export default ({ label, visible, onClose }) => (
     <Portal>
         <Snackbar
             visible={visible}
-            onIconPress={() => onClose(false)}
+            onIconPress={() => onClose(false)} 
+            onDismiss={() => onClose(false)}
         >
             {label + '!!!'}
         </Snackbar>

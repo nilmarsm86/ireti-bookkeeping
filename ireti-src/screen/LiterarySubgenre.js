@@ -4,22 +4,24 @@ import { StyleSheet, View } from 'react-native';
 import Form from '../component/Form/Form';
 import Input from '../component/Form/Input';
 
-import { useNativeFormModel, validateNativeFormModel } from "../hook/form";
+import { useNativeFormModel } from "../hook/form";
 import { FAB } from 'react-native-paper';
 import { DispatchContext } from '../context/app';
-import { onSave } from '../controller/literary_subgenre';
-import { useLiterarySubgenre } from '../services/literary_subgenre';
+import { onAdd, onModalClose, onModalOk, onRowDelete, applyManageSubgenre } from '../controller/literary_subgenre';
 import DismissAlert from '../component/DismissAlert';
 import ModalAlert from '../component/ModalAlert';
+import { useFetchData } from '../hook/sqlite';
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
+        
+    //components
+    //TODO: useReducer
     const [showDismissAlert, setShowDismissAlert] = useState(false);
-    const [showModalAlert, setShowModalAlert] = useState(false);
-    const [removeItem, setRemoveItem] = useState(null);
-
-    const [data, setData] = useState([]);
-    useLiterarySubgenre(worker, data, setData);
+    const [showModalAlert, setShowModalAlert] = useState(false);    
+    
+    //data
+    useFetchData(state.literary_subgenre.data, dispatch, worker, applyManageSubgenre);
 
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
@@ -35,41 +37,24 @@ export default () => {
     const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel(initialData);
 
     const resetForm = () => setNewGenreData(initialData);
-
-    const onAdd = () => {
-        if (onSave(genreAttr, setError, newGenreData, worker)) {
-            setShowDismissAlert(true);
-            resetForm();
-        }
-    };
-
-    const onRemove = (item) => {        
-        setShowModalAlert(true);
-        setRemoveItem(item);
-    };
-
-    const onModalClose = () => setShowModalAlert(false);
-    const onModalOk = () => { 
-        //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-        worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ ':id': removeItem.id }] }); 
-        setShowModalAlert(false);
-    }
+    const modalClose = () => onModalClose(resetForm, setShowModalAlert);
 
     return (
         <>
             <View style={styles.container}>
                 <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
-                    <Table metadata={metadata} data={[...data]} buttons={
+                    {/*<Table metadata={metadata} data={[...data]} buttons={*/}
+                    <Table metadata={metadata} data={[...state.literary_subgenre.data]} buttons={    
                         {
-                            save: { press: setNewGenreData, icon: 'pencil' },
-                            delete: { icon: 'delete', press: onRemove },
+                            edit: { press: setNewGenreData, icon: 'pencil' },
+                            delete: { icon: 'delete', press: (item) => onRowDelete(setShowModalAlert, setNewGenreData, item) },
                         }
                     } />
                 </View>
                 <View style={{ flex: 'auto', width: '39%' }}>
                     <Form title='Agregar genrero literaio:' buttons={
                         {
-                            save: { label: 'Salvar', press: onAdd, icon: 'content-save' },
+                            save: { label: 'Salvar', press: () => onAdd(genreAttr, setError, newGenreData, worker, setShowDismissAlert, resetForm), icon: 'content-save' },
                             //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
                         }
                     }>
@@ -88,15 +73,16 @@ export default () => {
                             onChangeText={genreAttr.num.onChangeText} />
                     </Form>
                 </View>
-
-
             </View>
+
             <FAB icon='plus' style={styles.fab} onPress={resetForm} />
+            
             <DismissAlert label='Registro salvado' onClose={setShowDismissAlert} visible={showDismissAlert} />
-            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={showModalAlert} onDismiss={onModalClose} buttons={
+            
+            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={showModalAlert} onDismiss={modalClose} buttons={
                 {
-                    cancel: { label: 'No', press: onModalClose },
-                    ok: { label: 'Si', press: onModalOk },
+                    cancel: { label: 'No', press: modalClose },
+                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, setShowModalAlert) },
                 }
             } />
         </>

@@ -39,7 +39,7 @@ export default () => {
                 icon="format-list-bulleted"
                 onPress={goSubgenre}
                 active={state.navigation.screen === 'subgenre'}
-                amount={5}
+                amount={state.literary_subgenre.data.length}
             />
             <AppBarAction
                 title="Localización"

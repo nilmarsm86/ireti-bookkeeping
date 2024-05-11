@@ -15,12 +15,13 @@ const theme = {
 
 import { DispatchContext } from "./context/app";
 import { navigationReducer } from "./reducer/navigation";
-import { useCombinedReducers } from "./services/hook";
+import { useCombinedReducers } from "./hook/reducer";
 import Accounting from "./screen/Accounting";
 import Book from "./screen/Book";
 import LiterarySubgenre from "./screen/LiterarySubgenre";
 import TopBar from "./component/TopBar";
-import { useConnectDb } from "./services/app";
+import { useConnectDb } from "./hook/sqlite";
+import { literarySubgenreReducer } from "./reducer/literary_subgenre";
 
 init();
 
@@ -71,8 +72,6 @@ events.on("ready", async () => {
   }
 
   await neutrawindow.show();
-
-
 });
 
 export default () => {
@@ -80,14 +79,12 @@ export default () => {
     navigation: useReducer(navigationReducer, {
       showHelp: false,
       screen: 'accounting',
-    })
+    }),
+    literary_subgenre: useReducer(literarySubgenreReducer, {data: []})
   };
 
   const [state, dispatch] = useCombinedReducers(store);
-
-  const [worker, setWorker] = useState(new Worker('db.js'));
-  const [connect, setConnect] = useState(false);  
-  useConnectDb('/mydb.sqlite3', worker, connect, setConnect);
+  const worker = useConnectDb('/mydb.sqlite3', 'db.js');  
 
   return (
     <DispatchContext.Provider value={[state, dispatch, worker]}>
