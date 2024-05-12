@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useReducer, useRef, useState } from 'react';
 import Table from '../component/Table/Table';
 import { StyleSheet, View } from 'react-native';
 import Form from '../component/Form/Form';
@@ -11,15 +11,19 @@ import { onAdd, onModalClose, onModalOk, onRowDelete, applyManageSubgenre } from
 import DismissAlert from '../component/DismissAlert';
 import ModalAlert from '../component/ModalAlert';
 import { useFetchData } from '../hook/sqlite';
+import { screenReducer } from '../reducer/literary_subgenre';
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
-        
-    //components
-    //TODO: useReducer
-    const [showDismissAlert, setShowDismissAlert] = useState(false);
-    const [showModalAlert, setShowModalAlert] = useState(false);    
-    
+
+    //components    
+    const [screenState, screenDispatch] = useReducer(screenReducer, {
+        showDismissAlert: false,
+        showModalAlert: false,
+    });
+
+    const nameInputRef = useRef(null);
+
     //data
     useFetchData(state.literary_subgenre.data, dispatch, worker, applyManageSubgenre);
 
@@ -37,24 +41,27 @@ export default () => {
     const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel(initialData);
 
     const resetForm = () => setNewGenreData(initialData);
-    const modalClose = () => onModalClose(resetForm, setShowModalAlert);
+    const createNew = () => {
+        resetForm();        
+        nameInputRef.current.focus();        
+    };
+    const modalClose = () => onModalClose(resetForm, screenDispatch);
 
     return (
         <>
             <View style={styles.container}>
-                <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
-                    {/*<Table metadata={metadata} data={[...data]} buttons={*/}
-                    <Table metadata={metadata} data={[...state.literary_subgenre.data]} buttons={    
+                <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>                    
+                    <Table metadata={metadata} data={[...state.literary_subgenre.data]} buttons={
                         {
-                            edit: { press: setNewGenreData, icon: 'pencil' },
-                            delete: { icon: 'delete', press: (item) => onRowDelete(setShowModalAlert, setNewGenreData, item) },
+                            edit: { icon: 'pencil', press: setNewGenreData },
+                            delete: { icon: 'delete', press: (item) => onRowDelete(screenDispatch, setNewGenreData, item) },
                         }
                     } />
                 </View>
                 <View style={{ flex: 'auto', width: '39%' }}>
                     <Form title='Agregar genrero literaio:' buttons={
                         {
-                            save: { label: 'Salvar', press: () => onAdd(genreAttr, setError, newGenreData, worker, setShowDismissAlert, resetForm), icon: 'content-save' },
+                            save: { label: 'Salvar', press: () => onAdd(genreAttr, setError, newGenreData, worker, screenDispatch, resetForm), icon: 'content-save' },
                             //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
                         }
                     }>
@@ -63,7 +70,8 @@ export default () => {
                             icon='pencil'
                             errorMsg='Establesca el nombre del género!'
                             error={error.name}
-                            {...genreAttr.name} />
+                            {...genreAttr.name} 
+                            reference={nameInputRef}/>
                         <Input
                             label='Número'
                             icon='music-accidental-sharp'
@@ -75,14 +83,14 @@ export default () => {
                 </View>
             </View>
 
-            <FAB icon='plus' style={styles.fab} onPress={resetForm} />
-            
-            <DismissAlert label='Registro salvado' onClose={setShowDismissAlert} visible={showDismissAlert} />
-            
-            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={showModalAlert} onDismiss={modalClose} buttons={
+            <FAB icon='plus' style={styles.fab} onPress={createNew} />
+
+            <DismissAlert label='Registro salvado' onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
+
+            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
                 {
                     cancel: { label: 'No', press: modalClose },
-                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, setShowModalAlert) },
+                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
                 }
             } />
         </>

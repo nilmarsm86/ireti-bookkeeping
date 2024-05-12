@@ -54,27 +54,27 @@ export const onSave = (genreAttr, setError, newGenreData, worker) => {
     return false;
 }
 
-export const onRowDelete = (setShowModalAlert, setNewGenreData, item) => {
-    setShowModalAlert(true);
+export const onRowDelete = (screenDispatch, setNewGenreData, item) => {    
+    screenDispatch({type:'SHOW_MODAL_ALERT'});
     setNewGenreData(item);
 };
 
-export const onModalClose = (resetForm, setShowModalAlert) => {
-    resetForm();
-    setShowModalAlert(false);
+export const onModalClose = (resetForm, screenDispatch) => {
+    resetForm();    
+    screenDispatch({type:'HIDE_MODAL_ALERT'});
 };
 
-export const onModalOk = (worker, newGenreData, resetForm, setShowModalAlert) => { 
+export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => { 
     //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
     worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ ':id': newGenreData.id }] }); 
     //onModalClose(resetForm, setShowModalAlert);
-    resetForm();
-    setShowModalAlert(false);
+    resetForm();    
+    screenDispatch({type:'HIDE_MODAL_ALERT'});
 }
 
-export const onAdd = (genreAttr, setError, newGenreData, worker, setShowDismissAlert, resetForm) => {
-    if (onSave(genreAttr, setError, newGenreData, worker)) {
-        setShowDismissAlert(true);
+export const onAdd = (genreAttr, setError, newGenreData, worker, screenDispatch, resetForm) => {
+    if (onSave(genreAttr, setError, newGenreData, worker)) {        
+        screenDispatch({type:'SHOW_DISMISS_ALERT'});
         resetForm();
     }
 };
