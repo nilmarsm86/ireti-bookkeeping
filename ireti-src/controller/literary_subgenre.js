@@ -39,9 +39,9 @@ export const onSave = (genreAttr, setError, newGenreData, worker) => {
     if (validateNativeFormModel(genreAttr, data, setError) === false) {
         try {
             if (newGenreData.id === null) {
-                worker.postMessage({ action: 'addLiterarySubgenre', args: [{ ':name': newGenreData.name, ':num': Number(newGenreData.num) }] });
+                worker.postMessage({ action: 'addLiterarySubgenre', args: [{ 'name': newGenreData.name, 'num': Number(newGenreData.num) }] });
             } else {
-                worker.postMessage({ action: 'updateLiterarySubgenre', args: [newGenreData.id, { ':id': newGenreData.id, ':name': newGenreData.name, ':num': Number(newGenreData.num) }] });
+                worker.postMessage({ action: 'updateLiterarySubgenre', args: [{ 'id': newGenreData.id }, { 'id': newGenreData.id, 'name': newGenreData.name, 'num': Number(newGenreData.num) }] });
             }
 
             return true;
@@ -66,7 +66,7 @@ export const onModalClose = (resetForm, screenDispatch) => {
 
 export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => { 
     //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-    worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ ':id': newGenreData.id }] }); 
+    worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ 'id': newGenreData.id }] }); 
     //onModalClose(resetForm, setShowModalAlert);
     resetForm();    
     screenDispatch({type:'HIDE_MODAL_ALERT'});

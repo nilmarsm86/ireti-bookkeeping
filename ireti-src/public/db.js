@@ -1,5 +1,10 @@
 let db = null;
 
+/**
+ * Connect to DB
+ * @param {*} path DB path
+ * @returns Boolean
+ */
 self.connect = async (path) => {
     let sqlite3Js = 'sqlite3.js';
     const urlParams = new URL(self.location.href).searchParams;
@@ -31,6 +36,10 @@ self.connect = async (path) => {
     }
 };
 
+/**
+ * After connect execute
+ * @returns 
+ */
 self.createDataBase = async function () {
     await db.exec(`
         PRAGMA foreign_keys = off;
@@ -138,29 +147,94 @@ PRAGMA foreign_keys = on;
     return true;
 };
 
-self.addLiterarySubgenre = async (data) => {
+/**
+ * Create SQL statment for insert
+ * @param {Object} data 
+ * @param {String} table 
+ * @returns String
+ */
+function sqlInsert(data, table) {
+    let columns = Object.keys(data);
+    let columnsList = columns.join(',');
+    let columnsBindName = [];
+    for (let i in columns) {
+        columnsBindName.push(":" + columns[i]);
+    }
+    return "INSERT INTO " + table + "(" + columnsList + ") VALUES (" + columnsBindName.join(',') + ") RETURNING *";
+}
+
+/**
+ * Create SQL statment for update
+ * @param {Object} conditionData 
+ * @param {Object} data 
+ * @param {String} table 
+ * @returns Strign
+ */
+function sqlUpdate(conditionData, data, table){
+    let columnsCondition = Object.keys(conditionData);    
+    let columnsBindCondition = [];    
+    for (let i in columnsCondition) {
+        columnsBindCondition.push(columnsCondition[i]+" = :"+columnsCondition[i]);
+    }
+    let condition = columnsBindCondition.join(' AND ');
+
+    let columns = Object.keys(data);
+    let columnsBind = [];    
+    for (let i in columns) {
+        columnsBind.push(columns[i]+" = :"+columns[i]);
+    }
+    let columnsList = columnsBind.join(', ');    
+    return "UPDATE "+table+" SET "+columnsList+" WHERE "+condition+" RETURNING *";
+}
+
+/**
+ * Create SQL statment for delete
+ * @param {Object} data 
+ * @param {String} table 
+ * @returns String
+ */
+function sqlRemove(data, table) {    
+    let id = Object.keys(data)[0];    
+    return "DELETE FROM "+table+" WHERE "+id+" = :"+id+" RETURNING *";
+}
+
+/**
+ * Bind data wit columns
+ * @param {Object} data 
+ * @returns Object
+ */
+function bindData(data){
+    let bind = {};
+    for (let i in data) {        
+        bind[":"+i] = data[i];
+    }
+
+    return bind;
+}
+
+self.addLiterarySubgenre = async (data) => {            
     return await db.exec({
-        sql: "INSERT INTO literary_subgenre(name, num) VALUES (" + Object.keys(data).join(',') + ") RETURNING *",
+        sql: sqlInsert(data, "literary_subgenre"),
         // bind by parameter index...
-        bind: data,
+        bind: bindData(data),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
 };
 
-self.updateLiterarySubgenre = async (id, data) => {
+self.updateLiterarySubgenre = async (condition, data) => {    
     return await db.exec({
-        sql: "UPDATE literary_subgenre SET name = :name, num = :num WHERE id = :id RETURNING *",
-        bind: data,
+        sql: sqlUpdate(condition, data, "literary_subgenre"),
+        bind: bindData(data),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
 };
 
-self.removeLiterarySubgenre = async (data) => {
+self.removeLiterarySubgenre = async (data) => {    
     return await db.exec({
-        sql: "DELETE FROM literary_subgenre WHERE id = :id RETURNING *",
-        bind: data,
+        sql: sqlRemove(data, "literary_subgenre"),
+        bind: bindData(data),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
