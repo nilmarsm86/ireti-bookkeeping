@@ -3,13 +3,13 @@ import { validateNativeFormModel } from "../hook/form";
 //poner en un memo
 export const applyManageSubgenre = (worker, dispatch) => {
     worker.onmessage = function (e) {
-        if(e.data.action === 'findAllLiterarySubgenre'){
+        if(e.data.action === 'selectAll'){
             dispatch({type:'findAllLiterarySubgenre', payload: e.data.result});
         }
 
-        if(['addLiterarySubgenre', 'updateLiterarySubgenre', 'removeLiterarySubgenre'].indexOf(e.data.action) !== -1){
-            dispatch({type:'addLiterarySubgenre', payload: e.data.result[0]});
-            worker.postMessage({ action: 'findAllLiterarySubgenre' });
+        if(['insert', 'update', 'delete'].indexOf(e.data.action) !== -1){
+            dispatch({type:e.data.action, payload: e.data.result[0]});
+            worker.postMessage({ action: 'selectAll', args: ["literary_subgenre"] });
         }
         
         /*switch (e.data.action) {
@@ -39,9 +39,9 @@ export const onSave = (genreAttr, setError, newGenreData, worker) => {
     if (validateNativeFormModel(genreAttr, data, setError) === false) {
         try {
             if (newGenreData.id === null) {
-                worker.postMessage({ action: 'addLiterarySubgenre', args: [{ 'name': newGenreData.name, 'num': Number(newGenreData.num) }] });
+                worker.postMessage({ action: 'insert', args: ["literary_subgenre", { 'name': newGenreData.name, 'num': Number(newGenreData.num) }] });
             } else {
-                worker.postMessage({ action: 'updateLiterarySubgenre', args: [{ 'id': newGenreData.id }, { 'id': newGenreData.id, 'name': newGenreData.name, 'num': Number(newGenreData.num) }] });
+                worker.postMessage({ action: 'update', args: ["literary_subgenre", { 'id': newGenreData.id, 'name': newGenreData.name, 'num': Number(newGenreData.num) }, { 'id': newGenreData.id }] });
             }
 
             return true;
@@ -66,7 +66,7 @@ export const onModalClose = (resetForm, screenDispatch) => {
 
 export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => { 
     //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-    worker.postMessage({ action: 'removeLiterarySubgenre', args: [{ 'id': newGenreData.id }] }); 
+    worker.postMessage({ action: 'delete', args: ["literary_subgenre", { 'id': newGenreData.id }] }); 
     //onModalClose(resetForm, setShowModalAlert);
     resetForm();    
     screenDispatch({type:'HIDE_MODAL_ALERT'});

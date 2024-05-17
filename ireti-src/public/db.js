@@ -170,21 +170,21 @@ function sqlInsert(data, table) {
  * @param {String} table 
  * @returns Strign
  */
-function sqlUpdate(conditionData, data, table){
-    let columnsCondition = Object.keys(conditionData);    
-    let columnsBindCondition = [];    
+function sqlUpdate(conditionData, data, table) {
+    let columnsCondition = Object.keys(conditionData);
+    let columnsBindCondition = [];
     for (let i in columnsCondition) {
-        columnsBindCondition.push(columnsCondition[i]+" = :"+columnsCondition[i]);
+        columnsBindCondition.push(columnsCondition[i] + " = :" + columnsCondition[i]);
     }
     let condition = columnsBindCondition.join(' AND ');
 
     let columns = Object.keys(data);
-    let columnsBind = [];    
+    let columnsBind = [];
     for (let i in columns) {
-        columnsBind.push(columns[i]+" = :"+columns[i]);
+        columnsBind.push(columns[i] + " = :" + columns[i]);
     }
-    let columnsList = columnsBind.join(', ');    
-    return "UPDATE "+table+" SET "+columnsList+" WHERE "+condition+" RETURNING *";
+    let columnsList = columnsBind.join(', ');
+    return "UPDATE " + table + " SET " + columnsList + " WHERE " + condition + " RETURNING *";
 }
 
 /**
@@ -193,9 +193,14 @@ function sqlUpdate(conditionData, data, table){
  * @param {String} table 
  * @returns String
  */
-function sqlRemove(data, table) {    
-    let id = Object.keys(data)[0];    
-    return "DELETE FROM "+table+" WHERE "+id+" = :"+id+" RETURNING *";
+function sqlRemove(data, table) {
+    let columnsCondition = Object.keys(data);
+    let columnsBindCondition = [];
+    for (let i in columnsCondition) {
+        columnsBindCondition.push(columnsCondition[i] + " = :" + columnsCondition[i]);
+    }
+    let condition = columnsBindCondition.join(' AND ');
+    return "DELETE FROM " + table + " WHERE " + condition + " RETURNING *";
 }
 
 /**
@@ -203,50 +208,59 @@ function sqlRemove(data, table) {
  * @param {Object} data 
  * @returns Object
  */
-function bindData(data){
+function bindData(data) {
     let bind = {};
-    for (let i in data) {        
-        bind[":"+i] = data[i];
+    for (let i in data) {
+        bind[":" + i] = data[i];
     }
 
     return bind;
 }
 
-self.addLiterarySubgenre = async (data) => {            
+self.insert = async (table, data) => {
     return await db.exec({
-        sql: sqlInsert(data, "literary_subgenre"),
-        // bind by parameter index...
+        sql: sqlInsert(data, table),
+        // bind by parameter by index
+        bind: bindData(data),
+        rowMode: 'object',
+        returnValue: 'resultRows'
+    });
+}
+
+self.update = async (table, data, condition) => {
+    return await db.exec({
+        sql: sqlUpdate(condition, data, table),
         bind: bindData(data),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
 };
 
-self.updateLiterarySubgenre = async (condition, data) => {    
+self.delete = async (table, condition) => {
     return await db.exec({
-        sql: sqlUpdate(condition, data, "literary_subgenre"),
-        bind: bindData(data),
+        sql: sqlRemove(condition, table),
+        bind: bindData(condition),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
 };
 
-self.removeLiterarySubgenre = async (data) => {    
+self.selectAll = async (table) => {
     return await db.exec({
-        sql: sqlRemove(data, "literary_subgenre"),
-        bind: bindData(data),
+        sql: "SELECT * FROM " + table,
         rowMode: 'object',
         returnValue: 'resultRows'
     });
-};
+}
 
-self.findAllLiterarySubgenre = async () => {
+self.select = async (sql, bindData={}) => {
     return await db.exec({
-        sql: "SELECT * FROM literary_subgenre",
+        sql: sql,
+        bind: bindData(bindData),
         rowMode: 'object',
         returnValue: 'resultRows'
     });
-};
+}
 
 self.onmessage = async (e) => {
     let args = e.data.args || [];

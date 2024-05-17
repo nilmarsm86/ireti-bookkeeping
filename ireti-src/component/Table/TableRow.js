@@ -1,6 +1,6 @@
 import { Button, DataTable, IconButton, Text } from "react-native-paper";
 
-export default ({ data, metadata, buttons }) => {
+export default ({ data, metadata, buttons }) => {    
     return data.length === 0
         ?
         (<DataTable.Row>
@@ -10,7 +10,7 @@ export default ({ data, metadata, buttons }) => {
         </DataTable.Row>)
         :
         data.map((item) => (
-            <DataTable.Row key={item['id']}>
+            <DataTable.Row key={JSON.stringify(item)}>
                 {metadata.map((meta) => {
                     return meta.show && (
                         <DataTable.Cell

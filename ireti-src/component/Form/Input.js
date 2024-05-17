@@ -11,6 +11,7 @@ export default ({ label, style, icon, errorMsg = '', value, onChangeText, error,
             value={value}
             onChangeText={onChangeText} 
             ref={reference}
+            name={label}
         />
         {error && (<HelperText type='error' visible={error} padding='none'>
             {errorMsg}
