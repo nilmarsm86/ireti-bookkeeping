@@ -6,7 +6,7 @@ import TableRow from "./TableRow";
 
 export default ({ metadata, data, buttons }) => {    
     const [page, setPage] = useState(0);
-    const numberOfItemsPerPageList = [2, 3, 4];
+    const numberOfItemsPerPageList = [5, 10, 15, 20, 50, 100];
     const [itemsPerPage, onItemsPerPageChange] = useState(
         numberOfItemsPerPageList[0]
     );
@@ -28,7 +28,7 @@ export default ({ metadata, data, buttons }) => {
                     page={page}
                     setPage={setPage}
                     itemsPerPage={itemsPerPage}                    
-                    label={`del ${from + 1} al ${to}, total ${data.length}`}
+                    label={(data.length) ? `del ${from + 1} al ${to}, total ${data.length}` : 'No se encontraron registros.'}
                     numberOfItemsPerPageList={numberOfItemsPerPageList}                    
                     onItemsPerPageChange={onItemsPerPageChange}
                 />

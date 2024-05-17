@@ -1,11 +1,11 @@
-import { Button, DataTable, IconButton, Text } from "react-native-paper";
+import { DataTable, IconButton, Text } from "react-native-paper";
 
 export default ({ data, metadata, buttons }) => {    
     return data.length === 0
         ?
         (<DataTable.Row>
             <DataTable.Cell style={{ alignItems: 'center', flexDirection: "column", justifyContent: 'center' }}>
-                <Text>Cargando datos...</Text>
+                <Text>No se encontraron registros.</Text>
             </DataTable.Cell>
         </DataTable.Row>)
         :

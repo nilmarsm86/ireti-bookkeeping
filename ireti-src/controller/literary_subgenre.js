@@ -3,13 +3,13 @@ import { validateNativeFormModel } from "../hook/form";
 //poner en un memo
 export const applyManageSubgenre = (worker, dispatch) => {
     worker.onmessage = function (e) {
-        if(e.data.action === 'selectAll'){
+        if(e.data.action === 'select'){
             dispatch({type:'findAllLiterarySubgenre', payload: e.data.result});
         }
 
         if(['insert', 'update', 'delete'].indexOf(e.data.action) !== -1){
             dispatch({type:e.data.action, payload: e.data.result[0]});
-            worker.postMessage({ action: 'selectAll', args: ["literary_subgenre"] });
+            worker.postMessage({ action: 'select', args: ["literary_subgenre"] });
         }
         
         /*switch (e.data.action) {
@@ -70,6 +70,7 @@ export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {
     //onModalClose(resetForm, setShowModalAlert);
     resetForm();    
     screenDispatch({type:'HIDE_MODAL_ALERT'});
+    screenDispatch({type:'SHOW_DISMISS_ALERT'});
 }
 
 export const onAdd = (genreAttr, setError, newGenreData, worker, screenDispatch, resetForm) => {

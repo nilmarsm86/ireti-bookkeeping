@@ -6,33 +6,27 @@ import { useEffect, useState } from "react";
  * @param {*} workerPath 
  * @returns 
  */
-export const useConnectDb = (dbPath, workerPath, onConnect = null, oncreateDataBase = null) => {
+export const useConnectDb = (dbPath, workerPath, onConnect = null) => {
     const [worker, setWorker] = useState(new Worker(workerPath));
     const [connect, setConnect] = useState(false);
 
     useEffect(() => {        
-        applyConnectDb(worker, connect, setConnect, dbPath, onConnect, oncreateDataBase);        
+        applyConnectDb(worker, connect, setConnect, dbPath, onConnect);        
     }, [worker]);
 
     return worker;
 };
 
-function applyOnConnect(event, worker, setConnect) {
-    worker.postMessage({ action: 'createDataBase' });
+function applyOnConnect(event, worker, setConnect) {    
     setConnect(event.data.result);
 }
 
-function applyOncreateDataBase(event, worker) {}
-
-function applyConnectDb(worker, connect, setConnect, dbPath, onConnect, oncreateDataBase) {       
+function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {       
     worker.onmessage = function (event) {
         switch (event.data.action) {
             case 'connect':                
                 (onConnect === null) ? applyOnConnect(event, worker, setConnect) : onConnect(event, worker, setConnect);                
-                break;
-            case 'createDataBase':
-                (oncreateDataBase === null) ? applyOncreateDataBase(event, worker, setConnect) : oncreateDataBase(event, worker, setConnect);
-                break;
+                break;            
         }
     };
 
@@ -50,6 +44,6 @@ function applyConnectDb(worker, connect, setConnect, dbPath, onConnect, oncreate
  */
 export const useFetchData = (data, dispatch, worker, apply) => {
     useEffect(() => {        
-        apply(worker, dispatch);//solo se ejecuta en insert y delete, update no cambia la longitud del arreglo
+        apply(worker, dispatch);
     }, [data.length]);
 };

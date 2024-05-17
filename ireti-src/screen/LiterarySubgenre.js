@@ -59,7 +59,7 @@ export default () => {
                     } />
                 </View>
                 <View style={{ flex: 'auto', width: '39%' }}>
-                    <Form title='Agregar genrero literaio:' buttons={
+                    <Form title='Agregar génrero literario:' buttons={
                         {
                             save: { label: 'Salvar', press: () => onAdd(genreAttr, setError, newGenreData, worker, screenDispatch, resetForm), icon: 'content-save' },
                             //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
@@ -68,14 +68,14 @@ export default () => {
                         <Input
                             label='Nombre'
                             icon='pencil'
-                            errorMsg='Establesca el nombre del género!'
+                            errorMsg='Establesca el nombre del género literario!'
                             error={error.name}
                             {...genreAttr.name} 
                             reference={nameInputRef}/>
                         <Input
                             label='Número'
                             icon='music-accidental-sharp'
-                            errorMsg='Establesca el número del género!'
+                            errorMsg='Establesca el número del género literario!'
                             value={genreAttr.num.value}
                             error={error.num}
                             onChangeText={genreAttr.num.onChangeText} />
@@ -85,9 +85,9 @@ export default () => {
 
             <FAB icon='plus' style={styles.fab} onPress={createNew} />
 
-            <DismissAlert label='Registro salvado' onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
+            <DismissAlert label='Datos salvados' onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
 
-            <ModalAlert title='Esta seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
+            <ModalAlert title='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
                 {
                     cancel: { label: 'No', press: modalClose },
                     ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },

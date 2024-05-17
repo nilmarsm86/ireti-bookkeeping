@@ -2,15 +2,17 @@ import { useContext } from "react";
 import { Appbar } from "react-native-paper";
 import { DispatchContext } from "../context/app";
 import AppBarAction from "./AppBarAction";
-import { onGoAccounting, onGoBook, onGoSubgenre } from "../controller/topbar";
+import { onGoAccounting, onGoBook, onGoAuthor, onGoSubgenre, onGoCountry } from "../controller/topbar";
 
 export default () => {
     const [state, dispatch, worker] = useContext(DispatchContext);
 
-    //usar memo con parametros si no cambian es la misma
-    const goSubgenre = () => onGoSubgenre(dispatch);
+    //usar memo con parametros si no cambian es la misma    
     const goAccounting = () => onGoAccounting(dispatch);
     const goBook = () => onGoBook(dispatch);
+    const goAuthor = () => onGoAuthor(dispatch);
+    const goSubgenre = () => onGoSubgenre(dispatch);
+    const goCountry = () => onGoCountry(dispatch);
 
     return (
         <Appbar.Header>
@@ -26,13 +28,14 @@ export default () => {
                 icon="book"
                 onPress={goBook}
                 active={state.navigation.screen === 'book'}
-                amount={5}
+                amount={state.book.data.length}
             />
             <AppBarAction
                 title="Autores"
                 icon="account-edit"
-                onPress={() => { }}
-                amount={5}
+                onPress={goAuthor}
+                active={state.navigation.screen === 'author'}
+                amount={state.author.data.length}
             />
             <AppBarAction
                 title="Géneros literarios"
@@ -44,9 +47,9 @@ export default () => {
             <AppBarAction
                 title="Localización"
                 icon="earth"
-                onPress={() => { }}
-                active={state.navigation.screen === ''}
-                amount={5}
+                onPress={goCountry}
+                active={state.navigation.screen === 'country'}
+                amount={state.country.data.length}
             />
             <AppBarAction
                 title="Ayuda"
