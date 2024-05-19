@@ -1,18 +1,24 @@
 import { validateNativeFormModel } from "../hook/form";
 
 //poner en un memo
-export const applyManageSubgenre = (worker, dispatch) => {
-    worker.onmessage = function (e) {
+/* export const applyManageSubgenre = (worker, dispatch) => {
+    worker.onmessage = function (e) {        
+        //tercera forma
+        let payload = (e.data.action !== 'select') ? e.data.result[0] : e.data.result;
+        dispatch({type:String(e.data.action).toUpperCase(), payload: payload});
+
+        //segunda forma
         if(e.data.action === 'select'){
-            dispatch({type:'findAllLiterarySubgenre', payload: e.data.result});
+            dispatch({type:String(e.data.action).toUpperCase(), payload: e.data.result});
         }
 
-        if(['insert', 'update', 'delete'].indexOf(e.data.action) !== -1){
-            dispatch({type:e.data.action, payload: e.data.result[0]});
-            worker.postMessage({ action: 'select', args: ["literary_subgenre"] });
+        if(['insert', 'update', 'delete'].indexOf(e.data.action) !== -1){            
+            dispatch({type:String(e.data.action).toUpperCase(), payload: e.data.result[0]});
+            //worker.postMessage({ action: 'SELECT', args: ["literary_subgenre"] });
         }
-        
-        /*switch (e.data.action) {
+
+        //primera forma        
+        switch (e.data.action) {
             case 'findAllLiterarySubgenre':                
                 dispatch({type:'findAllLiterarySubgenre', payload: e.data.result});
                 return ;
@@ -26,9 +32,9 @@ export const applyManageSubgenre = (worker, dispatch) => {
             case 'removeLiterarySubgenre':                
                 dispatch({type:'removeLiterarySubgenre', payload: e.data.result[0]});                
                 break;
-        }*/
+        }
     };   
-}
+} */
 
 export const onSave = (genreAttr, setError, newGenreData, worker) => {
     const data = {

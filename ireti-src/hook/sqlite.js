@@ -10,23 +10,37 @@ export const useConnectDb = (dbPath, workerPath, onConnect = null) => {
     const [worker, setWorker] = useState(new Worker(workerPath));
     const [connect, setConnect] = useState(false);
 
-    useEffect(() => {        
-        applyConnectDb(worker, connect, setConnect, dbPath, onConnect);        
+    useEffect(() => {
+        applyConnectDb(worker, connect, setConnect, dbPath, onConnect);
     }, [worker]);
 
     return worker;
 };
 
-function applyOnConnect(event, worker, setConnect) {    
+/**
+ * Execute after connect toi DB
+ * @param {Event} event 
+ * @param {Worker} worker 
+ * @param {Function} setConnect 
+ */
+function applyOnConnect(event, worker, setConnect) {
     setConnect(event.data.result);
 }
 
-function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {       
+/**
+ * Execute after connect toi DB
+ * @param {Worker} worker 
+ * @param {Boolean} connect 
+ * @param {Function} setConnect 
+ * @param {String} dbPath 
+ * @param {Function} onConnect 
+ */
+function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
     worker.onmessage = function (event) {
         switch (event.data.action) {
-            case 'connect':                
-                (onConnect === null) ? applyOnConnect(event, worker, setConnect) : onConnect(event, worker, setConnect);                
-                break;            
+            case 'connect':
+                (onConnect === null) ? applyOnConnect(event, worker, setConnect) : onConnect(event, worker, setConnect);
+                break;
         }
     };
 
@@ -42,8 +56,19 @@ function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
  * @param {Function} apply 
  * @returns 
  */
-export const useFetchData = (data, dispatch, worker, apply) => {
-    useEffect(() => {        
+export const useFetchData = (data, dispatch, worker, apply=null) => {
+    if(apply === null){
+        apply = applyManage;
+    }
+
+    useEffect(() => {
         apply(worker, dispatch);
     }, [data.length]);
 };
+
+const applyManage = (worker, dispatch) => {
+    worker.onmessage = function (e) {
+        let payload = (e.data.action !== 'select') ? e.data.result[0] : e.data.result;
+        dispatch({ type: String(e.data.action).toUpperCase(), payload: payload });
+    };
+}

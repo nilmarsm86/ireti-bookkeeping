@@ -21,7 +21,7 @@ import { useCombinedReducers } from "./hook/reducer";
 import { useConnectDb } from "./hook/sqlite";
 
 //reducers
-import { literarySubgenreReducer } from "./reducer/literary_subgenre";
+import { sqlReducer } from "./reducer/sqlite";
 
 //components
 import TopBar from "./component/TopBar";
@@ -194,10 +194,10 @@ export default () => {
       showHelp: false,
       screen: 'accounting',
     }),
-    book: useReducer((state, action) => { return state }, { data: [] }),
-    author: useReducer((state, action) => { return state }, { data: [] }),
-    literary_subgenre: useReducer(literarySubgenreReducer, { data: [] }),
-    country: useReducer((state, action) => { return state }, { data: [] }),
+    book: useReducer(sqlReducer, { data: [] }),
+    author: useReducer(sqlReducer, { data: [] }),
+    literary_subgenre: useReducer(sqlReducer, { data: [] }),
+    country: useReducer(sqlReducer, { data: [] }),
   };
 
   const [state, dispatch] = useCombinedReducers(store);

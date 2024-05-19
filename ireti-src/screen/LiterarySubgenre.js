@@ -25,7 +25,8 @@ export default () => {
     const nameInputRef = useRef(null);
 
     //data
-    useFetchData(state.literary_subgenre.data, dispatch, worker, applyManageSubgenre);
+    //useFetchData(state.literary_subgenre.data, dispatch, worker, applyManageSubgenre);
+    useFetchData(state.literary_subgenre.data, dispatch, worker);
 
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
