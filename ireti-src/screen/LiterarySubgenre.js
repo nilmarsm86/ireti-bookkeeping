@@ -1,16 +1,20 @@
-import { useContext, useReducer, useRef, useState } from 'react';
-import Table from '../component/Table/Table';
+import { useContext, useReducer, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { FAB } from 'react-native-paper';
+//components
+import Table from '../component/Table/Table';
 import Form from '../component/Form/Form';
 import Input from '../component/Form/Input';
+import DismissAlert from '../component/DismissAlert';
+import Dialog from '../component/Dialog';
 
 import { useNativeFormModel } from "../hook/form";
-import { FAB } from 'react-native-paper';
-import { DispatchContext } from '../context/app';
-import { onAdd, onModalClose, onModalOk, onRowDelete, applyManageSubgenre } from '../controller/literary_subgenre';
-import DismissAlert from '../component/DismissAlert';
-import ModalAlert from '../component/ModalAlert';
 import { useFetchData } from '../hook/sqlite';
+
+import { DispatchContext } from '../context/app';
+
+import { onAdd, onModalClose, onModalOk, onRowDelete } from '../controller/literary_subgenre';
+
 import { screenReducer } from '../reducer/literary_subgenre';
 
 export default () => {
@@ -88,7 +92,7 @@ export default () => {
 
             <DismissAlert label='Datos salvados' onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
 
-            <ModalAlert title='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
+            <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
                 {
                     cancel: { label: 'No', press: modalClose },
                     ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
