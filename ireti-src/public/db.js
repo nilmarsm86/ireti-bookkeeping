@@ -57,7 +57,7 @@ function sqlInsert(data, table) {
  * @param {Object} data 
  * @returns Array
  */
-function prepareBind(data){
+function prepareBind(data) {
     let columns = Object.keys(data);
     let columnsBind = [];
     for (let i in columns) {
@@ -74,10 +74,10 @@ function prepareBind(data){
  * @param {String} table 
  * @returns Strign
  */
-function sqlUpdate(conditionData, data, table) {    
+function sqlUpdate(conditionData, data, table) {
     let columnsBindCondition = prepareBind(conditionData);
     let condition = columnsBindCondition.join(' AND ');
-    
+
     let columnsBind = prepareBind(data);
     let columnsList = columnsBind.join(', ');
     return "UPDATE " + table + " SET " + columnsList + " WHERE " + condition + " RETURNING *";
@@ -89,7 +89,7 @@ function sqlUpdate(conditionData, data, table) {
  * @param {String} table 
  * @returns String
  */
-function sqlRemove(data, table) {    
+function sqlRemove(data, table) {
     let columnsBindCondition = prepareBind(data);
     let condition = columnsBindCondition.join(' AND ');
     return "DELETE FROM " + table + " WHERE " + condition + " RETURNING *";
@@ -115,9 +115,9 @@ function bindData(data) {
  * @param {Object} data 
  * @returns Array
  */
-self.query = async (sql, data={}) => {
+self.query = async (sql, data = {}) => {
     return await db.exec({
-        sql: sql,        
+        sql: sql,
         bind: bindData(data),
         rowMode: 'object',
         returnValue: 'resultRows'
@@ -131,7 +131,7 @@ self.query = async (sql, data={}) => {
  * @returns Array
  */
 self.insert = async (table, data) => {
-    return query(sqlInsert(data, table), data);    
+    return query(sqlInsert(data, table), data);
 }
 
 /**
@@ -142,7 +142,7 @@ self.insert = async (table, data) => {
  * @returns Array
  */
 self.update = async (table, data, condition) => {
-    return query(sqlUpdate(condition, data, table), data);    
+    return query(sqlUpdate(condition, data, table), data);
 };
 
 /**
@@ -152,7 +152,7 @@ self.update = async (table, data, condition) => {
  * @returns Array
  */
 self.delete = async (table, condition) => {
-    return query(sqlRemove(condition, table), condition);    
+    return query(sqlRemove(condition, table), condition);
 };
 
 /**
@@ -161,13 +161,17 @@ self.delete = async (table, condition) => {
  * @returns Array
  */
 self.select = async (table) => {
-    return query("SELECT * FROM " + table);    
+    return query("SELECT * FROM " + table);
 }
 
 self.onmessage = async (e) => {
-    let args = e.data.args || [];
-    const result = await self[e.data.action].apply(self, args);
-    if (result) {
-        self.postMessage({ action: e.data.action, result: result });
+    try {
+        let args = e.data.args || [];
+        const result = await self[e.data.action].apply(self, args);
+        if (result) {
+            self.postMessage({ action: e.data.action, result: result });
+        }
+    }catch(e){
+        self.postMessage({ action: 'error', result: e });        
     }
 };

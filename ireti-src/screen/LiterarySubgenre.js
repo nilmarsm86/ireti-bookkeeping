@@ -1,6 +1,6 @@
 import { useContext, useReducer, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { ActivityIndicator, FAB } from 'react-native-paper';
 //components
 import Table from '../component/Table/Table';
 import Form from '../component/Form/Form';
@@ -13,49 +13,47 @@ import { useFetchData } from '../hook/sqlite';
 
 import { DispatchContext } from '../context/app';
 
-import { onAdd, onModalClose, onModalOk, onRowDelete } from '../controller/literary_subgenre';
+import { onSave, onModalClose, onModalOk, onRowDelete, applyManageSubgenre, onCeateNew } from '../controller/literary_subgenre';
 
 import { screenReducer } from '../reducer/literary_subgenre';
+import Loader from '../component/Loader';
 
 export default () => {
-    const [state, dispatch, worker] = useContext(DispatchContext);
-
-    //components    
+    //reducers
+    const [state, dispatch, worker] = useContext(DispatchContext);     
     const [screenState, screenDispatch] = useReducer(screenReducer, {
         showDismissAlert: false,
         showModalAlert: false,
+        dismissMsg: '',
+        showLoader: false
     });
-
-    const nameInputRef = useRef(null);
-
-    //data
-    //useFetchData(state.literary_subgenre.data, dispatch, worker, applyManageSubgenre);
-    useFetchData(state.literary_subgenre.data, dispatch, worker);
-
-    const metadata = [
-        { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
-        { name: 'name', title: 'Name', show: true, sortDirection: '', numeric: false },
-        { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: true },
-    ];
 
     const initialData = {
         id: null,
         name: "",
         num: ""
     };
-    const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel(initialData);
 
-    const resetForm = () => setNewGenreData(initialData);
-    const createNew = () => {
-        resetForm();        
-        nameInputRef.current.focus();        
+    const resetForm = () => {        
+        setNewGenreData({...initialData});
     };
-    const modalClose = () => onModalClose(resetForm, screenDispatch);
+
+    const nameInputRef = useRef(null);
+
+    useFetchData(state.literary_subgenre.data, applyManageSubgenre(worker, dispatch, screenDispatch, resetForm));
+
+    const metadata = [
+        { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
+        { name: 'name', title: 'Name', show: true, sortDirection: '', numeric: false },
+        { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: true },
+    ];
+    
+    const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel({...initialData});
 
     return (
         <>
             <View style={styles.container}>
-                <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>                    
+                <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
                     <Table metadata={metadata} data={[...state.literary_subgenre.data]} buttons={
                         {
                             edit: { icon: 'pencil', press: setNewGenreData },
@@ -66,21 +64,20 @@ export default () => {
                 <View style={{ flex: 'auto', width: '39%' }}>
                     <Form title='Agregar génrero literario:' buttons={
                         {
-                            save: { label: 'Salvar', press: () => onAdd(genreAttr, setError, newGenreData, worker, screenDispatch, resetForm), icon: 'content-save' },
+                            save: { label: 'Salvar', press: () => onSave(genreAttr, setError, worker, state.literary_subgenre.data, screenDispatch), icon: 'content-save' },
                             //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
                         }
                     }>
                         <Input
                             label='Nombre'
                             icon='pencil'
-                            errorMsg='Establesca el nombre del género literario!'
                             error={error.name}
-                            {...genreAttr.name} 
-                            reference={nameInputRef}/>
+                            {...genreAttr.name}
+                            reference={nameInputRef}
+                             />
                         <Input
                             label='Número'
                             icon='music-accidental-sharp'
-                            errorMsg='Establesca el número del género literario!'
                             value={genreAttr.num.value}
                             error={error.num}
                             onChangeText={genreAttr.num.onChangeText} />
@@ -88,16 +85,18 @@ export default () => {
                 </View>
             </View>
 
-            <FAB icon='plus' style={styles.fab} onPress={createNew} />
+            <FAB icon='plus' style={styles.fab} onPress={() => onCeateNew(resetForm, nameInputRef)} />
 
-            <DismissAlert label='Datos salvados' onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
+            <DismissAlert label={screenState.dismissMsg} onClose={() => screenDispatch({ type: 'HIDE_DISMISS_ALERT' })} visible={screenState.showDismissAlert} />
 
-            <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={modalClose} buttons={
+            <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={() => onModalClose(resetForm, screenDispatch)} buttons={
                 {
-                    cancel: { label: 'No', press: modalClose },
+                    cancel: { label: 'No', press: () => onModalClose(resetForm, screenDispatch) },
                     ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
                 }
             } />
+
+            <Loader visible={screenState.showLoader} />
         </>
     );
 };

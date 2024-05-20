@@ -44,25 +44,21 @@ export default () => {
                 // showLeadingSpace={true} //  (default=true) show leading space in scrollable tabs inside the header
                 // disableSwipe={false} // (de fault=false) disable swipe to left/right gestures
                 >
-                    <TabScreen label="Explore" icon="compass" badge={0}>                        
+                    <TabScreen label="Pais" icon="compass" badge={0}>                        
                         <Text>Contenido</Text>
-                    </TabScreen>
-
-                    <TabScreen label="Flights" icon="airplane" disabled>
-                        <View style={{ backgroundColor: 'black', flex: 1 }} />
-                    </TabScreen>
+                    </TabScreen>                    
 
                     <TabScreen
-                        label="Trips"
+                        label="Localidad"
                         icon="bag-suitcase"
                         badge={0}
                     // optional props
                     // badge={true} // only show indicator
                     // badge="text"
                     // badge={1}
-                    // onPressIn={() => {
-                    //   console.log('onPressIn explore');
-                    // }}
+                     onPressIn={() => {
+                       console.log('cargar la informacion de las provincias');
+                     }}
                     // onPress={() => {
                     //   console.log('onPress explore');
                     // }}

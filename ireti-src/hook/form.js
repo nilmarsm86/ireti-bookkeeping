@@ -80,7 +80,7 @@ function validateNativeFormModel(attr, validation, setError) {
   for (let field in validation) {
     errors[field] = false;
     if (attr[field].value === validation[field]) {      
-      errors[field] = true;
+      errors[field] = 'Campo vacio';
       error = true;
     }
   }  
