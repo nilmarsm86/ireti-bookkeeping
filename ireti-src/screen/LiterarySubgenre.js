@@ -1,6 +1,5 @@
 import { useContext, useReducer, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, FAB } from 'react-native-paper';
 //components
 import Table from '../component/Table/Table';
 import Form from '../component/Form/Form';
@@ -17,6 +16,7 @@ import { onSave, onModalClose, onModalOk, onRowDelete, applyManageSubgenre, onCe
 
 import { screenReducer } from '../reducer/literary_subgenre';
 import Loader from '../component/Loader';
+import { FAB } from 'react-native-paper';
 
 export default () => {
     //reducers
@@ -44,8 +44,8 @@ export default () => {
 
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
-        { name: 'name', title: 'Name', show: true, sortDirection: '', numeric: false },
-        { name: 'num', title: 'Num', show: true, sortDirection: '', numeric: true },
+        { name: 'name', title: 'Nombre', show: true, sortDirection: '', numeric: false },
+        { name: 'num', title: 'Número', show: true, sortDirection: '', numeric: true },
     ];
     
     const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel({...initialData});
@@ -92,7 +92,7 @@ export default () => {
             <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={() => onModalClose(resetForm, screenDispatch)} buttons={
                 {
                     cancel: { label: 'No', press: () => onModalClose(resetForm, screenDispatch) },
-                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
+                    ok: { label: 'Si', press: () => onModalOk(worker, newCountryData, resetForm, screenDispatch) },
                 }
             } />
 

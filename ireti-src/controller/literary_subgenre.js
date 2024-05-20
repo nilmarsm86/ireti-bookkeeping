@@ -1,4 +1,4 @@
-import { validateNativeFormModel } from "../hook/form";
+//import { validateNativeFormModel } from "../hook/form";
 
 //poner en un memo
 /* export const applyManageSubgenre = (worker, dispatch) => {
@@ -51,21 +51,21 @@ export const applyManageSubgenre = (worker, dispatch, screenDispatch, resetForm)
 
             switch (e.data.action) {
                 case 'select':
-                    dispatch({ type: String(e.data.action).toUpperCase(), payload: e.data.result });
+                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result });
                     return;
                     break;
                 case 'insert':
-                    dispatch({ type: String(e.data.action).toUpperCase(), payload: e.data.result[0] });
+                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
                     screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos agregados' });
                     resetForm();
                     break;
                 case 'update':
-                    dispatch({ type: String(e.data.action).toUpperCase(), payload: e.data.result[0] });
+                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
                     screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos modificados' });
                     resetForm();
                     break;
                 case 'delete':
-                    dispatch({ type: String(e.data.action).toUpperCase(), payload: e.data.result[0] });
+                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
                     screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos eliminados' });
                     break;
             }

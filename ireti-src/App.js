@@ -32,6 +32,8 @@ import Book from "./screen/Book";
 import LiterarySubgenre from "./screen/LiterarySubgenre";
 import Country from "./screen/Country";
 import Author from "./screen/Author";
+import { sqlReducerLiterarySubgenre } from "./reducer/literary_subgenre";
+import { sqlReducerCountry } from "./reducer/country";
 
 const SCHEMA = `
 PRAGMA foreign_keys = off;
@@ -196,12 +198,13 @@ export default () => {
     }),
     book: useReducer(sqlReducer, { data: [] }),
     author: useReducer(sqlReducer, { data: [] }),
-    literary_subgenre: useReducer(sqlReducer, { data: [] }),
-    country: useReducer(sqlReducer, { data: [] }),
+    literary_subgenre: useReducer(sqlReducerLiterarySubgenre, { data: [] }),
+    country: useReducer(sqlReducerCountry, { data: [] }),
+    province: useReducer(sqlReducer, { data: [] }),
   };
 
   const [state, dispatch] = useCombinedReducers(store);
-
+  
   const onConnect = (event, worker, setConnect) => {
     console.log('on connect personalizado');
     worker.postMessage({ action: 'query', args: [SCHEMA] });
