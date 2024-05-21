@@ -15,8 +15,7 @@ export const applyManageCountry = (worker, dispatch, screenDispatch, resetForm) 
 
             switch (e.data.action) {
                 case 'select':
-                    dispatch({ type: String(e.data.action+'_country').toUpperCase(), payload: e.data.result });
-                    return;
+                    dispatch({ type: String(e.data.action+'_country').toUpperCase(), payload: e.data.result });                    
                     break;
                 case 'insert':
                     dispatch({ type: String(e.data.action+'_country').toUpperCase(), payload: e.data.result[0] });
@@ -93,7 +92,7 @@ export const onModalClose = (resetForm, screenDispatch) => {
 
 export const onModalOk = (worker, newCountryData, resetForm, screenDispatch) => {
     //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-    worker.postMessage({ action: 'delete', args: ["literary_subgenre", { 'id': newCountryData.id }] });
+    worker.postMessage({ action: 'delete', args: ["country", { 'id': newCountryData.id }] });
     screenDispatch({ type: 'SHOW_LOADER' });
     onModalClose(resetForm, screenDispatch);
 }

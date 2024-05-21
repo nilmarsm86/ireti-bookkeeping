@@ -92,7 +92,7 @@ export default () => {
             <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={() => onModalClose(resetForm, screenDispatch)} buttons={
                 {
                     cancel: { label: 'No', press: () => onModalClose(resetForm, screenDispatch) },
-                    ok: { label: 'Si', press: () => onModalOk(worker, newCountryData, resetForm, screenDispatch) },
+                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
                 }
             } />
 

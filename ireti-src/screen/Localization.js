@@ -8,12 +8,12 @@ import {
 } from 'react-native-paper-tabs';
 import { StyleSheet, View } from 'react-native';
 import { DispatchContext } from '../context/app';
-import { screenReducer } from '../reducer/country';
+import { screenReducer } from '../reducer/loclization';
 import Table from '../component/Table/Table';
 import Form from '../component/Form/Form';
 import Input from '../component/Form/Input';
 import { useNativeFormModel } from '../hook/form';
-import { applyManageCountry, onCeateNew, onSave } from '../controller/country';
+import { applyManageCountry, onCeateNew, onModalClose, onModalOk, onRowDelete, onSave } from '../controller/localization';
 import DismissAlert from '../component/DismissAlert';
 import Dialog from '../component/Dialog';
 import { useFetchData } from '../hook/sqlite';
@@ -65,7 +65,7 @@ export default () => {
     ];
     
     const [countryAttr, newCountryData, setNewCountryData, error, setError] = useNativeFormModel({...initialData});
-
+    
     return (
         <>
             {/*<Select label='País' selected={selected} onChangeSelected={onChangeSelected} data={data} />
@@ -73,12 +73,12 @@ export default () => {
 
             <TabsProvider defaultIndex={screenState.tab} onChangeIndex={() => { }}>
                 <Tabs>
-                    <TabScreen label="Pais" icon="compass" badge={state.country.data.length} onPress={() => { console.log('cargar datos de los paises'); }}>
+                    <TabScreen label="Paises" icon="earth" badge={state.country.data.length} onPress={() => { console.log('cargar datos de los paises'); }}>
                         <View style={styles.container}>
                             <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
                                 <Table metadata={metadata} data={[...state.country.data]} buttons={
                                     {
-                                        edit: { icon: 'pencil', press: () => setNewCountryData },
+                                        edit: { icon: 'pencil', press: setNewCountryData },
                                         delete: { icon: 'delete', press: (item) => onRowDelete(screenDispatch, setNewCountryData, item) },
                                     }
                                 } />
@@ -101,7 +101,7 @@ export default () => {
                         </View>
                     </TabScreen>
 
-                    <TabScreen label="Localidad" icon="bag-suitcase" badge={state.province.data.length} onPress={() => { console.log('cargar datos de las provincias'); }}>
+                    <TabScreen label="Provincias" icon="compass" badge={state.province.data.length} onPress={() => { console.log('cargar datos de las provincias'); }}>
                         <View style={{ backgroundColor: 'red', flex: 1 }} />
                     </TabScreen>
                 </Tabs>
@@ -112,7 +112,7 @@ export default () => {
             <Dialog title='Borrar registro' label='Está seguro que desea borrar el registro?' visible={screenState.showModalAlert} onDismiss={() => onModalClose(resetForm, screenDispatch)} buttons={
                 {
                     cancel: { label: 'No', press: () => onModalClose(resetForm, screenDispatch) },
-                    ok: { label: 'Si', press: () => onModalOk(worker, newGenreData, resetForm, screenDispatch) },
+                    ok: { label: 'Si', press: () => onModalOk(worker, newCountryData, resetForm, screenDispatch) },
                 }
             } />
             <Loader visible={screenState.showLoader} />

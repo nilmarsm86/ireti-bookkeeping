@@ -30,10 +30,10 @@ import TopBar from "./component/TopBar";
 import Accounting from "./screen/Accounting";
 import Book from "./screen/Book";
 import LiterarySubgenre from "./screen/LiterarySubgenre";
-import Country from "./screen/Country";
 import Author from "./screen/Author";
 import { sqlReducerLiterarySubgenre } from "./reducer/literary_subgenre";
-import { sqlReducerCountry } from "./reducer/country";
+import { sqlReducerCountry } from "./reducer/loclization";
+import Localization from "./screen/Localization";
 
 const SCHEMA = `
 PRAGMA foreign_keys = off;
@@ -222,7 +222,7 @@ export default () => {
             {state.navigation.screen === 'book' && <Book />}
             {state.navigation.screen === 'author' && <Author />}
             {state.navigation.screen === 'subgenre' && <LiterarySubgenre />}
-            {state.navigation.screen === 'country' && <Country />}
+            {state.navigation.screen === 'country' && <Localization />}
           </View>
         </View>
       </PaperProvider>

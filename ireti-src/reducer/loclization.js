@@ -21,8 +21,7 @@ export const sqlReducerCountry = (state, action) => {
     switch (action.type) {
         case 'SELECT_COUNTRY':
             return { ...state, data: action.payload };
-        case 'INSERT_COUNTRY':
-            console.log('LiterarySubgenre');
+        case 'INSERT_COUNTRY':            
             let newData = [...state.data, action.payload];
             return { ...state, data: newData };
         case 'UPDATE_COUNTRY':
