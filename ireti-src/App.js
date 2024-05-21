@@ -32,8 +32,9 @@ import Book from "./screen/Book";
 import LiterarySubgenre from "./screen/LiterarySubgenre";
 import Author from "./screen/Author";
 import { sqlReducerLiterarySubgenre } from "./reducer/literary_subgenre";
-import { sqlReducerCountry } from "./reducer/loclization";
+import { sqlReducerCountry } from "./reducer/country";
 import Localization from "./screen/Localization";
+import { sqlReducerProvince } from "./reducer/province";
 
 const SCHEMA = `
 PRAGMA foreign_keys = off;
@@ -200,7 +201,7 @@ export default () => {
     author: useReducer(sqlReducer, { data: [] }),
     literary_subgenre: useReducer(sqlReducerLiterarySubgenre, { data: [] }),
     country: useReducer(sqlReducerCountry, { data: [] }),
-    province: useReducer(sqlReducer, { data: [] }),
+    province: useReducer(sqlReducerProvince, { data: [] }),
   };
 
   const [state, dispatch] = useCombinedReducers(store);

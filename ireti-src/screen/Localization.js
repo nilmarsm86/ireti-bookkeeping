@@ -4,7 +4,7 @@ import { FAB, Text } from 'react-native-paper';
 import {
     TabsProvider,
     Tabs,
-    TabScreen,    
+    TabScreen,
 } from 'react-native-paper-tabs';
 import { StyleSheet, View } from 'react-native';
 import { DispatchContext } from '../context/app';
@@ -18,26 +18,12 @@ import DismissAlert from '../component/DismissAlert';
 import Dialog from '../component/Dialog';
 import { useFetchData } from '../hook/sqlite';
 import Loader from '../component/Loader';
+import Country from '../component/Country';
+import Province from '../component/Province';
 
 export default () => {
-
-    /*const [selected, onChangeSelected] = useState("");
-    const data = [
-        { label: '-Seleccione un pais-', value: '' },
-        { label: 'Uno', value: '1' },
-        { label: 'Dos', value: '2' },
-        { label: 'Tres', value: '3' },
-        { label: 'Cuatro', value: '4' },
-        { label: 'Cinco', value: '5' },
-        { label: 'Seis', value: '6' },
-        { label: 'Siete', value: '7' },
-        { label: 'Ocho', value: '8' },
-        { label: 'Nueve', value: '9' },
-        { label: 'Diez', value: '10' },
-    ];*/
-
     const [state, dispatch, worker] = useContext(DispatchContext);
-    //const [tab, onChangeTab] = useState(0);
+
     const [screenState, screenDispatch] = useReducer(screenReducer, {
         tab: 0,
         showDismissAlert: false,
@@ -46,63 +32,47 @@ export default () => {
         showLoader: false
     });
 
-    const initialData = {
+    const resetForm = () => {
+        if (screenState.tab === 0) {
+            setNewCountryData({
+                id: null,
+                name: "",
+            });
+        }
+
+        if (screenState.tab === 1) {
+            //resetear formulario de provincias
+        }
+    };
+
+    const [countryAttr, newCountryData, setNewCountryData, errorCountry, setErrorCountry] = useNativeFormModel({
         id: null,
-        name: "",        
-    };
+        name: "",
+    });
 
-    const resetForm = () => {        
-        setNewCountryData({...initialData});
-    };
+    const [provinceAttr, newProvinceData, setNewProvinceData, errorProvince, setErrorProvince] = useNativeFormModel({
+        id: null,
+        name: "",
+    });
 
-    const nameInputRef = useRef(null);
-
-    useFetchData(state.country.data, applyManageCountry(worker, dispatch, screenDispatch, resetForm));
-
-    const metadata = [
-        { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
-        { name: 'name', title: 'Nombre', show: true, sortDirection: '', numeric: false },        
-    ];
-    
-    const [countryAttr, newCountryData, setNewCountryData, error, setError] = useNativeFormModel({...initialData});
-    
     return (
         <>
-            {/*<Select label='País' selected={selected} onChangeSelected={onChangeSelected} data={data} />
-            <Text>Se a seleccionado la opcion: {selected}</Text>*/}
+
 
             <TabsProvider defaultIndex={screenState.tab} onChangeIndex={() => { }}>
                 <Tabs>
-                    <TabScreen label="Paises" icon="earth" badge={state.country.data.length} onPress={() => { console.log('cargar datos de los paises'); }}>
-                        <View style={styles.container}>
-                            <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
-                                <Table metadata={metadata} data={[...state.country.data]} buttons={
-                                    {
-                                        edit: { icon: 'pencil', press: setNewCountryData },
-                                        delete: { icon: 'delete', press: (item) => onRowDelete(screenDispatch, setNewCountryData, item) },
-                                    }
-                                } />
-                            </View>
-                            <View style={{ flex: 'auto', width: '39%' }}>
-                                <Form title='Agregar país:' buttons={
-                                    {
-                                        save: { label: 'Salvar', press: () => onSave(countryAttr, setError, worker, state.country.data, screenDispatch), icon: 'content-save' },                                        
-                                    }
-                                }>
-                                    <Input
-                                        label='Nombre'
-                                        icon='pencil'
-                                        error={error.name}
-                                        {...countryAttr.name}
-                                        reference={nameInputRef}
-                                    />                                    
-                                </Form>
-                            </View>
-                        </View>
+                    <TabScreen label="Paises" icon="earth" badge={state.country.data.length} onPress={() => { screenDispatch({ type: 'CHNAGE_TAB', payload: 0 }) }}>
+                        <>
+                            <Text>Paises</Text>
+                            {screenState.tab === 0 && <Country styles={styles} screenDispatch={screenDispatch} countryAttr={countryAttr} setNewCountryData={setNewCountryData} error={errorCountry} setError={setErrorCountry} />}
+                        </>
                     </TabScreen>
 
-                    <TabScreen label="Provincias" icon="compass" badge={state.province.data.length} onPress={() => { console.log('cargar datos de las provincias'); }}>
-                        <View style={{ backgroundColor: 'red', flex: 1 }} />
+                    <TabScreen label="Provincias" icon="compass" badge={state.province.data.length} onPress={() => { screenDispatch({type: 'CHNAGE_TAB', payload: 1}) }}>
+                        <>
+                            <Text>Provincias</Text>
+                            {screenState.tab === 1 && <Province styles={styles} screenDispatch={screenDispatch} provinceAttr={provinceAttr} setNewProvinceData={newProvinceData} error={errorProvince} setError={setErrorProvince} />}
+                        </>
                     </TabScreen>
                 </Tabs>
             </TabsProvider>
