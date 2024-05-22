@@ -1,14 +1,13 @@
-import { useContext, useRef } from 'react';
+import { useContext } from 'react';
 import { View } from 'react-native';
 import { DispatchContext } from '../context/app';
 import { useFetchData } from '../hook/sqlite';
 import { applyManageCountry, onRowDelete, onSave } from '../controller/country';
-//import { useNativeFormModel } from '../hook/form';
 import Table from './Table/Table';
 import Form from './Form/Form';
 import Input from './Form/Input';
 
-export default ({ styles, screenDispatch, countryAttr, setNewCountryData, error, setError }) => {
+export default ({ styles, screenDispatch, countryAttr, setNewCountryData, error, setError, nameInputRef }) => {
     const [state, dispatch, worker] = useContext(DispatchContext);
 
     const metadata = [
@@ -25,11 +24,7 @@ export default ({ styles, screenDispatch, countryAttr, setNewCountryData, error,
         setNewCountryData({ ...initialData });
     };
 
-    const nameInputRef = useRef(null);
-
-    useFetchData(state.country.data, applyManageCountry(worker, dispatch, screenDispatch, resetForm));
-
-    //const [countryAttr, newCountryData, setNewCountryData, error, setError] = useNativeFormModel({ ...initialData });
+    useFetchData(worker, applyManageCountry(dispatch, screenDispatch, resetForm));
 
     return (
         <View style={styles.container}>

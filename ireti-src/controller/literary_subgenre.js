@@ -41,35 +41,33 @@ function onError(e) {
     console.log('A ocurrido un error al salvar la informacion');
 }
 
-export const applyManageSubgenre = (worker, dispatch, screenDispatch, resetForm) => {
-    return () => {
-        worker.onmessage = function (e) {
-            if (e.data.action === 'error') {
-                onError(e);
-                return;
-            }
+export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
+    return (e) => {
+        if (e.data.action === 'error') {
+            onError(e);
+            return;
+        }
 
-            switch (e.data.action) {
-                case 'select':
-                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result });
-                    return;
-                    break;
-                case 'insert':
-                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                    screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos agregados' });
-                    resetForm();
-                    break;
-                case 'update':
-                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                    screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos modificados' });
-                    resetForm();
-                    break;
-                case 'delete':
-                    dispatch({ type: String(e.data.action+'_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                    screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos eliminados' });
-                    break;
-            }
-        };
+        switch (e.data.action) {
+            case 'select':
+                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result });
+                return;
+                break;
+            case 'insert':
+                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
+                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos agregados' });
+                resetForm();
+                break;
+            case 'update':
+                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
+                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos modificados' });
+                resetForm();
+                break;
+            case 'delete':
+                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
+                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos eliminados' });
+                break;
+        }
     };
 };
 
@@ -117,11 +115,11 @@ export const onSave = (genreAttr, setError, worker, existData, screenDispatch) =
     if (isValid(existData, genreAttr, setError)) {
         try {
             if (genreAttr.id.value === null) {
-                worker.postMessage({ action: 'insert', args: ["literary_subgenre", { 'name': genreAttr.name.value, 'num': Number(genreAttr.num.value) }] });                
+                worker.postMessage({ action: 'insert', args: ["literary_subgenre", { 'name': genreAttr.name.value, 'num': Number(genreAttr.num.value) }] });
             } else {
                 worker.postMessage({ action: 'update', args: ["literary_subgenre", { 'id': genreAttr.id.value, 'name': genreAttr.name.value, 'num': Number(genreAttr.num.value) }, { 'id': genreAttr.id.value }] });
             }
-            screenDispatch({ type: 'SHOW_LOADER' });
+            //screenDispatch({ type: 'SHOW_LOADER' });
         } catch (e) {
             onError(e);
         }
@@ -140,6 +138,7 @@ export const onModalClose = (resetForm, screenDispatch) => {
 
 export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {
     //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
+    console.warn('buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto');
     worker.postMessage({ action: 'delete', args: ["literary_subgenre", { 'id': newGenreData.id }] });
     screenDispatch({ type: 'SHOW_LOADER' });
     onModalClose(resetForm, screenDispatch);

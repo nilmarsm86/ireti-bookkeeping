@@ -166,12 +166,10 @@ self.select = async (table) => {
 
 self.onmessage = async (e) => {
     try {
-        let args = e.data.args || [];
-        const result = await self[e.data.action].apply(self, args);
-        if (result) {
-            self.postMessage({ action: e.data.action, result: result });
-        }
-    }catch(e){
+        let args = e.data.args || [];        
+        const result = (self[e.data.action]) ? await self[e.data.action].apply(self, args) : await self['query'].apply(self, args);
+        self.postMessage({ action: e.data.action, result: result });
+    }catch(e){        
         self.postMessage({ action: 'error', result: e });        
     }
 };

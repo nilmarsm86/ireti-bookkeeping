@@ -1,4 +1,4 @@
-import { useContext, useReducer, useRef } from 'react';
+import { useContext, useEffect, useReducer, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 //components
 import Table from '../component/Table/Table';
@@ -20,7 +20,7 @@ import { FAB } from 'react-native-paper';
 
 export default () => {
     //reducers
-    const [state, dispatch, worker] = useContext(DispatchContext);     
+    const [state, dispatch, worker] = useContext(DispatchContext);
     const [screenState, screenDispatch] = useReducer(screenReducer, {
         showDismissAlert: false,
         showModalAlert: false,
@@ -34,21 +34,21 @@ export default () => {
         num: ""
     };
 
-    const resetForm = () => {        
-        setNewGenreData({...initialData});
+    const resetForm = () => {
+        setNewGenreData({ ...initialData });
     };
 
     const nameInputRef = useRef(null);
 
-    useFetchData(state.literary_subgenre.data, applyManageSubgenre(worker, dispatch, screenDispatch, resetForm));
+    useFetchData(worker, applyManageSubgenre(dispatch, screenDispatch, resetForm));
 
     const metadata = [
         { name: 'id', title: 'ID', show: false, sortDirection: 'descending', numeric: false },
         { name: 'name', title: 'Nombre', show: true, sortDirection: '', numeric: false },
         { name: 'num', title: 'Número', show: true, sortDirection: '', numeric: true },
     ];
-    
-    const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel({...initialData});
+
+    const [genreAttr, newGenreData, setNewGenreData, error, setError] = useNativeFormModel({ ...initialData });
 
     return (
         <>
@@ -74,7 +74,7 @@ export default () => {
                             error={error.name}
                             {...genreAttr.name}
                             reference={nameInputRef}
-                             />
+                        />
                         <Input
                             label='Número'
                             icon='music-accidental-sharp'

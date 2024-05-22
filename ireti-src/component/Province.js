@@ -1,15 +1,14 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { DispatchContext } from '../context/app';
 import { useFetchData } from '../hook/sqlite';
-import { applyManageCountry, onRowDelete, onSave } from '../controller/country';
 import Table from './Table/Table';
 import Form from './Form/Form';
 import Input from './Form/Input';
 import Select from './Select';
-import { FAB, Text } from 'react-native-paper';
+import { applyManageProvince, onRowDelete, onSave } from '../controller/province';
 
-export default ({ styles, screenDispatch, provinceAttr, setNewProvinceData, error, setError }) => {
+export default ({ styles, screenDispatch, provinceAttr, setNewProvinceData, error, setError, nameInputRef }) => {
     const [state, dispatch, worker] = useContext(DispatchContext);
 
     const metadata = [
@@ -28,34 +27,28 @@ export default ({ styles, screenDispatch, provinceAttr, setNewProvinceData, erro
         setNewProvinceData({ ...initialData });
     };
 
-    const nameInputRef = useRef(null);
+    const [countries, setCountries] = useState([]);
+    useFetchData(worker, applyManageProvince(worker, dispatch, screenDispatch, resetForm, setCountries));
+    
+    useEffect(() => {
+        worker.postMessage({ action: 'allCountries', args: ["SELECT * FROM country"] });
+    }, []);
 
-    useFetchData(state.province.data, applyManageCountry(worker, dispatch, screenDispatch, resetForm));
-
-    //const [provinceAttr, newCountryData, setNewProvinceData, error, setError] = useNativeFormModel({ ...initialData });
-
-    const [selected, onChangeSelected] = useState("");
-    const options = [
-        { label: '-Seleccione un pais-', value: '' },
-        { label: 'Uno', value: '1' },
-        { label: 'Dos', value: '2' },
-        { label: 'Tres', value: '3' },
-        { label: 'Cuatro', value: '4' },
-        { label: 'Cinco', value: '5' },
-        { label: 'Seis', value: '6' },
-        { label: 'Siete', value: '7' },
-        { label: 'Ocho', value: '8' },
-        { label: 'Nueve', value: '9' },
-        { label: 'Diez', value: '10' },
-    ];
+    //transform data for select (country name to id)
+    const transformProvinceData = (item) => {                
+        const country = countries.find((element) => {            
+            return (element.name === item.country);
+        });
+        setNewProvinceData({...item, country: country.id});
+    };
 
     return (
         <View style={styles.container}>
             <View style={{ flex: 'auto', width: '59%', minWidth: '300px' }}>
                 <Table metadata={metadata} data={[...state.province.data]} buttons={
                     {
-                        edit: { icon: 'pencil', press: setNewProvinceData },
-                        delete: { icon: 'delete', press: (item) => onRowDelete(screenDispatch, setNewProvinceData, item) },
+                        edit: { icon: 'pencil', press: transformProvinceData },
+                        delete: { icon: 'delete', press: (item) => onRowDelete(screenDispatch, transformProvinceData, item) },
                     }
                 } />
             </View>
@@ -73,7 +66,12 @@ export default ({ styles, screenDispatch, provinceAttr, setNewProvinceData, erro
                         reference={nameInputRef}
                     />
 
-                    <Select label='País' selected={selected} onChangeSelected={onChangeSelected} data={options} />                    
+                    <Select
+                        label='Países'
+                        data={countries.map((item) => ({ label: item.name, value: item.id }))}
+                        error={error.country}
+                        {...provinceAttr.country}
+                    />
                 </Form>
             </View>
         </View>

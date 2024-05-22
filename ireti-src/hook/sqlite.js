@@ -50,30 +50,14 @@ function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
 }
 
 /**
- * Get data from DB
+ * Prepare for interact with DB
  * 
  * @param {Worker} worker 
  * @param {Function} apply 
  * @returns 
  */
-export const useFetchData = (data, apply) => {
-    /*if (apply === null) {
-        apply = applyManage;
-    }*/
-
-    useEffect(() => {
-        apply();
-    }, [data.length]);
+export const useFetchData = (worker, apply) => {
+    useEffect(() => {        
+        worker.onmessage = apply;
+    }, []);
 };
-
-/*const applyManage = (worker, dispatch, onError) => {
-    worker.onmessage = function (e) {
-        if (e.data.action === 'error') {
-            onError(e.data.result);
-            return;
-        }
-
-        let payload = (e.data.action !== 'select') ? e.data.result[0] : e.data.result;
-        dispatch({ type: String(e.data.action).toUpperCase(), payload: payload });
-    };
-}*/

@@ -3,9 +3,10 @@ export const onModalClose = (resetForm, screenDispatch) => {
     screenDispatch({ type: 'HIDE_MODAL_ALERT' });
 };
 
-export const onModalOk = (worker, newCountryData, resetForm, screenDispatch) => {
-    //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-    worker.postMessage({ action: 'delete', args: ["country", { 'id': newCountryData.id }] });
+export const onModalOk = (worker, table, data, resetForm, screenDispatch) => {
+    //TODO: buscar si hay autores que dependen de esta localizacion en caso de que si mostrar mensaje diciendo esto
+    console.warn('buscar si hay autores que dependen de esta localizacion en caso de que si mostrar mensaje diciendo esto');
+    worker.postMessage({ action: 'delete', args: [table, { 'id': data.id }] });
     screenDispatch({ type: 'SHOW_LOADER' });
     onModalClose(resetForm, screenDispatch);
 }
