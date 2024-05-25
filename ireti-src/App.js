@@ -1,17 +1,15 @@
 import "@expo/metro-runtime";
-import { View, Linking, Platform } from 'react-native';
-import { init, events, os, app, window as neutrawindow } from "@neutralinojs/lib";
-import { useReducer } from "react";
-
+import { View, Linking, Platform } from "react-native";
 import {
-  DefaultTheme,
-  Provider as PaperProvider,
-} from 'react-native-paper';
+  init,
+  events,
+  os,
+  app,
+  window as neutrawindow,
+} from "@neutralinojs/lib";
+import { useCallback, useReducer } from "react";
 
-const theme = {
-  ...DefaultTheme,
-  //...DarkTheme,
-};
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 import { DispatchContext } from "./context/app";
 import { navigationReducer } from "./reducer/navigation";
@@ -35,6 +33,11 @@ import { sqlReducerLiterarySubgenre } from "./reducer/literary_subgenre";
 import { sqlReducerCountry } from "./reducer/country";
 import Localization from "./screen/Localization";
 import { sqlReducerProvince } from "./reducer/province";
+
+const theme = {
+  ...DefaultTheme,
+  //...DarkTheme,
+};
 
 const SCHEMA = `
 PRAGMA foreign_keys = off;
@@ -144,11 +147,11 @@ init();
 
 //deberia ir en un controlador
 async function onOpenLink(url) {
-  (Platform.OS === 'web') ? os.open(url) : await Linking.openURL(url);
+  Platform.OS === "web" ? os.open(url) : await Linking.openURL(url);
 }
 
 function setTray() {
-  if (NL_MODE != "window") {
+  if (NL_MODE !== "window") {
     console.log("INFO: Tray menu is only available in the window mode.");
     return;
   }
@@ -158,8 +161,8 @@ function setTray() {
     menuItems: [
       { id: "VERSION", text: "Get version" },
       { id: "SEP", text: "-" },
-      { id: "QUIT", text: "Quit" }
-    ]
+      { id: "QUIT", text: "Quit" },
+    ],
   };
   os.setTray(tray);
 }
@@ -173,10 +176,15 @@ function exit(event) {
 function onTrayMenuItemClicked(event) {
   switch (event.detail.id) {
     case "VERSION":
-      os.showMessageBox("Version information", `Neutralinojs server: v${NL_VERSION} | Neutralinojs client: v${NL_CVERSION}`);
+      os.showMessageBox(
+        "Version information",
+        `Neutralinojs server: v${NL_VERSION} | Neutralinojs client: v${NL_CVERSION}`
+      );
       break;
     case "QUIT":
       exit();
+      break;
+    default:
       break;
   }
 }
@@ -184,18 +192,19 @@ function onTrayMenuItemClicked(event) {
 events.on("ready", async () => {
   events.on("trayMenuItemClicked", onTrayMenuItemClicked);
   events.on("windowClose", exit);
-  if (NL_OS != "Darwin") { // TODO: Fix https://github.com/neutralinojs/neutralinojs/issues/615
+  if (NL_OS !== "Darwin") {
+    // TODO: Fix https://github.com/neutralinojs/neutralinojs/issues/615
     setTray();
   }
 
   await neutrawindow.show();
 });
 
-export default () => {
+const App = () => {
   const store = {
     navigation: useReducer(navigationReducer, {
       showHelp: false,
-      screen: 'accounting',
+      screen: "accounting",
     }),
     book: useReducer(sqlReducer, { data: [] }),
     author: useReducer(sqlReducer, { data: [] }),
@@ -205,13 +214,12 @@ export default () => {
   };
 
   const [state, dispatch] = useCombinedReducers(store);
-  
-  const onConnect = (event, worker, setConnect) => {
-    console.log('on connect personalizado');
-    worker.postMessage({ action: 'query', args: [SCHEMA] });
+
+  const onConnect = useCallback((event, worker, setConnect) => {
+    worker.postMessage({ action: "query", args: [SCHEMA] });
     setConnect(event.data.result);
-  };
-  const worker = useConnectDb('/mydb.sqlite3', 'db.js', onConnect);
+  }, []);
+  const worker = useConnectDb("/mydb.sqlite3", "db.js", onConnect);
 
   return (
     <DispatchContext.Provider value={[state, dispatch, worker]}>
@@ -219,14 +227,16 @@ export default () => {
         <View style={{ flex: 1 }}>
           <TopBar />
           <View style={{ flex: 1, padding: 10 }}>
-            {state.navigation.screen === 'accounting' && <Accounting />}
-            {state.navigation.screen === 'book' && <Book />}
-            {state.navigation.screen === 'author' && <Author />}
-            {state.navigation.screen === 'subgenre' && <LiterarySubgenre />}
-            {state.navigation.screen === 'country' && <Localization />}
+            {state.navigation.screen === "accounting" && <Accounting />}
+            {state.navigation.screen === "book" && <Book />}
+            {state.navigation.screen === "author" && <Author />}
+            {state.navigation.screen === "subgenre" && <LiterarySubgenre />}
+            {state.navigation.screen === "country" && <Localization />}
           </View>
         </View>
       </PaperProvider>
     </DispatchContext.Provider>
   );
-}
+};
+
+export default App;

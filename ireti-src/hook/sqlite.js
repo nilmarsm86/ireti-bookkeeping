@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * Connect to Sqlite DB
@@ -9,11 +9,7 @@ import { useEffect, useState } from "react";
 export const useConnectDb = (dbPath, workerPath, onConnect = null) => {
   const [worker, setWorker] = useState(new Worker(workerPath));
   const [connect, setConnect] = useState(false);
-
-  useEffect(() => {
-    applyConnectDb(worker, connect, setConnect, dbPath, onConnect);
-  }, [worker, connect, dbPath, onConnect]);
-
+  applyConnectDb(worker, connect, setConnect, dbPath, onConnect, worker);
   return worker;
 };
 
@@ -36,19 +32,19 @@ function applyOnConnect(event, worker, setConnect) {
  * @param {Function} onConnect
  */
 function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
-  worker.onmessage = function (event) {
-    switch (event.data.action) {
-      case "connect":
-        onConnect === null
-          ? applyOnConnect(event, worker, setConnect)
-          : onConnect(event, worker, setConnect);
-        break;
-      default:
-        break;
-    }
-  };
-
   if (!connect) {
+    worker.onmessage = function (event) {
+      switch (event.data.action) {
+        case "connect":
+          onConnect === null
+            ? applyOnConnect(event, worker, setConnect)
+            : onConnect(event, worker, setConnect);
+          break;
+        default:
+          break;
+      }
+    };
+
     worker.postMessage({ action: "connect", args: [dbPath] });
   }
 }
@@ -61,7 +57,5 @@ function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
  * @returns
  */
 export const useFetchData = (worker, apply) => {
-  useEffect(() => {
-    worker.onmessage = apply;
-  }, [worker, apply]);
+  worker.onmessage = apply;
 };
