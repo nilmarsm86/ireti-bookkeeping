@@ -1,34 +1,34 @@
 export const navigationReducer = (state, action) => {
   switch (action.type) {
-    case 'SHOW_HELP':
+    case "SHOW_HELP":
       return {
         ...state,
         showHelp: true,
       };
-    case 'GO_ACCOUNTING':
+    case "GO_ACCOUNTING":
       return {
         ...state,
-        screen: 'accounting',
+        screen: "accounting",
       };
-    case 'GO_BOOK':
+    case "GO_BOOK":
       return {
         ...state,
-        screen: 'book',
+        screen: "book",
       };
-    case 'GO_AUTHOR':
+    case "GO_AUTHOR":
       return {
         ...state,
-        screen: 'author',
+        screen: "author",
       };
-    case 'GO_SUBGENRE':
+    case "GO_SUBGENRE":
       return {
         ...state,
-        screen: 'subgenre',
+        screen: "subgenre",
       };
-    case 'GO_COUNTRY':
+    case "GO_COUNTRY":
       return {
         ...state,
-        screen: 'country',
+        screen: "country",
       };
     default:
       return state;

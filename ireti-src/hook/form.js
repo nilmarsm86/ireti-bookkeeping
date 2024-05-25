@@ -9,7 +9,7 @@ function useFormModel(initialValue) {
     result[field] = fieldModel(model[field]);
     result[field]["name"] = field;
     result[field]["onChange"] = function (e) {
-      if (typeof e === 'object') {
+      if (typeof e === "object") {
         model[field] = e.target.value;
       } else {
         model[field] = e;
@@ -21,14 +21,14 @@ function useFormModel(initialValue) {
 }
 
 function useNativeFormModel(initialValue) {
-  let [model, setModel] = useState(initialValue);  
+  let [model, setModel] = useState(initialValue);
   let attrs = {};
   let errors = {};
 
   for (let field in model) {
-    attrs[field] = fieldModel(model[field]);    
+    attrs[field] = fieldModel(model[field]);
     attrs[field]["onChangeText"] = function (e) {
-      model[field] = e;      
+      model[field] = e;
       setModel({ ...model });
     };
     errors[field] = false;
@@ -41,7 +41,7 @@ function fieldModel(model, set = null) {
   let attrs = { value: model };
   if (set !== null) {
     attrs["onChange"] = function (e) {
-      if (typeof e === 'object') {
+      if (typeof e === "object") {
         set(e.target.value);
       } else {
         set(e);
@@ -79,12 +79,12 @@ function validateNativeFormModel(attr, validation, setError) {
   let errors = {};
   for (let field in validation) {
     errors[field] = false;
-    if (attr[field].value === validation[field]) {      
-      errors[field] = 'Campo vacio';
+    if (attr[field].value === validation[field]) {
+      errors[field] = "Campo vacio";
       error = true;
     }
-  }  
-  setError({...errors});
+  }
+  setError({ ...errors });
   return error;
 }
 
@@ -98,4 +98,11 @@ function reAssembleData(model, exclude) {
   return data;
 }
 
-export { useFormModel, useNativeFormModel, useFieldModel, validateFormModel, validateNativeFormModel, reAssembleData };
+export {
+  useFormModel,
+  useNativeFormModel,
+  useFieldModel,
+  validateFormModel,
+  validateNativeFormModel,
+  reAssembleData,
+};

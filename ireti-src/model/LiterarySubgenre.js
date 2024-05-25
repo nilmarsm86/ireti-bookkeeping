@@ -1,17 +1,17 @@
-export default class {
-    #name;
-    #number;
+export default class LitearySubgenre {
+  #name;
+  #number;
 
-    constructor(name, num){
-        this.#name = name;
-        this.#number = num;                
-    }    
+  constructor(name, num) {
+    this.#name = name;
+    this.#number = num;
+  }
 
-    getName(){
-        return this.#name;
-    }   
+  getName() {
+    return this.#name;
+  }
 
-    getNumber(){
-        return this.#number;
-    }
+  getNumber() {
+    return this.#number;
+  }
 }

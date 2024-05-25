@@ -1,5 +1,7 @@
-import { Text } from 'react-native';
+import { Text } from "react-native";
 
-export default () => {
-    return (<Text>Cuentas</Text>);
+const Accounting = () => {
+  return <Text>Cuentas</Text>;
 };
+
+export default Accounting;

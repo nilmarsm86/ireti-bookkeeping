@@ -1,23 +1,26 @@
-import { Portal, Button, Text, Dialog } from 'react-native-paper';
+import { Portal, Button, Text, Dialog as Dialo } from "react-native-paper";
 
-export default ({ title, label, visible, onDismiss, buttons }) => (
+const Dialog = ({ title, label, visible, onDismiss, buttons }) => (
   <Portal>
-    <Dialog visible={visible} onDismiss={onDismiss} style={{ width: '40%', marginLeft: 'auto', marginRight: 'auto' }}>
+    <Dialo
+      visible={visible}
+      onDismiss={onDismiss}
+      style={{ width: "40%", marginLeft: "auto", marginRight: "auto" }}
+    >
       {/*<Dialog.Icon icon="alert" />*/}
-      <Dialog.Title>{title}</Dialog.Title>
-      <Dialog.Content>
+      <Dialo.Title>{title}</Dialo.Title>
+      <Dialo.Content>
         <Text variant="bodyMedium">{label}</Text>
-      </Dialog.Content>
-      <Dialog.Actions>
+      </Dialo.Content>
+      <Dialo.Actions>
         {Object.entries(buttons).map(([key, value]) => (
-          <Button
-            key={key}
-            onPress={value.press}
-          >
+          <Button key={key} onPress={value.press}>
             {value.label}
           </Button>
         ))}
-      </Dialog.Actions>
-    </Dialog>
-  </Portal >
+      </Dialo.Actions>
+    </Dialo>
+  </Portal>
 );
+
+export default Dialog;

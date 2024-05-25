@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * State y dispath global
@@ -7,7 +7,11 @@ import { useEffect, useRef } from 'react';
  * @param {Array} middlewareAfter
  * @returns
  */
-export const useCombinedReducers = (combinedReducers, middlewareBefore = [], middlewareAfter = []) => {
+export const useCombinedReducers = (
+  combinedReducers,
+  middlewareBefore = [],
+  middlewareAfter = []
+) => {
   // Global State
   const state = Object.keys(combinedReducers).reduce(
     (acc, cur) => ({ ...acc, [cur]: combinedReducers[cur][0] }),

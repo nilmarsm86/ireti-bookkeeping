@@ -37,115 +37,155 @@
 } */
 
 function onError(e) {
-    alert('A ocurrido un error al salvar la informacion');
-    console.log('A ocurrido un error al salvar la informacion');
+  alert("A ocurrido un error al salvar la informacion");
+  console.log("A ocurrido un error al salvar la informacion");
 }
 
 export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
-    return (e) => {
-        if (e.data.action === 'error') {
-            onError(e);
-            return;
-        }
+  return (e) => {
+    if (e.data.action === "error") {
+      onError(e);
+      return;
+    }
 
-        switch (e.data.action) {
-            case 'select':
-                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result });
-                return;
-                break;
-            case 'insert':
-                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos agregados' });
-                resetForm();
-                break;
-            case 'update':
-                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos modificados' });
-                resetForm();
-                break;
-            case 'delete':
-                dispatch({ type: String(e.data.action + '_literary_subgenre').toUpperCase(), payload: e.data.result[0] });
-                screenDispatch({ type: 'AFTER_SAVE', payload: 'Datos eliminados' });
-                break;
-        }
-    };
+    switch (e.data.action) {
+      case "select":
+        dispatch({
+          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
+          payload: e.data.result,
+        });
+        break;
+      case "insert":
+        dispatch({
+          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
+          payload: e.data.result[0],
+        });
+        screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
+        resetForm();
+        break;
+      case "update":
+        dispatch({
+          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
+          payload: e.data.result[0],
+        });
+        screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
+        resetForm();
+        break;
+      case "delete":
+        dispatch({
+          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
+          payload: e.data.result[0],
+        });
+        screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
+        break;
+      default:
+        break;
+    }
+  };
 };
 
 //validacion formulario
 function isValid(data, genreAttr, setError) {
-    let valid = [true];
-    let error = { name: false, num: false };
+  let valid = [true];
+  let error = { name: false, num: false };
 
-    if (genreAttr.name.value.length === 0) {
-        error['name'] = 'Este campo no debe estar vacio!';
-        valid.push(false);
+  if (genreAttr.name.value.length === 0) {
+    error["name"] = "Este campo no debe estar vacio!";
+    valid.push(false);
+  }
+
+  if (genreAttr.num.value.length === 0) {
+    error["num"] = "Este campo no debe estar vacio!";
+    valid.push(false);
+  }
+
+  let v = data.every((item) => {
+    let validate = true;
+
+    if (Number(item.id) !== Number(genreAttr.id.value)) {
+      if (genreAttr.name.value === item.name) {
+        error["name"] = "Este género literario ya existe!";
+        validate = false;
+      }
+
+      if (Number(genreAttr.num.value) === Number(item.num)) {
+        error["num"] =
+          "Este numero identificador de género literario ya existe!";
+        validate = false;
+      }
     }
 
-    if (genreAttr.num.value.length === 0) {
-        error['num'] = 'Este campo no debe estar vacio!';
-        valid.push(false);
-    }
+    return validate;
+  });
+  valid.push(v);
 
-    let v = data.every((item) => {
-        let validate = true;
-
-        if (Number(item.id) !== Number(genreAttr.id.value)) {
-            if (genreAttr.name.value === item.name) {
-                error['name'] = 'Este género literario ya existe!';
-                validate = false;
-            }
-
-            if (Number(genreAttr.num.value) === Number(item.num)) {
-                error['num'] = 'Este numero identificador de género literario ya existe!';
-                validate = false;
-            }
-
-        }
-
-        return validate;
-    });
-    valid.push(v);
-
-    setError({ ...error });
-    return valid.every((item) => item);
+  setError({ ...error });
+  return valid.every((item) => item);
 }
 
 //insert and update
-export const onSave = (genreAttr, setError, worker, existData, screenDispatch) => {
-    if (isValid(existData, genreAttr, setError)) {
-        try {
-            if (genreAttr.id.value === null) {
-                worker.postMessage({ action: 'insert', args: ["literary_subgenre", { 'name': genreAttr.name.value, 'num': Number(genreAttr.num.value) }] });
-            } else {
-                worker.postMessage({ action: 'update', args: ["literary_subgenre", { 'id': genreAttr.id.value, 'name': genreAttr.name.value, 'num': Number(genreAttr.num.value) }, { 'id': genreAttr.id.value }] });
-            }
-            //screenDispatch({ type: 'SHOW_LOADER' });
-        } catch (e) {
-            onError(e);
-        }
+export const onSave = (
+  genreAttr,
+  setError,
+  worker,
+  existData,
+  screenDispatch
+) => {
+  if (isValid(existData, genreAttr, setError)) {
+    try {
+      if (genreAttr.id.value === null) {
+        worker.postMessage({
+          action: "insert",
+          args: [
+            "literary_subgenre",
+            { name: genreAttr.name.value, num: Number(genreAttr.num.value) },
+          ],
+        });
+      } else {
+        worker.postMessage({
+          action: "update",
+          args: [
+            "literary_subgenre",
+            {
+              id: genreAttr.id.value,
+              name: genreAttr.name.value,
+              num: Number(genreAttr.num.value),
+            },
+            { id: genreAttr.id.value },
+          ],
+        });
+      }
+      screenDispatch({ type: "SHOW_LOADER" });
+    } catch (e) {
+      onError(e);
     }
-}
+  }
+};
 
 export const onRowDelete = (screenDispatch, setNewGenreData, item) => {
-    screenDispatch({ type: 'SHOW_MODAL_ALERT' });
-    setNewGenreData(item);
+  screenDispatch({ type: "SHOW_MODAL_ALERT" });
+  setNewGenreData(item);
 };
 
 export const onModalClose = (resetForm, screenDispatch) => {
-    resetForm();
-    screenDispatch({ type: 'HIDE_MODAL_ALERT' });
+  resetForm();
+  screenDispatch({ type: "HIDE_MODAL_ALERT" });
 };
 
 export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {
-    //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
-    console.warn('buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto');
-    worker.postMessage({ action: 'delete', args: ["literary_subgenre", { 'id': newGenreData.id }] });
-    screenDispatch({ type: 'SHOW_LOADER' });
-    onModalClose(resetForm, screenDispatch);
-}
+  //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
+  console.warn(
+    "buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto"
+  );
+  worker.postMessage({
+    action: "delete",
+    args: ["literary_subgenre", { id: newGenreData.id }],
+  });
+  screenDispatch({ type: "SHOW_LOADER" });
+  onModalClose(resetForm, screenDispatch);
+};
 
 export const onCeateNew = (resetForm, nameInputRef) => {
-    resetForm();
-    nameInputRef.current.focus();
-
+  resetForm();
+  nameInputRef.current.focus();
 };

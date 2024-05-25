@@ -1,13 +1,11 @@
 import { Portal, Snackbar } from "react-native-paper";
 
-export default ({ label, visible, onClose }) => (
-    <Portal>
-        <Snackbar
-            visible={visible}
-            onIconPress={onClose} 
-            onDismiss={onClose}
-        >
-            {label + '!!!'}
-        </Snackbar>
-    </Portal>
+const DismissAlert = ({ label, visible, onClose }) => (
+  <Portal>
+    <Snackbar visible={visible} onIconPress={onClose} onDismiss={onClose}>
+      {label + "!!!"}
+    </Snackbar>
+  </Portal>
 );
+
+export default DismissAlert;

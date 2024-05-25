@@ -20,19 +20,19 @@ export const screenReducer = (state, action) => {
   }
 };
 
-export const sqlReducerLiterarySubgenre = (state, action) => {
+export const sqlReducerAuthor = (state, action) => {
   switch (action.type) {
-    case "SELECT_LITERARY_SUBGENRE":
+    case "SELECT_AUTHOR":
       return { ...state, data: action.payload };
-    case "INSERT_LITERARY_SUBGENRE":
+    case "INSERT_AUTHOR":
       let newData = [...state.data, action.payload];
       return { ...state, data: newData };
-    case "UPDATE_LITERARY_SUBGENRE":
+    case "UPDATE_AUTHOR":
       let updateData = [...state.data].map((item) =>
         action.payload.id === item.id ? action.payload : item
       );
       return { ...state, data: updateData };
-    case "DELETE_LITERARY_SUBGENRE":
+    case "DELETE_AUTHOR":
       let removeData = [...state.data].filter(
         (item) => action.payload.id !== item.id
       );
