@@ -1,4 +1,4 @@
-import { useContext, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 //components
 import Table from "../component/Table/Table";
@@ -37,6 +37,13 @@ const Author = () => {
     showLoader: false,
   });
 
+  useEffect(() => {
+    worker.postMessage({
+      action: "allCountries",
+      args: ["SELECT * FROM country"],
+    });
+  }, [worker]);
+
   const initialData = {
     id: null,
     name: "",
@@ -53,12 +60,24 @@ const Author = () => {
 
   const [countries, setCountries] = useState([]);
   const [provinces, setProvinces] = useState([]);
-  const [sex, setSex] = useState([
+  const [disabledProvinces, setDisabledProvinces] = useState(true);
+  const sex = [
     { label: "Femenino", value: "f" },
     { label: "Masculino", value: "m" },
-  ]);
-  //const [sex, setSex] = useState('');
-  useFetchData(worker, applyManageAuthor(dispatch, screenDispatch, resetForm));
+  ];
+
+  useFetchData(
+    worker,
+    applyManageAuthor(
+      worker,
+      dispatch,
+      screenDispatch,
+      resetForm,
+      setCountries,
+      setProvinces,
+      setDisabledProvinces
+    )
+  );
 
   const metadata = [
     {
@@ -100,6 +119,16 @@ const Author = () => {
 
   const [authorAttr, newAuthorData, setNewAuthorData, error, setError] =
     useNativeFormModel({ ...initialData });
+
+  const findProvinces = (value) => {
+    authorAttr.country.onChangeText(value);
+    const sql =
+      "SELECT province.id AS id, province.name AS name FROM province, country WHERE province.country_id = :country_id AND province.country_id = country.id";
+    worker.postMessage({
+      action: "findProvincesByCountry",
+      args: [sql, { country_id: value }],
+    });
+  };
 
   return (
     <>
@@ -159,6 +188,7 @@ const Author = () => {
               }))}
               error={error.country}
               {...authorAttr.country}
+              onChangeText={findProvinces}
             />
             <Select
               label="Provincias"
@@ -166,7 +196,7 @@ const Author = () => {
                 label: item.name,
                 value: item.id,
               }))}
-              disabled={true}
+              disabled={disabledProvinces}
               error={error.province}
               {...authorAttr.province}
             />
@@ -199,7 +229,7 @@ const Author = () => {
           ok: {
             label: "Si",
             press: () =>
-              onModalOk(worker, newGenreData, resetForm, screenDispatch),
+              onModalOk(worker, newAuthorData, resetForm, screenDispatch),
           },
         }}
       />

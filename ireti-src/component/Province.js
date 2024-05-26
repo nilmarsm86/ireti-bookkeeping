@@ -70,7 +70,6 @@ const Province = ({
   );
 
   useEffect(() => {
-    console.log("sdfsd");
     worker.postMessage({
       action: "allCountries",
       args: ["SELECT * FROM country"],

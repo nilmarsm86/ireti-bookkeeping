@@ -1,9 +1,17 @@
 function onError(e) {
   alert("A ocurrido un error al salvar la informacion");
-  console.log("A ocurrido un error al salvar la informacion");
+  console.log(e);
 }
 
-export const applyManageAuthor = (dispatch, screenDispatch, resetForm) => {
+export const applyManageAuthor = (
+  worker,
+  dispatch,
+  screenDispatch,
+  resetForm,
+  setCountries,
+  setProvinces,
+  setDisabledProvinces
+) => {
   return (e) => {
     if (e.data.action === "error") {
       onError(e);
@@ -18,10 +26,13 @@ export const applyManageAuthor = (dispatch, screenDispatch, resetForm) => {
         });
         break;
       case "insert":
-        dispatch({
+        /*dispatch({
           type: String(e.data.action + "_author").toUpperCase(),
           payload: e.data.result[0],
-        });
+        });*/
+        const sql =
+          "SELECT author.id AS id, author.name AS name, author.gender as gender, country.name as country, province.name as province FROM author, province, country WHERE author.country_id = country.id AND author.province_id = province.id";
+        worker.postMessage({ action: "readData", args: [sql] });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
         resetForm();
         break;
@@ -39,6 +50,24 @@ export const applyManageAuthor = (dispatch, screenDispatch, resetForm) => {
           payload: e.data.result[0],
         });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
+        break;
+      case "allCountries":
+        setCountries(e.data.result);
+        break;
+      case "findProvincesByCountry":
+        if (e.data.result.length > 0) {
+          setDisabledProvinces(false);
+          setProvinces(e.data.result);
+        } else {
+          setDisabledProvinces(true);
+          setProvinces([]);
+        }
+        break;
+      case "readData":
+        dispatch({
+          type: String("select_province").toUpperCase(),
+          payload: e.data.result,
+        });
         break;
       default:
         break;
@@ -106,12 +135,12 @@ export const onSave = (
         province: authorAttr.province.value,
       };
       if (authorAttr.id.value === null) {
-        worker.postMessage({ action: "insert", args: ["auhor", data] });
+        worker.postMessage({ action: "insert", args: ["author", data] });
       } else {
         worker.postMessage({
           action: "update",
           args: [
-            "literary_subgenre",
+            "author",
             { id: authorAttr.id.value, ...data },
             { id: authorAttr.id.value },
           ],
@@ -141,7 +170,7 @@ export const onModalOk = (worker, newAuthorData, resetForm, screenDispatch) => {
   );
   worker.postMessage({
     action: "delete",
-    args: ["literary_subgenre", { id: newAuthorData.id }],
+    args: ["author", { id: newAuthorData.id }],
   });
   screenDispatch({ type: "SHOW_LOADER" });
   onModalClose(resetForm, screenDispatch);
