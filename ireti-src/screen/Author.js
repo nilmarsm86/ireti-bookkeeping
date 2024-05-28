@@ -99,7 +99,7 @@ const Author = () => {
       title: "Género",
       show: true,
       sortDirection: "",
-      numeric: true,
+      numeric: false,
     },
     {
       name: "country",
@@ -147,6 +147,7 @@ const Author = () => {
             }}
           />
         </View>
+        {/*TODO: poner el formulario en un modal*/}
         <View style={{ flex: "auto", width: "39%" }}>
           <Form
             title="Datos del autor:"

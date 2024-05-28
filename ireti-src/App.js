@@ -33,6 +33,7 @@ import { sqlReducerLiterarySubgenre } from "./reducer/literary_subgenre";
 import { sqlReducerCountry } from "./reducer/country";
 import Localization from "./screen/Localization";
 import { sqlReducerProvince } from "./reducer/province";
+import { sqlReducerAuthor } from "./reducer/author";
 
 const theme = {
   ...DefaultTheme,
@@ -207,7 +208,7 @@ const App = () => {
       screen: "accounting",
     }),
     book: useReducer(sqlReducer, { data: [] }),
-    author: useReducer(sqlReducer, { data: [] }),
+    author: useReducer(sqlReducerAuthor, { data: [] }),
     literary_subgenre: useReducer(sqlReducerLiterarySubgenre, { data: [] }),
     country: useReducer(sqlReducerCountry, { data: [] }),
     province: useReducer(sqlReducerProvince, { data: [] }),

@@ -13,10 +13,24 @@ const RadioGroup = ({
 }) => {
   return (
     <>
-      <Text variant="bodySmall" style={{ ...styles.label, style }}>
+      <Text
+        variant="bodySmall"
+        style={
+          Boolean(error)
+            ? { ...styles.label, color: "#b3261e", style }
+            : { ...styles.label, style }
+        }
+      >
         {label}
       </Text>
-      <Card mode="outlined" style={{ borderRadius: 4 }}>
+      <Card
+        mode="outlined"
+        style={
+          Boolean(error)
+            ? { borderRadius: 4, borderColor: "#b3261e" }
+            : { borderRadius: 4 }
+        }
+      >
         <Card.Content>
           <RadioButton.Group onValueChange={onChangeText} value={value}>
             {data.map((item) => (

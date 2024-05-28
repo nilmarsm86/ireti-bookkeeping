@@ -65,7 +65,7 @@ export const applyManageAuthor = (
         break;
       case "readData":
         dispatch({
-          type: String("select_province").toUpperCase(),
+          type: String("select_author").toUpperCase(),
           payload: e.data.result,
         });
         break;
@@ -131,8 +131,8 @@ export const onSave = (
       let data = {
         name: authorAttr.name.value,
         gender: authorAttr.gender.value,
-        country: authorAttr.country.value,
-        province: authorAttr.province.value,
+        country_id: authorAttr.country.value,
+        province_id: authorAttr.province.value,
       };
       if (authorAttr.id.value === null) {
         worker.postMessage({ action: "insert", args: ["author", data] });
