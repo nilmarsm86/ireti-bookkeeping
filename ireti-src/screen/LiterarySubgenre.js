@@ -16,7 +16,6 @@ import {
   onSave,
   onModalClose,
   onModalOk,
-  onRowDelete,
   applyManageSubgenre,
   onCeateNew,
 } from "../controller/literary_subgenre";
@@ -24,6 +23,7 @@ import {
 import { screenReducer } from "../reducer/literary_subgenre";
 import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
+import { onRowDelete } from "../controller/screen";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -136,7 +136,7 @@ const LiterarySubgenre = () => {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => onCeateNew(resetForm, nameInputRef)}
+        onPress={() => onCeateNew(resetForm, nameInputRef, setError)}
       />
 
       <DismissAlert

@@ -137,6 +137,7 @@ const Localization = () => {
                   error={errorProvince}
                   setError={setErrorProvince}
                   nameInputRef={provinceNameInputRef}
+                  countries={state.country.data}
                 />
               )}
             </>

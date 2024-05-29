@@ -16,7 +16,6 @@ import {
   onSave,
   onModalClose,
   onModalOk,
-  onRowDelete,
   applyManageAuthor,
   onCeateNew,
 } from "../controller/author";
@@ -26,6 +25,7 @@ import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
 import Select from "../component/Select";
 import RadioGroup from "../component/RadioGroup";
+import { onRowDelete } from "../controller/screen";
 
 const Author = () => {
   //reducers

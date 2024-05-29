@@ -2,10 +2,11 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData } from "../hook/sqlite";
-import { applyManageCountry, onRowDelete, onSave } from "../controller/country";
+import { applyManageCountry, onSave } from "../controller/country";
 import Table from "./Table/Table";
 import Form from "./Form/Form";
 import Input from "./Form/Input";
+import { onRowDelete } from "../controller/screen";
 
 const Country = ({
   styles,

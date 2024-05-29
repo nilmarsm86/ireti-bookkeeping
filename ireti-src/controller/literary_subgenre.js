@@ -1,5 +1,7 @@
 //import { validateNativeFormModel } from "../hook/form";
 
+import { onError } from "./error";
+
 //poner en un memo
 /* export const applyManageSubgenre = (worker, dispatch) => {
     worker.onmessage = function (e) {        
@@ -35,11 +37,6 @@
         }
     };   
 } */
-
-function onError(e) {
-  alert("A ocurrido un error al salvar la informacion");
-  console.log("A ocurrido un error al salvar la informacion");
-}
 
 export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
@@ -162,11 +159,6 @@ export const onSave = (
   }
 };
 
-export const onRowDelete = (screenDispatch, setNewGenreData, item) => {
-  screenDispatch({ type: "SHOW_MODAL_ALERT" });
-  setNewGenreData(item);
-};
-
 export const onModalClose = (resetForm, screenDispatch) => {
   resetForm();
   screenDispatch({ type: "HIDE_MODAL_ALERT" });
@@ -185,7 +177,8 @@ export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {
   onModalClose(resetForm, screenDispatch);
 };
 
-export const onCeateNew = (resetForm, nameInputRef) => {
+export const onCeateNew = (resetForm, nameInputRef, setError) => {
   resetForm();
   nameInputRef.current.focus();
+  setError({ name: false, num: false });
 };

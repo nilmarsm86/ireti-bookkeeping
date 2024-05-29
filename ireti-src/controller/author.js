@@ -1,7 +1,4 @@
-function onError(e) {
-  alert("A ocurrido un error al salvar la informacion");
-  console.log(e);
-}
+import { onError } from "./error";
 
 export const applyManageAuthor = (
   worker,
@@ -151,11 +148,6 @@ export const onSave = (
       onError(e);
     }
   }
-};
-
-export const onRowDelete = (screenDispatch, setNewAuthorData, item) => {
-  screenDispatch({ type: "SHOW_MODAL_ALERT" });
-  setNewAuthorData(item);
 };
 
 export const onModalClose = (resetForm, screenDispatch) => {

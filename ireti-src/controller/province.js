@@ -1,7 +1,4 @@
-function onError(e) {
-  alert("A ocurrido un error al salvar la informacion");
-  console.error(e);
-}
+import { onError } from "./error";
 
 //validacion formulario
 function isValid(data, provinceAttr, setError) {
@@ -40,9 +37,10 @@ export const applyManageProvince = (
   worker,
   dispatch,
   screenDispatch,
-  resetForm,
-  setCountries
+  resetForm
 ) => {
+  const sql =
+    "SELECT province.id AS id, province.name AS name, country.name as country FROM province, country WHERE province.country_id = country.id";
   return (e) => {
     if (e.data.action === "error") {
       onError(e);
@@ -57,21 +55,12 @@ export const applyManageProvince = (
         });
         break;
       case "insert":
-        //dispatch({ type: String(e.data.action + '_province').toUpperCase(), payload: e.data.result[0] });
-        const sql =
-          "SELECT province.id AS id, province.name AS name, country.name as country FROM province, country WHERE province.country_id = country.id";
         worker.postMessage({ action: "readData", args: [sql] });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
         resetForm();
         break;
       case "update":
-        //dispatch({ type: String(e.data.action + '_province').toUpperCase(), payload: e.data.result[0] });
-        worker.postMessage({
-          action: "readData",
-          args: [
-            "SELECT province.id AS id, province.name AS name, country.name as country FROM province, country WHERE province.country_id = country.id",
-          ],
-        });
+        worker.postMessage({ action: "readData", args: [sql] });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
         resetForm();
         break;
@@ -81,9 +70,6 @@ export const applyManageProvince = (
           payload: e.data.result[0],
         });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
-        break;
-      case "allCountries":
-        setCountries(e.data.result);
         break;
       case "readData":
         dispatch({
@@ -95,12 +81,6 @@ export const applyManageProvince = (
         break;
     }
   };
-};
-
-//refactorizar
-export const onRowDelete = (screenDispatch, setNewProvinceData, item) => {
-  screenDispatch({ type: "SHOW_MODAL_ALERT" });
-  setNewProvinceData(item);
 };
 
 //insert and update

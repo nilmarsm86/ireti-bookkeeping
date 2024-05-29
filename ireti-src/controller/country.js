@@ -1,7 +1,4 @@
-function onError(e) {
-  alert("A ocurrido un error al salvar la informacion");
-  console.log("A ocurrido un error al salvar la informacion");
-}
+import { onError } from "./error";
 
 //validacion formulario
 function isValid(data, countryAttr, setError) {
@@ -72,11 +69,6 @@ export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
         break;
     }
   };
-};
-
-export const onRowDelete = (screenDispatch, setNewCountryData, item) => {
-  screenDispatch({ type: "SHOW_MODAL_ALERT" });
-  setNewCountryData(item);
 };
 
 //insert and update

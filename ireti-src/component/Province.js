@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData } from "../hook/sqlite";
@@ -6,11 +6,8 @@ import Table from "./Table/Table";
 import Form from "./Form/Form";
 import Input from "./Form/Input";
 import Select from "./Select";
-import {
-  applyManageProvince,
-  onRowDelete,
-  onSave,
-} from "../controller/province";
+import { applyManageProvince, onSave } from "../controller/province";
+import { onRowDelete } from "../controller/screen";
 
 const Province = ({
   styles,
@@ -20,6 +17,7 @@ const Province = ({
   error,
   setError,
   nameInputRef,
+  countries,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
 
@@ -57,24 +55,10 @@ const Province = ({
     setNewProvinceData({ ...initialData });
   };
 
-  const [countries, setCountries] = useState([]);
   useFetchData(
     worker,
-    applyManageProvince(
-      worker,
-      dispatch,
-      screenDispatch,
-      resetForm,
-      setCountries
-    )
+    applyManageProvince(worker, dispatch, screenDispatch, resetForm)
   );
-
-  useEffect(() => {
-    worker.postMessage({
-      action: "allCountries",
-      args: ["SELECT * FROM country"],
-    });
-  }, [worker]);
 
   //transform data for select (country name to id)
   const transformProvinceData = (item) => {
