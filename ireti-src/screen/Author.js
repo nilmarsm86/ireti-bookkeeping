@@ -23,10 +23,11 @@ import {
 import { screenReducer } from "../reducer/author";
 import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
-import Select from "../component/Select";
-import RadioGroup from "../component/RadioGroup";
+import Select from "../component/Form/Select";
+import RadioGroup from "../component/Form/RadioGroup";
 import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
+import AuthorForm from "../form/AuthorForm";
 
 const Author = () => {
   //reducers
@@ -123,6 +124,10 @@ const Author = () => {
     });
   };
 
+  const onSaveForm = () => {
+    onSave(authorAttr, setError, worker, state.author.data, screenDispatch);
+  };
+
   return (
     <>
       <TitleSection>Autores</TitleSection>
@@ -143,59 +148,17 @@ const Author = () => {
         </View>
         {/*TODO: poner el formulario en un modal*/}
         <View style={{ flex: "auto", width: "39%" }}>
-          <Form
-            title="Datos del autor:"
-            buttons={{
-              save: {
-                label: "Salvar",
-                press: () =>
-                  onSave(
-                    authorAttr,
-                    setError,
-                    worker,
-                    state.author.data,
-                    screenDispatch
-                  ),
-                icon: "content-save",
-              },
-            }}
-          >
-            <Input
-              label="Nombre"
-              icon="pencil"
-              error={error.name}
-              {...authorAttr.name}
-              reference={nameInputRef}
-            />
-
-            <RadioGroup
-              label="Sexo"
-              error={error.gender}
-              {...authorAttr.gender}
-              data={sex}
-            />
-
-            <Select
-              label="Países"
-              data={state.country.data.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))}
-              error={error.country}
-              {...authorAttr.country}
-              onChangeText={findProvinces}
-            />
-            <Select
-              label="Provincias"
-              data={provinces.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))}
-              disabled={disabledProvinces}
-              error={error.province}
-              {...authorAttr.province}
-            />
-          </Form>
+          <AuthorForm
+            authorAttr={authorAttr}
+            error={error}
+            nameInputRef={nameInputRef}
+            onSaveForm={onSaveForm}
+            sex={sex}
+            countries={state.country.data}
+            provinces={provinces}
+            findProvinces={findProvinces}
+            disabledProvinces={disabledProvinces}
+          ></AuthorForm>
         </View>
       </View>
 

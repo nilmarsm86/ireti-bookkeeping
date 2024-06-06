@@ -25,6 +25,7 @@ import Loader from "../component/Loader";
 import { Card, FAB, Text } from "react-native-paper";
 import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
+import LiterarySubgenreForm from "../form/LiterarySubgenreForm";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -80,6 +81,16 @@ const LiterarySubgenre = () => {
   const [genreAttr, newGenreData, setNewGenreData, error, setError] =
     useNativeFormModel({ ...initialData });
 
+  const onSaveForm = () => {
+    onSave(
+      genreAttr,
+      setError,
+      worker,
+      state.literary_subgenre.data,
+      screenDispatch
+    );
+  };
+
   return (
     <>
       <TitleSection>Generos literarios</TitleSection>
@@ -99,39 +110,12 @@ const LiterarySubgenre = () => {
           />
         </View>
         <View style={{ flex: "auto", width: "39%" }}>
-          <Form
-            title="Datos de los géneros literarios:"
-            buttons={{
-              save: {
-                label: "Salvar",
-                press: () =>
-                  onSave(
-                    genreAttr,
-                    setError,
-                    worker,
-                    state.literary_subgenre.data,
-                    screenDispatch
-                  ),
-                icon: "content-save",
-              },
-              //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
-            }}
-          >
-            <Input
-              label="Nombre"
-              icon="pencil"
-              error={error.name}
-              {...genreAttr.name}
-              reference={nameInputRef}
-            />
-            <Input
-              label="Número"
-              icon="music-accidental-sharp"
-              value={genreAttr.num.value}
-              error={error.num}
-              onChangeText={genreAttr.num.onChangeText}
-            />
-          </Form>
+          <LiterarySubgenreForm
+            genreAttr={genreAttr}
+            error={error}
+            nameInputRef={nameInputRef}
+            onSaveForm={onSaveForm}
+          ></LiterarySubgenreForm>
         </View>
       </View>
 

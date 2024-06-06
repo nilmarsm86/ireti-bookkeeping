@@ -3,11 +3,9 @@ import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
 import Table from "./Table/Table";
-import Form from "./Form/Form";
-import Input from "./Form/Input";
-import Select from "./Select";
 import { applyManageProvince, onSave } from "../controller/province";
 import { onRowDelete } from "../controller/screen";
+import ProvinceForm from "../form/ProvinceForm";
 
 const Province = ({
   styles,
@@ -68,6 +66,10 @@ const Province = ({
     setNewProvinceData({ ...item, country: country.id });
   };
 
+  const onSaveForm = () => {
+    onSave(provinceAttr, setError, worker, state.province.data, screenDispatch);
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
@@ -85,41 +87,13 @@ const Province = ({
         />
       </View>
       <View style={{ flex: "auto", width: "39%" }}>
-        <Form
-          title="Datos de la provincia:"
-          buttons={{
-            save: {
-              label: "Salvar",
-              press: () =>
-                onSave(
-                  provinceAttr,
-                  setError,
-                  worker,
-                  state.province.data,
-                  screenDispatch
-                ),
-              icon: "content-save",
-            },
-          }}
-        >
-          <Input
-            label="Nombre"
-            icon="pencil"
-            error={error.name}
-            {...provinceAttr.name}
-            reference={nameInputRef}
-          />
-
-          <Select
-            label="Países"
-            data={state.country.data.map((item) => ({
-              label: item.name,
-              value: item.id,
-            }))}
-            error={error.country}
-            {...provinceAttr.country}
-          />
-        </Form>
+        <ProvinceForm
+          provinceAttr={provinceAttr}
+          error={error}
+          nameInputRef={nameInputRef}
+          onSaveForm={onSaveForm}
+          countries={state.country.data}
+        ></ProvinceForm>
       </View>
     </View>
   );

@@ -4,8 +4,7 @@ import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
 import { applyManageCountry, onSave } from "../controller/country";
 import Table from "./Table/Table";
-import Form from "./Form/Form";
-import Input from "./Form/Input";
+import CountryForm from "../form/CountryForm";
 import { onRowDelete } from "../controller/screen";
 
 const Country = ({
@@ -48,6 +47,10 @@ const Country = ({
   useFetchData(worker, applyManageCountry(dispatch, screenDispatch, resetForm));
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
+  const onSaveForm = () => {
+    onSave(countryAttr, setError, worker, state.country.data, screenDispatch);
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
@@ -65,31 +68,12 @@ const Country = ({
         />
       </View>
       <View style={{ flex: "auto", width: "39%" }}>
-        <Form
-          title="Datos del país:"
-          buttons={{
-            save: {
-              label: "Salvar",
-              press: () =>
-                onSave(
-                  countryAttr,
-                  setError,
-                  worker,
-                  state.country.data,
-                  screenDispatch
-                ),
-              icon: "content-save",
-            },
-          }}
-        >
-          <Input
-            label="Nombre"
-            icon="pencil"
-            error={error.name}
-            {...countryAttr.name}
-            reference={nameInputRef}
-          />
-        </Form>
+        <CountryForm
+          countryAttr={countryAttr}
+          error={error}
+          nameInputRef={nameInputRef}
+          onSaveForm={onSaveForm}
+        ></CountryForm>
       </View>
     </View>
   );
