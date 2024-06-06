@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
-import { useFetchData } from "../hook/sqlite";
+import { useFetchData, useFindAll } from "../hook/sqlite";
 import { applyManageCountry, onSave } from "../controller/country";
 import Table from "./Table/Table";
 import Form from "./Form/Form";
@@ -46,6 +46,7 @@ const Country = ({
   };
 
   useFetchData(worker, applyManageCountry(dispatch, screenDispatch, resetForm));
+  useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   return (
     <View style={styles.container}>

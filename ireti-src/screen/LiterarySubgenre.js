@@ -22,8 +22,9 @@ import {
 
 import { screenReducer } from "../reducer/literary_subgenre";
 import Loader from "../component/Loader";
-import { FAB } from "react-native-paper";
+import { Card, FAB, Text } from "react-native-paper";
 import { onRowDelete } from "../controller/screen";
+import TitleSection from "../component/TitleSection";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -81,6 +82,7 @@ const LiterarySubgenre = () => {
 
   return (
     <>
+      <TitleSection>Generos literarios</TitleSection>
       <View style={styles.container}>
         <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
           <Table
@@ -98,7 +100,7 @@ const LiterarySubgenre = () => {
         </View>
         <View style={{ flex: "auto", width: "39%" }}>
           <Form
-            title="datos del génrero literario:"
+            title="Datos de los géneros literarios:"
             buttons={{
               save: {
                 label: "Salvar",

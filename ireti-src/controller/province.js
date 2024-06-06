@@ -77,6 +77,12 @@ export const applyManageProvince = (
           payload: e.data.result,
         });
         break;
+      case "allCountries":
+        dispatch({
+          type: String("select_country").toUpperCase(),
+          payload: e.data.result,
+        });
+        break;
       default:
         break;
     }

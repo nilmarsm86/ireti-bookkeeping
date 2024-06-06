@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import {
   Portal,
   RadioButton,
@@ -46,25 +46,28 @@ const Select = ({
 
   return (
     <>
-      <TextInput
-        value={inputValue(value)}
-        mode="outlined"
-        placeholder={label}
-        label={label}
-        readOnly={false}
-        editable={false}
-        right={
-          <TextInput.Icon
-            icon="chevron-down"
-            disabled={disabled}
-            onPress={showDialog}
-          />
-        }
-        disabled={disabled}
-        error={Boolean(error)}
-        ref={reference}
-        style={style}
-      />
+      <Pressable onPress={showDialog}>
+        <TextInput
+          value={inputValue(value)}
+          mode="outlined"
+          placeholder={label}
+          label={label}
+          readOnly={false}
+          editable={false}
+          right={
+            <TextInput.Icon
+              icon="chevron-down"
+              disabled={disabled}
+              onPress={showDialog}
+              color={Boolean(error) ? "#b3261e" : ""}
+            />
+          }
+          disabled={disabled}
+          error={Boolean(error)}
+          ref={reference}
+          style={{ ...style, cursor: "pointer" }}
+        />
+      </Pressable>
 
       {Boolean(error) && (
         <HelperText type="error" visible={Boolean(error)} padding="none">

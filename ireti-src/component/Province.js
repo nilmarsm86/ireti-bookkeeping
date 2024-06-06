@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
-import { useFetchData } from "../hook/sqlite";
+import { useFetchData, useFindAll } from "../hook/sqlite";
 import Table from "./Table/Table";
 import Form from "./Form/Form";
 import Input from "./Form/Input";
@@ -17,7 +17,6 @@ const Province = ({
   error,
   setError,
   nameInputRef,
-  countries,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
 
@@ -59,10 +58,11 @@ const Province = ({
     worker,
     applyManageProvince(worker, dispatch, screenDispatch, resetForm)
   );
+  useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   //transform data for select (country name to id)
   const transformProvinceData = (item) => {
-    const country = countries.find((element) => {
+    const country = state.country.data.find((element) => {
       return element.name === item.country;
     });
     setNewProvinceData({ ...item, country: country.id });
@@ -112,7 +112,7 @@ const Province = ({
 
           <Select
             label="Países"
-            data={countries.map((item) => ({
+            data={state.country.data.map((item) => ({
               label: item.name,
               value: item.id,
             }))}

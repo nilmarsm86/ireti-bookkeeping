@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Connect to Sqlite DB
@@ -58,4 +58,22 @@ function applyConnectDb(worker, connect, setConnect, dbPath, onConnect) {
  */
 export const useFetchData = (worker, apply) => {
   worker.onmessage = apply;
+};
+
+/**
+ * Find all data from table
+ * @param {*} worker
+ * @param {*} action
+ * @param {*} table
+ * @param {*} dataLength
+ */
+export const useFindAll = (worker, action, table, dataLength) => {
+  useEffect(() => {
+    if (dataLength === 0) {
+      worker.postMessage({
+        action: action,
+        args: ["SELECT * FROM " + table],
+      });
+    }
+  }, [worker, action, table, dataLength]);
 };

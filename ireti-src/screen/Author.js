@@ -8,7 +8,7 @@ import DismissAlert from "../component/DismissAlert";
 import Dialog from "../component/Dialog";
 
 import { useNativeFormModel } from "../hook/form";
-import { useFetchData } from "../hook/sqlite";
+import { useFetchData, useFindAll } from "../hook/sqlite";
 
 import { DispatchContext } from "../context/app";
 
@@ -20,12 +20,13 @@ import {
   onCeateNew,
 } from "../controller/author";
 
-import { screenReducer } from "../reducer/literary_subgenre";
+import { screenReducer } from "../reducer/author";
 import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
 import Select from "../component/Select";
 import RadioGroup from "../component/RadioGroup";
 import { onRowDelete } from "../controller/screen";
+import TitleSection from "../component/TitleSection";
 
 const Author = () => {
   //reducers
@@ -36,13 +37,6 @@ const Author = () => {
     dismissMsg: "",
     showLoader: false,
   });
-
-  useEffect(() => {
-    worker.postMessage({
-      action: "allCountries",
-      args: ["SELECT * FROM country"],
-    });
-  }, [worker]);
 
   const initialData = {
     id: null,
@@ -58,7 +52,6 @@ const Author = () => {
 
   const nameInputRef = useRef(null);
 
-  const [countries, setCountries] = useState([]);
   const [provinces, setProvinces] = useState([]);
   const [disabledProvinces, setDisabledProvinces] = useState(true);
   const sex = [
@@ -73,11 +66,11 @@ const Author = () => {
       dispatch,
       screenDispatch,
       resetForm,
-      setCountries,
       setProvinces,
       setDisabledProvinces
     )
   );
+  useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   const metadata = [
     {
@@ -132,6 +125,7 @@ const Author = () => {
 
   return (
     <>
+      <TitleSection>Autores</TitleSection>
       <View style={styles.container}>
         <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
           <Table
@@ -183,7 +177,7 @@ const Author = () => {
 
             <Select
               label="Países"
-              data={countries.map((item) => ({
+              data={state.country.data.map((item) => ({
                 label: item.name,
                 value: item.id,
               }))}

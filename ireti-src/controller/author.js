@@ -5,7 +5,6 @@ export const applyManageAuthor = (
   dispatch,
   screenDispatch,
   resetForm,
-  setCountries,
   setProvinces,
   setDisabledProvinces
 ) => {
@@ -49,7 +48,10 @@ export const applyManageAuthor = (
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
         break;
       case "allCountries":
-        setCountries(e.data.result);
+        dispatch({
+          type: String("select_country").toUpperCase(),
+          payload: e.data.result,
+        });
         break;
       case "findProvincesByCountry":
         if (e.data.result.length > 0) {

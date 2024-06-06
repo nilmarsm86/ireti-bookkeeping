@@ -1,7 +1,8 @@
 import { Text } from "react-native";
+import TitleSection from "../component/TitleSection";
 
 const Accounting = () => {
-  return <Text>Cuentas</Text>;
+  return <TitleSection>Cuentas</TitleSection>;
 };
 
 export default Accounting;

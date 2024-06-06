@@ -38,6 +38,9 @@ const RadioGroup = ({
                 label={item.label}
                 value={item.value}
                 key={item.value}
+                uncheckedColor={Boolean(error) ? "#b3261e" : ""}
+                labelStyle={Boolean(error) ? { color: "#b3261e" } : {}}
+                style={Boolean(error) ? { color: "#b3261e" } : {}}
               />
             ))}
           </RadioButton.Group>

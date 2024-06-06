@@ -65,6 +65,12 @@ export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
         });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
         break;
+      case "allCountries":
+        dispatch({
+          type: String("select_country").toUpperCase(),
+          payload: e.data.result,
+        });
+        break;
       default:
         break;
     }

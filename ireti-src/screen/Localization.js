@@ -15,6 +15,7 @@ import Dialog from "../component/Dialog";
 import Loader from "../component/Loader";
 import Country from "../component/Country";
 import Province from "../component/Province";
+import TitleSection from "../component/TitleSection";
 
 const Localization = () => {
   const [state, dispatch, worker] = useContext(DispatchContext);
@@ -103,7 +104,7 @@ const Localization = () => {
             }}
           >
             <>
-              <Text>Paises</Text>
+              <TitleSection>Paises</TitleSection>
               {screenState.tab === 0 && (
                 <Country
                   styles={styles}
@@ -127,7 +128,7 @@ const Localization = () => {
             }}
           >
             <>
-              <Text>Provincias</Text>
+              <TitleSection>Provincias</TitleSection>
               {screenState.tab === 1 && (
                 <Province
                   styles={styles}
@@ -137,7 +138,6 @@ const Localization = () => {
                   error={errorProvince}
                   setError={setErrorProvince}
                   nameInputRef={provinceNameInputRef}
-                  countries={state.country.data}
                 />
               )}
             </>
