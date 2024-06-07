@@ -138,13 +138,17 @@ book_id INTEGER REFERENCES book (id)
 
 COMMIT TRANSACTION;
 
-INSERT INTO literary_subgenre (name,num) VALUES ('name1',1);
-INSERT INTO literary_subgenre (name,num) VALUES ('name2',2);
-INSERT INTO literary_subgenre (name,num) VALUES ('name3',3);
+INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre1',1);
+INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre2',2);
+INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre3',3);
 
-INSERT INTO country (name) VALUES ('q1');
-INSERT INTO country (name) VALUES ('w2');
-INSERT INTO country (name) VALUES ('e3');
+INSERT INTO country (name) VALUES ('country1');
+INSERT INTO country (name) VALUES ('country2');
+INSERT INTO country (name) VALUES ('country3');
+
+INSERT INTO province (name, country_id) VALUES ('province1', 1);
+INSERT INTO province (name, country_id) VALUES ('province2', 1);
+INSERT INTO province (name, country_id) VALUES ('province3', 2);
 PRAGMA foreign_keys = on;
 `;
 

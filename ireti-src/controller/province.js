@@ -55,12 +55,20 @@ export const applyManageProvince = (
         });
         break;
       case "insert":
-        worker.postMessage({ action: "readData", args: [sql] });
+        //worker.postMessage({ action: "readData", args: [sql] });
+        dispatch({
+          type: String(e.data.action + "_province").toUpperCase(),
+          payload: e.data.result[0],
+        });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
         resetForm();
         break;
       case "update":
-        worker.postMessage({ action: "readData", args: [sql] });
+        //worker.postMessage({ action: "readData", args: [sql] });
+        dispatch({
+          type: String(e.data.action + "_province").toUpperCase(),
+          payload: e.data.result[0],
+        });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
         resetForm();
         break;

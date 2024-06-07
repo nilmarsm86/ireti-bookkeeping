@@ -77,3 +77,22 @@ export const useFindAll = (worker, action, table, dataLength) => {
     }
   }, [worker, action, table, dataLength]);
 };
+
+/**
+ * Find data from query
+ * @param {*} worker
+ * @param {*} action
+ * @param {*} sql
+ * @param {*} dataBind
+ * @param {*} dataLength
+ */
+export const useQuery = (worker, action, sql, dataBind, dataLength) => {
+  useEffect(() => {
+    if (dataLength === 0) {
+      worker.postMessage({
+        action: action,
+        args: [sql, dataBind],
+      });
+    }
+  }, [worker, action, sql, dataBind, dataLength]);
+};

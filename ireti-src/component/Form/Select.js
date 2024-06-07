@@ -34,7 +34,12 @@ const Select = ({
       return value;
     }
     let item = data.find((item) => item.value === value);
-    return item["label"];
+
+    if (item?.label) {
+      return item["label"];
+    }
+
+    return "";
   };
 
   const selectValue = (value, selected) => {

@@ -6,6 +6,7 @@ import Table from "./Table/Table";
 import { applyManageProvince, onSave } from "../controller/province";
 import { onRowDelete } from "../controller/screen";
 import ProvinceForm from "../form/ProvinceForm";
+import { province_metadata } from "../config/metadata";
 
 const Province = ({
   styles,
@@ -17,30 +18,6 @@ const Province = ({
   nameInputRef,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
-
-  const metadata = [
-    {
-      name: "id",
-      title: "ID",
-      show: false,
-      sortDirection: "descending",
-      numeric: false,
-    },
-    {
-      name: "name",
-      title: "Nombre",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-    {
-      name: "country",
-      title: "País",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-  ];
 
   const initialData = {
     id: null,
@@ -56,14 +33,31 @@ const Province = ({
     worker,
     applyManageProvince(worker, dispatch, screenDispatch, resetForm)
   );
+
+  useFindAll(worker, "readData", "province", state.province.data.length);
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   //transform data for select (country name to id)
-  const transformProvinceData = (item) => {
-    const country = state.country.data.find((element) => {
-      return element.name === item.country;
+  const fromIdToNameCountry = (province) => {
+    const country = state.country.data.find((country) => {
+      return country.name === province.country;
     });
-    setNewProvinceData({ ...item, country: country.id });
+    setNewProvinceData({ ...province, country: country.id });
+  };
+
+  //transform province.country_id to name
+  const fromIdToNameProvinceCountry = (data, countries) => {
+    return data.map((province) => {
+      const country = countries.find((country) => {
+        return country.id === province.country_id;
+      });
+
+      if (country) {
+        province.country = country.name;
+      }
+
+      return province;
+    });
   };
 
   const onSaveForm = () => {
@@ -74,14 +68,17 @@ const Province = ({
     <View style={styles.container}>
       <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
         <Table
-          metadata={metadata}
-          data={[...state.province.data]}
+          metadata={province_metadata}
+          data={fromIdToNameProvinceCountry(
+            state.province.data,
+            state.country.data
+          )}
           buttons={{
-            edit: { icon: "pencil", press: transformProvinceData },
+            edit: { icon: "pencil", press: fromIdToNameCountry },
             delete: {
               icon: "delete",
               press: (item) =>
-                onRowDelete(screenDispatch, transformProvinceData, item),
+                onRowDelete(screenDispatch, fromIdToNameCountry, item),
             },
           }}
         />
@@ -93,7 +90,7 @@ const Province = ({
           nameInputRef={nameInputRef}
           onSaveForm={onSaveForm}
           countries={state.country.data}
-        ></ProvinceForm>
+        />
       </View>
     </View>
   );

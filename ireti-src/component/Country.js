@@ -6,6 +6,7 @@ import { applyManageCountry, onSave } from "../controller/country";
 import Table from "./Table/Table";
 import CountryForm from "../form/CountryForm";
 import { onRowDelete } from "../controller/screen";
+import { country_metadata } from "../config/metadata";
 
 const Country = ({
   styles,
@@ -17,23 +18,6 @@ const Country = ({
   nameInputRef,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
-
-  const metadata = [
-    {
-      name: "id",
-      title: "ID",
-      show: false,
-      sortDirection: "descending",
-      numeric: false,
-    },
-    {
-      name: "name",
-      title: "Nombre",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-  ];
 
   const initialData = {
     id: null,
@@ -55,7 +39,7 @@ const Country = ({
     <View style={styles.container}>
       <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
         <Table
-          metadata={metadata}
+          metadata={country_metadata}
           data={[...state.country.data]}
           buttons={{
             edit: { icon: "pencil", press: setNewCountryData },
@@ -73,7 +57,7 @@ const Country = ({
           error={error}
           nameInputRef={nameInputRef}
           onSaveForm={onSaveForm}
-        ></CountryForm>
+        />
       </View>
     </View>
   );

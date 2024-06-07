@@ -75,6 +75,12 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
         });
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
         break;
+      case "allSubgenre":
+        dispatch({
+          type: String("select_literary_subgenre").toUpperCase(),
+          payload: e.data.result,
+        });
+        break;
       default:
         break;
     }

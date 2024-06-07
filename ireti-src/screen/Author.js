@@ -1,9 +1,7 @@
-import { useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useReducer, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 //components
 import Table from "../component/Table/Table";
-import Form from "../component/Form/Form";
-import Input from "../component/Form/Input";
 import DismissAlert from "../component/DismissAlert";
 import Dialog from "../component/Dialog";
 
@@ -23,11 +21,10 @@ import {
 import { screenReducer } from "../reducer/author";
 import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
-import Select from "../component/Form/Select";
-import RadioGroup from "../component/Form/RadioGroup";
 import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
 import AuthorForm from "../form/AuthorForm";
+import { author_metadata } from "../config/metadata";
 
 const Author = () => {
   //reducers
@@ -73,44 +70,6 @@ const Author = () => {
   );
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
-  const metadata = [
-    {
-      name: "id",
-      title: "ID",
-      show: false,
-      sortDirection: "descending",
-      numeric: false,
-    },
-    {
-      name: "name",
-      title: "Nombre",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-    {
-      name: "gender",
-      title: "Género",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-    {
-      name: "country",
-      title: "País",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-    {
-      name: "province",
-      title: "Provincia",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-  ];
-
   const [authorAttr, newAuthorData, setNewAuthorData, error, setError] =
     useNativeFormModel({ ...initialData });
 
@@ -134,7 +93,7 @@ const Author = () => {
       <View style={styles.container}>
         <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
           <Table
-            metadata={metadata}
+            metadata={author_metadata}
             data={[...state.author.data]}
             buttons={{
               edit: { icon: "pencil", press: setNewAuthorData },
@@ -158,7 +117,7 @@ const Author = () => {
             provinces={provinces}
             findProvinces={findProvinces}
             disabledProvinces={disabledProvinces}
-          ></AuthorForm>
+          />
         </View>
       </View>
 

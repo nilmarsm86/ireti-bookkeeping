@@ -2,13 +2,11 @@ import { useContext, useReducer, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 //components
 import Table from "../component/Table/Table";
-import Form from "../component/Form/Form";
-import Input from "../component/Form/Input";
 import DismissAlert from "../component/DismissAlert";
 import Dialog from "../component/Dialog";
 
 import { useNativeFormModel } from "../hook/form";
-import { useFetchData } from "../hook/sqlite";
+import { useFetchData, useFindAll } from "../hook/sqlite";
 
 import { DispatchContext } from "../context/app";
 
@@ -22,10 +20,11 @@ import {
 
 import { screenReducer } from "../reducer/literary_subgenre";
 import Loader from "../component/Loader";
-import { Card, FAB, Text } from "react-native-paper";
+import { FAB } from "react-native-paper";
 import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
 import LiterarySubgenreForm from "../form/LiterarySubgenreForm";
+import { literary_subgenre_metadata } from "../config/metadata";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -53,30 +52,12 @@ const LiterarySubgenre = () => {
     worker,
     applyManageSubgenre(dispatch, screenDispatch, resetForm)
   );
-
-  const metadata = [
-    {
-      name: "id",
-      title: "ID",
-      show: false,
-      sortDirection: "descending",
-      numeric: false,
-    },
-    {
-      name: "name",
-      title: "Nombre",
-      show: true,
-      sortDirection: "",
-      numeric: false,
-    },
-    {
-      name: "num",
-      title: "Número",
-      show: true,
-      sortDirection: "",
-      numeric: true,
-    },
-  ];
+  useFindAll(
+    worker,
+    "allSubgenre",
+    "literary_subgenre",
+    state.literary_subgenre.data.length
+  );
 
   const [genreAttr, newGenreData, setNewGenreData, error, setError] =
     useNativeFormModel({ ...initialData });
@@ -93,11 +74,11 @@ const LiterarySubgenre = () => {
 
   return (
     <>
-      <TitleSection>Generos literarios</TitleSection>
+      <TitleSection>Géneros literarios</TitleSection>
       <View style={styles.container}>
         <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
           <Table
-            metadata={metadata}
+            metadata={literary_subgenre_metadata}
             data={[...state.literary_subgenre.data]}
             buttons={{
               edit: { icon: "pencil", press: setNewGenreData },
@@ -115,7 +96,7 @@ const LiterarySubgenre = () => {
             error={error}
             nameInputRef={nameInputRef}
             onSaveForm={onSaveForm}
-          ></LiterarySubgenreForm>
+          />
         </View>
       </View>
 
