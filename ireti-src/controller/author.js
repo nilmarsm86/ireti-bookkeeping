@@ -1,3 +1,4 @@
+import { isValid } from "../validator/author";
 import { onError } from "./error";
 
 export const applyManageAuthor = (
@@ -73,49 +74,6 @@ export const applyManageAuthor = (
     }
   };
 };
-
-//validacion formulario
-function isValid(data, authorAttr, setError) {
-  let valid = [true];
-  let error = { name: false, gender: false, country: false, province: false };
-
-  if (authorAttr.name.value.length === 0) {
-    error["name"] = "Este campo no debe estar vacio!";
-    valid.push(false);
-  }
-
-  if (authorAttr.gender.value.length === 0) {
-    error["gender"] = "Debe seleccionar el sexo del autor!";
-    valid.push(false);
-  }
-
-  if (authorAttr.country.value.length === 0) {
-    error["country"] = "Por favor selecciona un país!";
-    valid.push(false);
-  }
-
-  if (authorAttr.province.value.length === 0) {
-    error["province"] = "Por favor selecciona una provincia!";
-    valid.push(false);
-  }
-
-  let v = data.every((item) => {
-    let validate = true;
-
-    if (Number(item.id) !== Number(authorAttr.id.value)) {
-      if (authorAttr.name.value === item.name) {
-        error["name"] = "Este autor ya existe!";
-        validate = false;
-      }
-    }
-
-    return validate;
-  });
-  valid.push(v);
-
-  setError({ ...error });
-  return valid.every((item) => item);
-}
 
 //insert and update
 export const onSave = (

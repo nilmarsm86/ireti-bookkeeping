@@ -1,37 +1,5 @@
 import { onError } from "./error";
-
-//validacion formulario
-function isValid(data, provinceAttr, setError) {
-  let valid = [true];
-  let error = { name: false, country: false };
-
-  if (provinceAttr.name.value.length === 0) {
-    error["name"] = "Este campo no debe estar vacio!";
-    valid.push(false);
-  }
-
-  if (provinceAttr.country.value.length === 0) {
-    error["country"] = "Por favor seleciona un país!";
-    valid.push(false);
-  }
-
-  let v = data.every((item) => {
-    let validate = true;
-
-    if (Number(item.id) !== Number(provinceAttr.id.value)) {
-      if (provinceAttr.name.value === item.name) {
-        error["name"] = "Esta provincia ya existe!";
-        validate = false;
-      }
-    }
-
-    return validate;
-  });
-  valid.push(v);
-
-  setError({ ...error });
-  return valid.every((item) => item);
-}
+import { isValid } from "../validator/province";
 
 export const applyManageProvince = (
   worker,

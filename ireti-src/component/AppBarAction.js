@@ -5,7 +5,7 @@ const AppBarAction = ({ title, icon, amount = null, onPress, active }) => {
 
   return (
     <>
-      <Tooltip title={title}>
+      <Tooltip title={title} leaveTouchDelay={250}>
         <Appbar.Action
           icon={icon}
           onPress={onPress}

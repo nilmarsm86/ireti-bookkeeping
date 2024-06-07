@@ -1,32 +1,5 @@
 import { onError } from "./error";
-
-//validacion formulario
-function isValid(data, countryAttr, setError) {
-  let valid = [true];
-  let error = { name: false };
-
-  if (countryAttr.name.value.length === 0) {
-    error["name"] = "Este campo no debe estar vacio!";
-    valid.push(false);
-  }
-
-  let v = data.every((item) => {
-    let validate = true;
-
-    if (Number(item.id) !== Number(countryAttr.id.value)) {
-      if (countryAttr.name.value === item.name) {
-        error["name"] = "Este pais ya existe!";
-        validate = false;
-      }
-    }
-
-    return validate;
-  });
-  valid.push(v);
-
-  setError({ ...error });
-  return valid.every((item) => item);
-}
+import { isValid } from "../validator/country";
 
 export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
   return (e) => {

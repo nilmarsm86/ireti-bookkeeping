@@ -1,42 +1,5 @@
-//import { validateNativeFormModel } from "../hook/form";
-
+import { isValid } from "../validator/literary_subgenre";
 import { onError } from "./error";
-
-//poner en un memo
-/* export const applyManageSubgenre = (worker, dispatch) => {
-    worker.onmessage = function (e) {        
-        //tercera forma
-        let payload = (e.data.action !== 'select') ? e.data.result[0] : e.data.result;
-        dispatch({type:String(e.data.action).toUpperCase(), payload: payload});
-
-        //segunda forma
-        if(e.data.action === 'select'){
-            dispatch({type:String(e.data.action).toUpperCase(), payload: e.data.result});
-        }
-
-        if(['insert', 'update', 'delete'].indexOf(e.data.action) !== -1){            
-            dispatch({type:String(e.data.action).toUpperCase(), payload: e.data.result[0]});
-            //worker.postMessage({ action: 'SELECT', args: ["literary_subgenre"] });
-        }
-
-        //primera forma        
-        switch (e.data.action) {
-            case 'findAllLiterarySubgenre':                
-                dispatch({type:'findAllLiterarySubgenre', payload: e.data.result});
-                return ;
-                break;
-            case 'addLiterarySubgenre':                
-                dispatch({type:'addLiterarySubgenre', payload: e.data.result[0]});
-                break;
-            case 'updateLiterarySubgenre':                
-                dispatch({type:'updateLiterarySubgenre', payload: e.data.result[0]});
-                break;
-            case 'removeLiterarySubgenre':                
-                dispatch({type:'removeLiterarySubgenre', payload: e.data.result[0]});                
-                break;
-        }
-    };   
-} */
 
 export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
@@ -86,45 +49,6 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
     }
   };
 };
-
-//validacion formulario
-function isValid(data, genreAttr, setError) {
-  let valid = [true];
-  let error = { name: false, num: false };
-
-  if (genreAttr.name.value.length === 0) {
-    error["name"] = "Este campo no debe estar vacio!";
-    valid.push(false);
-  }
-
-  if (genreAttr.num.value.length === 0) {
-    error["num"] = "Este campo no debe estar vacio!";
-    valid.push(false);
-  }
-
-  let v = data.every((item) => {
-    let validate = true;
-
-    if (Number(item.id) !== Number(genreAttr.id.value)) {
-      if (genreAttr.name.value === item.name) {
-        error["name"] = "Este género literario ya existe!";
-        validate = false;
-      }
-
-      if (Number(genreAttr.num.value) === Number(item.num)) {
-        error["num"] =
-          "Este numero identificador de género literario ya existe!";
-        validate = false;
-      }
-    }
-
-    return validate;
-  });
-  valid.push(v);
-
-  setError({ ...error });
-  return valid.every((item) => item);
-}
 
 //insert and update
 export const onSave = (
