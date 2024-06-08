@@ -1,4 +1,4 @@
-import { isValid } from "../validator/literary_subgenre";
+import { onModalClose } from "./controller";
 import { onError } from "./error";
 
 export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
@@ -48,50 +48,6 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
         break;
     }
   };
-};
-
-//insert and update
-export const onSave = (
-  genreAttr,
-  setError,
-  worker,
-  existData,
-  screenDispatch
-) => {
-  if (isValid(existData, genreAttr, setError)) {
-    try {
-      if (genreAttr.id.value === null) {
-        worker.postMessage({
-          action: "insert",
-          args: [
-            "literary_subgenre",
-            { name: genreAttr.name.value, num: Number(genreAttr.num.value) },
-          ],
-        });
-      } else {
-        worker.postMessage({
-          action: "update",
-          args: [
-            "literary_subgenre",
-            {
-              id: genreAttr.id.value,
-              name: genreAttr.name.value,
-              num: Number(genreAttr.num.value),
-            },
-            { id: genreAttr.id.value },
-          ],
-        });
-      }
-      screenDispatch({ type: "SHOW_LOADER" });
-    } catch (e) {
-      onError(e);
-    }
-  }
-};
-
-export const onModalClose = (resetForm, screenDispatch) => {
-  resetForm();
-  screenDispatch({ type: "HIDE_MODAL_ALERT" });
 };
 
 export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {

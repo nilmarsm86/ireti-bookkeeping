@@ -11,8 +11,6 @@ import { useFetchData, useFindAll } from "../hook/sqlite";
 import { DispatchContext } from "../context/app";
 
 import {
-  onSave,
-  onModalClose,
   onModalOk,
   applyManageSubgenre,
   onCeateNew,
@@ -25,6 +23,8 @@ import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
 import LiterarySubgenreForm from "../form/LiterarySubgenreForm";
 import { literary_subgenre_metadata } from "../config/metadata";
+import { isValid } from "../validator/literary_subgenre";
+import { onModalClose, onSave } from "../controller/controller";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -64,11 +64,14 @@ const LiterarySubgenre = () => {
 
   const onSaveForm = () => {
     onSave(
+      isValid,
       genreAttr,
       setError,
       worker,
       state.literary_subgenre.data,
-      screenDispatch
+      screenDispatch,
+      "literary_subgenre",
+      { name: genreAttr.name.value, num: Number(genreAttr.num.value) }
     );
   };
 

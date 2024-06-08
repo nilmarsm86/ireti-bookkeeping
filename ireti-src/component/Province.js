@@ -3,10 +3,12 @@ import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
 import Table from "./Table/Table";
-import { applyManageProvince, onSave } from "../controller/province";
+import { applyManageProvince } from "../controller/province";
 import { onRowDelete } from "../controller/screen";
 import ProvinceForm from "../form/ProvinceForm";
 import { province_metadata } from "../config/metadata";
+import { onSave } from "../controller/controller";
+import { isValid } from "../validator/province";
 
 const Province = ({
   styles,
@@ -61,7 +63,19 @@ const Province = ({
   };
 
   const onSaveForm = () => {
-    onSave(provinceAttr, setError, worker, state.province.data, screenDispatch);
+    onSave(
+      isValid,
+      provinceAttr,
+      setError,
+      worker,
+      state.province.data,
+      screenDispatch,
+      "province",
+      {
+        name: provinceAttr.name.value,
+        country_id: provinceAttr.country.value,
+      }
+    );
   };
 
   return (

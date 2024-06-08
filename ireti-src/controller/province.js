@@ -1,5 +1,4 @@
 import { onError } from "./error";
-import { isValid } from "../validator/province";
 
 export const applyManageProvince = (
   worker,
@@ -63,46 +62,4 @@ export const applyManageProvince = (
         break;
     }
   };
-};
-
-//insert and update
-export const onSave = (
-  provinceAttr,
-  setError,
-  worker,
-  existData,
-  screenDispatch
-) => {
-  if (isValid(existData, provinceAttr, setError)) {
-    try {
-      if (provinceAttr.id.value === null) {
-        worker.postMessage({
-          action: "insert",
-          args: [
-            "province",
-            {
-              name: provinceAttr.name.value,
-              country_id: provinceAttr.country.value,
-            },
-          ],
-        });
-      } else {
-        worker.postMessage({
-          action: "update",
-          args: [
-            "province",
-            {
-              id: provinceAttr.id.value,
-              name: provinceAttr.name.value,
-              country_id: provinceAttr.country.value,
-            },
-            { id: provinceAttr.id.value },
-          ],
-        });
-      }
-      screenDispatch({ type: "SHOW_LOADER" });
-    } catch (e) {
-      onError(e);
-    }
-  }
 };

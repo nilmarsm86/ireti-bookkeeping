@@ -8,6 +8,11 @@ export function isValid(data, provinceAttr, setError) {
     valid.push(false);
   }
 
+  if (!/^([A-Za-z])*$/.test(provinceAttr.name.value)) {
+    error["name"] = "El nombre de la provincia debe contener solo letras!";
+    valid.push(false);
+  }
+
   if (provinceAttr.country.value.length === 0) {
     error["country"] = "Por favor seleciona un país para la provincia!";
     valid.push(false);

@@ -2,11 +2,13 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
-import { applyManageCountry, onSave } from "../controller/country";
+import { applyManageCountry } from "../controller/country";
 import Table from "./Table/Table";
 import CountryForm from "../form/CountryForm";
 import { onRowDelete } from "../controller/screen";
 import { country_metadata } from "../config/metadata";
+import { onSave } from "../controller/controller";
+import { isValid } from "../validator/country";
 
 const Country = ({
   styles,
@@ -32,7 +34,17 @@ const Country = ({
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   const onSaveForm = () => {
-    onSave(countryAttr, setError, worker, state.country.data, screenDispatch);
+    //onSave(countryAttr, setError, worker, state.country.data, screenDispatch);
+    onSave(
+      isValid,
+      countryAttr,
+      setError,
+      worker,
+      state.country.data,
+      screenDispatch,
+      "country",
+      { name: countryAttr.name.value }
+    );
   };
 
   return (

@@ -10,13 +10,7 @@ import { useFetchData, useFindAll } from "../hook/sqlite";
 
 import { DispatchContext } from "../context/app";
 
-import {
-  onSave,
-  onModalClose,
-  onModalOk,
-  applyManageAuthor,
-  onCeateNew,
-} from "../controller/author";
+import { onModalOk, applyManageAuthor, onCeateNew } from "../controller/author";
 
 import { screenReducer } from "../reducer/author";
 import Loader from "../component/Loader";
@@ -25,6 +19,8 @@ import { onRowDelete } from "../controller/screen";
 import TitleSection from "../component/TitleSection";
 import AuthorForm from "../form/AuthorForm";
 import { author_metadata } from "../config/metadata";
+import { onModalClose, onSave } from "../controller/controller";
+import { isValid } from "../validator/author";
 
 const Author = () => {
   //reducers
@@ -84,7 +80,23 @@ const Author = () => {
   };
 
   const onSaveForm = () => {
-    onSave(authorAttr, setError, worker, state.author.data, screenDispatch);
+    //onSave(authorAttr, setError, worker, state.author.data, screenDispatch);
+    let data = {
+      name: authorAttr.name.value,
+      gender: authorAttr.gender.value,
+      country_id: authorAttr.country.value,
+      province_id: authorAttr.province.value,
+    };
+    onSave(
+      isValid,
+      authorAttr,
+      setError,
+      worker,
+      state.author.data,
+      screenDispatch,
+      "author",
+      data
+    );
   };
 
   return (
@@ -124,7 +136,7 @@ const Author = () => {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => onCeateNew(resetForm, nameInputRef)}
+        onPress={() => onCeateNew(resetForm, nameInputRef, setError)}
       />
 
       <DismissAlert

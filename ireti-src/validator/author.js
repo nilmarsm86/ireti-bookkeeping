@@ -7,6 +7,11 @@ export function isValid(data, authorAttr, setError) {
     valid.push(false);
   }
 
+  if (!/^([A-Za-z])*$/.test(authorAttr.name.value)) {
+    error["name"] = "El nombre del autor debe contener solo letras!";
+    valid.push(false);
+  }
+
   if (authorAttr.gender.value.length === 0) {
     error["gender"] = "Debe seleccionar el sexo del autor!";
     valid.push(false);

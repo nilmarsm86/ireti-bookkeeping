@@ -1,4 +1,4 @@
-import { isValid } from "../validator/author";
+import { onModalClose } from "./controller";
 import { onError } from "./error";
 
 export const applyManageAuthor = (
@@ -75,46 +75,6 @@ export const applyManageAuthor = (
   };
 };
 
-//insert and update
-export const onSave = (
-  authorAttr,
-  setError,
-  worker,
-  existData,
-  screenDispatch
-) => {
-  if (isValid(existData, authorAttr, setError)) {
-    try {
-      let data = {
-        name: authorAttr.name.value,
-        gender: authorAttr.gender.value,
-        country_id: authorAttr.country.value,
-        province_id: authorAttr.province.value,
-      };
-      if (authorAttr.id.value === null) {
-        worker.postMessage({ action: "insert", args: ["author", data] });
-      } else {
-        worker.postMessage({
-          action: "update",
-          args: [
-            "author",
-            { id: authorAttr.id.value, ...data },
-            { id: authorAttr.id.value },
-          ],
-        });
-      }
-      screenDispatch({ type: "SHOW_LOADER" });
-    } catch (e) {
-      onError(e);
-    }
-  }
-};
-
-export const onModalClose = (resetForm, screenDispatch) => {
-  resetForm();
-  screenDispatch({ type: "HIDE_MODAL_ALERT" });
-};
-
 export const onModalOk = (worker, newAuthorData, resetForm, screenDispatch) => {
   //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
   console.warn(
@@ -128,7 +88,8 @@ export const onModalOk = (worker, newAuthorData, resetForm, screenDispatch) => {
   onModalClose(resetForm, screenDispatch);
 };
 
-export const onCeateNew = (resetForm, nameInputRef) => {
+export const onCeateNew = (resetForm, nameInputRef, setError) => {
   resetForm();
   nameInputRef.current.focus();
+  setError({ name: false, gender: false, country: false, province: false });
 };

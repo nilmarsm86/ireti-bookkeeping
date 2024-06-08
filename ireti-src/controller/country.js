@@ -1,5 +1,4 @@
 import { onError } from "./error";
-import { isValid } from "../validator/country";
 
 export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
@@ -48,36 +47,4 @@ export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
         break;
     }
   };
-};
-
-//insert and update
-export const onSave = (
-  countryAttr,
-  setError,
-  worker,
-  existData,
-  screenDispatch
-) => {
-  if (isValid(existData, countryAttr, setError)) {
-    try {
-      if (countryAttr.id.value === null) {
-        worker.postMessage({
-          action: "insert",
-          args: ["country", { name: countryAttr.name.value }],
-        });
-      } else {
-        worker.postMessage({
-          action: "update",
-          args: [
-            "country",
-            { id: countryAttr.id.value, name: countryAttr.name.value },
-            { id: countryAttr.id.value },
-          ],
-        });
-      }
-      screenDispatch({ type: "SHOW_LOADER" });
-    } catch (e) {
-      onError(e);
-    }
-  }
 };

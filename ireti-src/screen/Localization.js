@@ -5,17 +5,14 @@ import { StyleSheet } from "react-native";
 import { DispatchContext } from "../context/app";
 import { screenReducer } from "../reducer/loclization";
 import { useNativeFormModel } from "../hook/form";
-import {
-  onCeateNew,
-  onModalClose,
-  onModalOk,
-} from "../controller/localization";
+import { onCeateNew, onModalOk } from "../controller/localization";
 import DismissAlert from "../component/DismissAlert";
 import Dialog from "../component/Dialog";
 import Loader from "../component/Loader";
 import Country from "../component/Country";
 import Province from "../component/Province";
 import TitleSection from "../component/TitleSection";
+import { onModalClose } from "../controller/controller";
 
 const Localization = () => {
   const [state, dispatch, worker] = useContext(DispatchContext);
@@ -84,10 +81,12 @@ const Localization = () => {
   const createNew = () => {
     if (screenState.tab === 0) {
       onCeateNew(resetForm, countryNameInputRef);
+      setErrorCountry({ name: false });
     }
 
     if (screenState.tab === 1) {
       onCeateNew(resetForm, provinceNameInputRef);
+      setErrorProvince({ name: false, country: false });
     }
   };
 

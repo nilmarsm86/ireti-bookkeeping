@@ -8,6 +8,11 @@ export function isValid(data, countryAttr, setError) {
     valid.push(false);
   }
 
+  if (!/^([A-Za-z])*$/.test(countryAttr.name.value)) {
+    error["name"] = "El nombre del país debe contener solo letras!";
+    valid.push(false);
+  }
+
   let v = data.every((item) => {
     let validate = true;
 

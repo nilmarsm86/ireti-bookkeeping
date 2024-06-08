@@ -84,7 +84,13 @@ const Select = ({
         <Dialog
           visible={visibleDialog}
           onDismiss={hideDialog}
-          style={{ width: "40%", marginLeft: "auto", marginRight: "auto" }}
+          style={{
+            width: "auto",
+            marginLeft: "auto",
+            marginRight: "auto",
+            minWidth: "40%",
+            maxWidth: "90%",
+          }}
         >
           <Dialog.Title>{label}</Dialog.Title>
           <Dialog.ScrollArea style={data.length > 0 ? { height: 200 } : {}}>

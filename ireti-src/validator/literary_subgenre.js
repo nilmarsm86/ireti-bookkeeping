@@ -13,6 +13,17 @@ export function isValid(data, genreAttr, setError) {
     valid.push(false);
   }
 
+  if (!/^([A-Za-z])*$/.test(genreAttr.name.value)) {
+    error["name"] = "El nombre del género literario debe contener solo letras!";
+    valid.push(false);
+  }
+
+  if (!/^([0-9])*$/.test(genreAttr.num.value)) {
+    error["num"] =
+      "El número identificador del género literario debe contener solo números!";
+    valid.push(false);
+  }
+
   //recorrer cada dato y compararlo con el que se desea insertar/actualizar
   let v = data.every((item) => {
     let validate = true;
