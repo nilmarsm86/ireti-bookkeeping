@@ -1,19 +1,19 @@
 import { onError } from "./error";
+import { isValid } from "../hook/validator";
 
 //insert and update
 export const onSave = (
-  isValid,
-  attr,
-  setError,
   worker,
+  model,
+  setModel,
   existData,
   screenDispatch,
   table,
   data
 ) => {
-  if (isValid(existData, attr, setError)) {
+  if (isValid(model, setModel, existData)) {
     try {
-      if (attr.id.value === null) {
+      if (model.id.value === null) {
         worker.postMessage({
           action: "insert",
           args: [table, data],
@@ -21,7 +21,11 @@ export const onSave = (
       } else {
         worker.postMessage({
           action: "update",
-          args: [table, { ...data, id: attr.id.value }, { id: attr.id.value }],
+          args: [
+            table,
+            { ...data, id: model.id.value },
+            { id: model.id.value },
+          ],
         });
       }
       screenDispatch({ type: "SHOW_LOADER" });
@@ -34,4 +38,9 @@ export const onSave = (
 export const onModalClose = (resetForm, screenDispatch) => {
   resetForm();
   screenDispatch({ type: "HIDE_MODAL_ALERT" });
+};
+
+export const onRowDelete = (screenDispatch, setModel, item) => {
+  screenDispatch({ type: "SHOW_MODAL_ALERT" });
+  setModel(item);
 };

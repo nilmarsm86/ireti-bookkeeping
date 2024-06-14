@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { Portal, Dialog, ActivityIndicator } from "react-native-paper";
 
-const Loader = ({ visible }) => (
+const Loader = memo(({ visible }) => (
   <Portal>
     <Dialog
       visible={visible}
@@ -11,6 +12,6 @@ const Loader = ({ visible }) => (
       </Dialog.Content>
     </Dialog>
   </Portal>
-);
+));
 
 export default Loader;

@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { DataTable } from "react-native-paper";
 
-const TableHeader = ({ metadata }) => (
+const TableHeader = memo(({ metadata }) => (
   <DataTable.Header>
     {metadata.map((item) => {
       return (
@@ -17,6 +18,6 @@ const TableHeader = ({ metadata }) => (
     })}
     <DataTable.Title numeric={true}></DataTable.Title>
   </DataTable.Header>
-);
+));
 
 export default TableHeader;

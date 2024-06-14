@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function useFormModel(initialValue) {
   let [model, set] = useState(initialValue);
@@ -29,7 +29,7 @@ function useNativeFormModel(initialValue) {
     attrs[field] = fieldModel(model[field]);
     attrs[field]["onChangeText"] = function (e) {
       model[field] = e;
-      setModel({ ...model });
+      //setModel({ ...model });
     };
     errors[field] = false;
   }
@@ -50,16 +50,6 @@ function fieldModel(model, set = null) {
   }
   return attrs;
 }
-
-/*function nativeFieldModel(model, set = null) {
-  let attrs = { value: model };
-  if (set !== null) {
-    attrs["onChangeText"] = function (e) {
-      set(e);
-    };
-  }
-  return attrs;
-}*/
 
 function useFieldModel(model, set) {
   return fieldModel(model, set);
@@ -98,6 +88,16 @@ function reAssembleData(model, exclude) {
   return data;
 }
 
+function useDataField(initialData) {
+  const [data, setData] = useState(initialData);
+
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
+  return [data, setData];
+}
+
 export {
   useFormModel,
   useNativeFormModel,
@@ -105,4 +105,5 @@ export {
   validateFormModel,
   validateNativeFormModel,
   reAssembleData,
+  useDataField,
 };

@@ -47,9 +47,10 @@ export const applyManageProvince = (
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
         break;
       case "readData":
+        console.log(e.data.result);
         dispatch({
           type: String("select_province").toUpperCase(),
-          payload: e.data.result,
+          payload: [...e.data.result],
         });
         break;
       case "allCountries":

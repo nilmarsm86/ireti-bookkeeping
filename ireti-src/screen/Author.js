@@ -15,7 +15,7 @@ import { onModalOk, applyManageAuthor, onCeateNew } from "../controller/author";
 import { screenReducer } from "../reducer/author";
 import Loader from "../component/Loader";
 import { FAB } from "react-native-paper";
-import { onRowDelete } from "../controller/screen";
+import { onRowDelete } from "../controller/controller";
 import TitleSection from "../component/TitleSection";
 import AuthorForm from "../form/AuthorForm";
 import { author_metadata } from "../config/metadata";

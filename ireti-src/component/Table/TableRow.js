@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { DataTable, IconButton, Text } from "react-native-paper";
 
-const TableRow = ({ data, metadata, buttons }) => {
+const TableRow = memo(({ data, metadata, buttons }) => {
   return data.length === 0 ? (
     <DataTable.Row>
       <DataTable.Cell
@@ -16,8 +17,8 @@ const TableRow = ({ data, metadata, buttons }) => {
   ) : (
     data.map((item) => (
       <DataTable.Row key={JSON.stringify(item)}>
-        {metadata.map((meta) => {
-          return (
+        {metadata.map(
+          (meta) =>
             meta.show && (
               <DataTable.Cell
                 key={meta.name + item[meta.name]}
@@ -26,8 +27,8 @@ const TableRow = ({ data, metadata, buttons }) => {
                 {item[meta.name]}
               </DataTable.Cell>
             )
-          );
-        })}
+        )}
+
         <DataTable.Cell numeric={true}>
           {Object.entries(buttons).map(([key, value]) => (
             <IconButton
@@ -48,6 +49,6 @@ const TableRow = ({ data, metadata, buttons }) => {
       </DataTable.Row>
     ))
   );
-};
+});
 
 export default TableRow;

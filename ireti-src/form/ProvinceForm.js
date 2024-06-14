@@ -3,10 +3,10 @@ import Input from "../component/Form/Input";
 import Select from "../component/Form/Select";
 
 const ProvinceForm = ({
-  provinceAttr,
-  error,
+  model,
+  changeModel,
   nameInputRef,
-  onSaveForm,
+  onSave,
   countries,
 }) => (
   <Form
@@ -14,7 +14,7 @@ const ProvinceForm = ({
     buttons={{
       save: {
         label: "Salvar",
-        press: onSaveForm,
+        press: onSave,
         icon: "content-save",
       },
     }}
@@ -22,8 +22,14 @@ const ProvinceForm = ({
     <Input
       label="Nombre"
       icon="pencil"
-      error={error.name}
-      {...provinceAttr.name}
+      error={model.name.error}
+      value={model.name.value}
+      onChangeText={(value) => {
+        changeModel({
+          ...model,
+          name: { ...model.name, value: value },
+        });
+      }}
       reference={nameInputRef}
     />
 
@@ -33,8 +39,14 @@ const ProvinceForm = ({
         label: item.name,
         value: item.id,
       }))}
-      error={error.country}
-      {...provinceAttr.country}
+      error={model.country.error}
+      value={model.country.value}
+      onChangeText={(value) => {
+        changeModel({
+          ...model,
+          country: { ...model.country, value: value },
+        });
+      }}
     />
   </Form>
 );

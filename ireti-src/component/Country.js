@@ -1,51 +1,65 @@
-import { useContext } from "react";
-import { View } from "react-native";
+import { useCallback, useContext, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
 import { applyManageCountry } from "../controller/country";
 import Table from "./Table/Table";
 import CountryForm from "../form/CountryForm";
-import { onRowDelete } from "../controller/screen";
 import { country_metadata } from "../config/metadata";
-import { onSave } from "../controller/controller";
-import { isValid } from "../validator/country";
+import { onRowDelete, onSave } from "../controller/controller";
+import { country_mapping } from "../config/mapping";
 
 const Country = ({
-  styles,
   screenDispatch,
-  countryAttr,
-  setNewCountryData,
-  error,
-  setError,
+  resetForm,
+  model,
+  setModel,
   nameInputRef,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
-
-  const initialData = {
-    id: null,
-    name: "",
-  };
-
-  const resetForm = () => {
-    setNewCountryData({ ...initialData });
-  };
 
   useFetchData(worker, applyManageCountry(dispatch, screenDispatch, resetForm));
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   const onSaveForm = () => {
-    //onSave(countryAttr, setError, worker, state.country.data, screenDispatch);
     onSave(
-      isValid,
-      countryAttr,
-      setError,
       worker,
+      model,
+      setModel,
       state.country.data,
       screenDispatch,
       "country",
-      { name: countryAttr.name.value }
+      { name: model.name.value }
     );
   };
+
+  const dbToForm = useCallback(
+    (item) => {
+      let model = { ...country_mapping };
+      for (const [key, value] of Object.entries(item)) {
+        model[key] = { ...model[key], value: value };
+      }
+      setModel(model);
+    },
+    [setModel]
+  );
+
+  const buttons = useMemo(() => {
+    return {
+      edit: { icon: "pencil", press: dbToForm },
+      delete: {
+        icon: "delete",
+        press: (item) => onRowDelete(screenDispatch, dbToForm, item),
+      },
+    };
+  }, [screenDispatch, dbToForm]);
+
+  const onSearch = useCallback(
+    (value) => {
+      return state.country.data.filter((item) => value === item.name);
+    },
+    [state.country.data]
+  );
 
   return (
     <View style={styles.container}>
@@ -53,26 +67,30 @@ const Country = ({
         <Table
           metadata={country_metadata}
           data={[...state.country.data]}
-          buttons={{
-            edit: { icon: "pencil", press: setNewCountryData },
-            delete: {
-              icon: "delete",
-              press: (item) =>
-                onRowDelete(screenDispatch, setNewCountryData, item),
-            },
-          }}
+          buttons={buttons}
+          onSearch={onSearch}
         />
       </View>
       <View style={{ flex: "auto", width: "39%" }}>
         <CountryForm
-          countryAttr={countryAttr}
-          error={error}
+          model={model}
+          changeModel={setModel}
           nameInputRef={nameInputRef}
-          onSaveForm={onSaveForm}
+          onSave={onSaveForm}
         />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    gap: 10,
+  },
+});
 
 export default Country;

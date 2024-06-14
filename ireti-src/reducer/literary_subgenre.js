@@ -23,7 +23,6 @@ export const screenReducer = (state, action) => {
 export const sqlReducerLiterarySubgenre = (state, action) => {
   switch (action.type) {
     case "SELECT_LITERARY_SUBGENRE":
-      console.log({ ...state, data: action.payload });
       return { ...state, data: action.payload };
     case "INSERT_LITERARY_SUBGENRE":
       let newData = [...state.data, action.payload];

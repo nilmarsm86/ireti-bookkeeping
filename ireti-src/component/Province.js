@@ -1,35 +1,32 @@
-import { useContext } from "react";
-import { View } from "react-native";
+import { useCallback, useContext, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFetchData, useFindAll } from "../hook/sqlite";
 import Table from "./Table/Table";
 import { applyManageProvince } from "../controller/province";
-import { onRowDelete } from "../controller/screen";
 import ProvinceForm from "../form/ProvinceForm";
 import { province_metadata } from "../config/metadata";
-import { onSave } from "../controller/controller";
-import { isValid } from "../validator/province";
+import { onSave, onRowDelete } from "../controller/controller";
+import { province_mapping } from "../config/mapping";
 
 const Province = ({
-  styles,
   screenDispatch,
-  provinceAttr,
-  setNewProvinceData,
-  error,
-  setError,
+  resetForm,
+  model,
+  setModel,
   nameInputRef,
 }) => {
   const [state, dispatch, worker] = useContext(DispatchContext);
 
-  const initialData = {
+  /*const initialData = {
     id: null,
     name: "",
     country: "",
-  };
+  };*/
 
-  const resetForm = () => {
+  /*const resetForm = () => {
     setNewProvinceData({ ...initialData });
-  };
+  };*/
 
   useFetchData(
     worker,
@@ -40,18 +37,30 @@ const Province = ({
   useFindAll(worker, "allCountries", "country", state.country.data.length);
 
   //transform data for select (country name to id)
-  const fromIdToNameCountry = (province) => {
-    const country = state.country.data.find((country) => {
-      return country.name === province.country;
-    });
-    setNewProvinceData({ ...province, country: country.id });
-  };
+  const fromIdToNameCountry = useCallback(
+    (province) => {
+      let model = { ...province_mapping };
+      for (const [key, value] of Object.entries(province)) {
+        model[key] = { ...model[key], value: value };
+      }
+
+      const country = state.country.data.find((c) => {
+        return c.name === province.country;
+      });
+
+      setModel({
+        ...model,
+        country: { ...model.country, value: country.id },
+      });
+    },
+    [setModel, state.country.data]
+  );
 
   //transform province.country_id to name
-  const fromIdToNameProvinceCountry = (data, countries) => {
-    return data.map((province) => {
-      const country = countries.find((country) => {
-        return country.id === province.country_id;
+  const fromIdToNameProvinceCountry = (provinces, countries) => {
+    return provinces.map((province) => {
+      const country = countries.find((c) => {
+        return c.id === province.country_id;
       });
 
       if (country) {
@@ -64,50 +73,74 @@ const Province = ({
 
   const onSaveForm = () => {
     onSave(
-      isValid,
-      provinceAttr,
-      setError,
       worker,
+      model,
+      setModel,
       state.province.data,
       screenDispatch,
       "province",
       {
-        name: provinceAttr.name.value,
-        country_id: provinceAttr.country.value,
+        name: model.name.value,
+        country_id: model.country.value,
       }
     );
   };
+
+  const buttons = useMemo(() => {
+    return {
+      edit: { icon: "pencil", press: fromIdToNameCountry },
+      delete: {
+        icon: "delete",
+        press: (item) => onRowDelete(screenDispatch, fromIdToNameCountry, item),
+      },
+    };
+  }, [fromIdToNameCountry, screenDispatch]);
+
+  const onSearch = useCallback(
+    (value) => {
+      return [...state.province.data].filter(
+        (item) => value === item.name || value === item.country
+      );
+    },
+    [state.province.data]
+  );
 
   return (
     <View style={styles.container}>
       <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
         <Table
           metadata={province_metadata}
-          data={fromIdToNameProvinceCountry(
-            state.province.data,
-            state.country.data
-          )}
-          buttons={{
-            edit: { icon: "pencil", press: fromIdToNameCountry },
-            delete: {
-              icon: "delete",
-              press: (item) =>
-                onRowDelete(screenDispatch, fromIdToNameCountry, item),
-            },
-          }}
+          data={[
+            ...fromIdToNameProvinceCountry(
+              [...state.province.data],
+              [...state.country.data]
+            ),
+          ]}
+          buttons={buttons}
+          onSearch={onSearch}
         />
       </View>
       <View style={{ flex: "auto", width: "39%" }}>
         <ProvinceForm
-          provinceAttr={provinceAttr}
-          error={error}
+          model={model}
+          changeModel={setModel}
           nameInputRef={nameInputRef}
-          onSaveForm={onSaveForm}
+          onSave={onSaveForm}
           countries={state.country.data}
         />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    gap: 10,
+  },
+});
 
 export default Province;

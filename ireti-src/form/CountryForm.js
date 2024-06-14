@@ -1,13 +1,13 @@
 import Form from "../component/Form/Form";
 import Input from "../component/Form/Input";
 
-const CountryForm = ({ countryAttr, error, nameInputRef, onSaveForm }) => (
+const CountryForm = ({ model, changeModel, nameInputRef, onSave }) => (
   <Form
     title="Datos del país:"
     buttons={{
       save: {
         label: "Salvar",
-        press: onSaveForm,
+        press: onSave,
         icon: "content-save",
       },
     }}
@@ -15,8 +15,14 @@ const CountryForm = ({ countryAttr, error, nameInputRef, onSaveForm }) => (
     <Input
       label="Nombre"
       icon="pencil"
-      error={error.name}
-      {...countryAttr.name}
+      error={model.name.error}
+      value={model.name.value}
+      onChangeText={(value) => {
+        changeModel({
+          ...model,
+          name: { ...model.name, value: value },
+        });
+      }}
       reference={nameInputRef}
     />
   </Form>

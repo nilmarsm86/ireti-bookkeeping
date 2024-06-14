@@ -1,10 +1,9 @@
-import { useContext, useReducer, useRef } from "react";
-import { FAB, Text } from "react-native-paper";
+import { useContext, useReducer, useRef, useState } from "react";
+import { FAB } from "react-native-paper";
 import { TabsProvider, Tabs, TabScreen } from "react-native-paper-tabs";
 import { StyleSheet } from "react-native";
 import { DispatchContext } from "../context/app";
 import { screenReducer } from "../reducer/loclization";
-import { useNativeFormModel } from "../hook/form";
 import { onCeateNew, onModalOk } from "../controller/localization";
 import DismissAlert from "../component/DismissAlert";
 import Dialog from "../component/Dialog";
@@ -13,6 +12,8 @@ import Country from "../component/Country";
 import Province from "../component/Province";
 import TitleSection from "../component/TitleSection";
 import { onModalClose } from "../controller/controller";
+import { country_mapping, province_mapping } from "../config/mapping";
+import { reset } from "../hook/validator";
 
 const Localization = () => {
   const [state, dispatch, worker] = useContext(DispatchContext);
@@ -25,7 +26,13 @@ const Localization = () => {
     showLoader: false,
   });
 
-  const [
+  const [countryModel, setCountryModel] = useState(country_mapping);
+  const countryNameInputRef = useRef(null);
+
+  const [provinceModel, setProvinceModel] = useState(province_mapping);
+  const provinceNameInputRef = useRef(null);
+
+  /*const [
     countryAttr,
     newCountryData,
     setNewCountryData,
@@ -46,47 +53,49 @@ const Localization = () => {
     id: null,
     name: "",
     country: "",
-  });
+  });*/
 
   const resetForm = () => {
     if (screenState.tab === 0) {
-      setNewCountryData({
-        id: null,
-        name: "",
-      });
+      reset(country_mapping);
+      setCountryModel(country_mapping);
     }
 
     if (screenState.tab === 1) {
-      setNewProvinceData({
-        id: null,
-        name: "",
-        country: "",
-      });
+      reset(province_mapping);
+      setProvinceModel(province_mapping);
     }
   };
 
   const modalOk = () => {
     if (screenState.tab === 0) {
-      onModalOk(worker, "country", newCountryData, resetForm, screenDispatch);
+      onModalOk(
+        worker,
+        "country",
+        countryModel.id.value,
+        resetForm,
+        screenDispatch
+      );
     }
 
     if (screenState.tab === 1) {
-      onModalOk(worker, "province", newProvinceData, resetForm, screenDispatch);
+      onModalOk(
+        worker,
+        "province",
+        provinceModel.id.value,
+        resetForm,
+        screenDispatch
+      );
     }
   };
-
-  const countryNameInputRef = useRef(null);
-  const provinceNameInputRef = useRef(null);
 
   const createNew = () => {
     if (screenState.tab === 0) {
       onCeateNew(resetForm, countryNameInputRef);
-      setErrorCountry({ name: false });
     }
 
     if (screenState.tab === 1) {
       onCeateNew(resetForm, provinceNameInputRef);
-      setErrorProvince({ name: false, country: false });
     }
   };
 
@@ -106,12 +115,10 @@ const Localization = () => {
               <TitleSection>Paises</TitleSection>
               {screenState.tab === 0 && (
                 <Country
-                  styles={styles}
                   screenDispatch={screenDispatch}
-                  countryAttr={countryAttr}
-                  setNewCountryData={setNewCountryData}
-                  error={errorCountry}
-                  setError={setErrorCountry}
+                  resetForm={resetForm}
+                  model={countryModel}
+                  setModel={setCountryModel}
                   nameInputRef={countryNameInputRef}
                 />
               )}
@@ -130,12 +137,10 @@ const Localization = () => {
               <TitleSection>Provincias</TitleSection>
               {screenState.tab === 1 && (
                 <Province
-                  styles={styles}
                   screenDispatch={screenDispatch}
-                  provinceAttr={provinceAttr}
-                  setNewProvinceData={setNewProvinceData}
-                  error={errorProvince}
-                  setError={setErrorProvince}
+                  resetForm={resetForm}
+                  model={provinceModel}
+                  setModel={setProvinceModel}
                   nameInputRef={provinceNameInputRef}
                 />
               )}

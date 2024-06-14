@@ -7,7 +7,7 @@ import {
   app,
   window as neutrawindow,
 } from "@neutralinojs/lib";
-import { useCallback, useReducer } from "react";
+import { StrictMode, useCallback, useReducer } from "react";
 
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
@@ -160,6 +160,7 @@ async function onOpenLink(url) {
 }
 
 function setTray() {
+  // eslint-disable-next-line no-undef
   if (NL_MODE !== "window") {
     console.log("INFO: Tray menu is only available in the window mode.");
     return;
@@ -187,6 +188,7 @@ function onTrayMenuItemClicked(event) {
     case "VERSION":
       os.showMessageBox(
         "Version information",
+        // eslint-disable-next-line no-undef
         `Neutralinojs server: v${NL_VERSION} | Neutralinojs client: v${NL_CVERSION}`
       );
       break;
@@ -201,6 +203,7 @@ function onTrayMenuItemClicked(event) {
 events.on("ready", async () => {
   events.on("trayMenuItemClicked", onTrayMenuItemClicked);
   events.on("windowClose", exit);
+  // eslint-disable-next-line no-undef
   if (NL_OS !== "Darwin") {
     // TODO: Fix https://github.com/neutralinojs/neutralinojs/issues/615
     setTray();
@@ -231,20 +234,22 @@ const App = () => {
   const worker = useConnectDb("/mydb.sqlite3", "db.js", onConnect);
 
   return (
-    <DispatchContext.Provider value={[state, dispatch, worker]}>
-      <PaperProvider theme={theme}>
-        <View style={{ flex: 1 }}>
-          <TopBar />
-          <View style={{ flex: 1, padding: 10 }}>
-            {state.navigation.screen === "accounting" && <Accounting />}
-            {state.navigation.screen === "book" && <Book />}
-            {state.navigation.screen === "author" && <Author />}
-            {state.navigation.screen === "subgenre" && <LiterarySubgenre />}
-            {state.navigation.screen === "country" && <Localization />}
+    <StrictMode>
+      <DispatchContext.Provider value={[state, dispatch, worker]}>
+        <PaperProvider theme={theme}>
+          <View style={{ flex: 1 }}>
+            <TopBar />
+            <View style={{ flex: 1, padding: 10 }}>
+              {state.navigation.screen === "accounting" && <Accounting />}
+              {state.navigation.screen === "book" && <Book />}
+              {state.navigation.screen === "author" && <Author />}
+              {state.navigation.screen === "subgenre" && <LiterarySubgenre />}
+              {state.navigation.screen === "country" && <Localization />}
+            </View>
           </View>
-        </View>
-      </PaperProvider>
-    </DispatchContext.Provider>
+        </PaperProvider>
+      </DispatchContext.Provider>
+    </StrictMode>
   );
 };
 

@@ -39,10 +39,12 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
         screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
         break;
       case "allSubgenre":
+        //setTimeout(() => {
         dispatch({
           type: String("select_literary_subgenre").toUpperCase(),
           payload: e.data.result,
         });
+        //}, 2000);
         break;
       default:
         break;
@@ -50,21 +52,20 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
   };
 };
 
-export const onModalOk = (worker, newGenreData, resetForm, screenDispatch) => {
+export const onModalOk = (worker, id, resetForm, screenDispatch) => {
   //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
   console.warn(
     "buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto"
   );
   worker.postMessage({
     action: "delete",
-    args: ["literary_subgenre", { id: newGenreData.id }],
+    args: ["literary_subgenre", { id: id }],
   });
   screenDispatch({ type: "SHOW_LOADER" });
   onModalClose(resetForm, screenDispatch);
 };
 
-export const onCeateNew = (resetForm, nameInputRef, setError) => {
+export const onCeateNew = (resetForm, nameInputRef) => {
   resetForm();
   nameInputRef.current.focus();
-  setError({ name: false, num: false });
 };

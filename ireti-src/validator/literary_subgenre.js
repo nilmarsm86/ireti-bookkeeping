@@ -1,5 +1,5 @@
 //validacion formulario literary subgenre
-export function isValid(data, genreAttr, setError) {
+/*export function isValid(data, genreAttr, setError) {
   let valid = [true];
   let error = { name: false, num: false };
 
@@ -46,4 +46,4 @@ export function isValid(data, genreAttr, setError) {
 
   setError({ ...error });
   return valid.every((item) => item);
-}
+}*/

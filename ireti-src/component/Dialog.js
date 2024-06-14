@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { Portal, Button, Text, Dialog as Dialo } from "react-native-paper";
 
-const Dialog = ({ title, label, visible, onDismiss, buttons }) => (
+const Dialog = memo(({ title, label, visible, onDismiss, buttons }) => (
   <Portal>
     <Dialo
       visible={visible}
@@ -21,6 +22,5 @@ const Dialog = ({ title, label, visible, onDismiss, buttons }) => (
       </Dialo.Actions>
     </Dialo>
   </Portal>
-);
-
+));
 export default Dialog;
