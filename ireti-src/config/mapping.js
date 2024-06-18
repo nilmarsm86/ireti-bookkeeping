@@ -80,3 +80,42 @@ export const province_mapping = {
     ],
   },
 };
+
+export const author_mapping = {
+  id: { value: null },
+  name: {
+    value: "",
+    constraints: [
+      { type: empty, message: "El autor debe tener un nombre!" },
+      {
+        type: letters,
+        message: "El nombre del autor debe contener solo letras!",
+      },
+      {
+        type: unique,
+        message: "Ya existe un autor con este nombre!",
+      },
+    ],
+  },
+  gender: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe seleccionar el sexo del autor!",
+      },
+    ],
+  },
+  country: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe seleccionar un país!",
+      },
+    ],
+  },
+  province: {
+    value: "",
+  },
+};

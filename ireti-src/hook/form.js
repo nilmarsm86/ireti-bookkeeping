@@ -20,7 +20,7 @@ function useFormModel(initialValue) {
   return [result, set];
 }
 
-function useNativeFormModel(initialValue) {
+/*function useNativeFormModel(initialValue) {
   let [model, setModel] = useState(initialValue);
   let attrs = {};
   let errors = {};
@@ -35,7 +35,7 @@ function useNativeFormModel(initialValue) {
   }
   const [error, setError] = useState(errors);
   return [attrs, model, setModel, error, setError];
-}
+}*/
 
 function fieldModel(model, set = null) {
   let attrs = { value: model };
@@ -98,12 +98,21 @@ function useDataField(initialData) {
   return [data, setData];
 }
 
+function mappingToForm(mapping, item) {
+  let model = { ...mapping };
+  for (const [key, value] of Object.entries(item)) {
+    model[key] = { ...model[key], value: value };
+  }
+
+  return model;
+}
+
 export {
   useFormModel,
-  useNativeFormModel,
   useFieldModel,
   validateFormModel,
   validateNativeFormModel,
   reAssembleData,
   useDataField,
+  mappingToForm,
 };

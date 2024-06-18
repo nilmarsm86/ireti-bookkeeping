@@ -21,6 +21,7 @@ const TableRow = memo(({ data, metadata, buttons }) => {
           (meta) =>
             meta.show && (
               <DataTable.Cell
+                style={meta.style}
                 key={meta.name + item[meta.name]}
                 numeric={meta.numeric}
               >
@@ -29,7 +30,14 @@ const TableRow = memo(({ data, metadata, buttons }) => {
             )
         )}
 
-        <DataTable.Cell numeric={true}>
+        <DataTable.Cell
+          numeric={true}
+          style={{
+            maxWidth: Object.entries(buttons).length * 42 + "px",
+            width: "auto",
+            minWidth: "auto",
+          }}
+        >
           {Object.entries(buttons).map(([key, value]) => (
             <IconButton
               key={key}

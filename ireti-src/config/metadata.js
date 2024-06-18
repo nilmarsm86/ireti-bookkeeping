@@ -18,7 +18,8 @@ export const literary_subgenre_metadata = [
     title: "Número",
     show: true,
     sortDirection: "",
-    numeric: true,
+    numeric: false,
+    style: { maxWidth: "100px" },
   },
 ];
 
@@ -77,13 +78,15 @@ export const author_metadata = [
     show: true,
     sortDirection: "",
     numeric: false,
+    style: { minWidth: "350px" },
   },
   {
     name: "gender",
     title: "Género",
     show: true,
     sortDirection: "",
-    numeric: false,
+    numeric: true,
+    style: { maxWidth: "45px", justifyContent: "center" },
   },
   {
     name: "country",

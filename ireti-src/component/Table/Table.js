@@ -38,7 +38,7 @@ const Table = memo(({ metadata, data, buttons = {}, onSearch = () => {} }) => {
       />
       <Card>
         <DataTable>
-          <TableHeader metadata={metadata} />
+          <TableHeader metadata={metadata} buttons={buttons} />
           <TableRow data={paginateData} metadata={metadata} buttons={buttons} />
           <TablePagination
             dataLength={filterData.length}

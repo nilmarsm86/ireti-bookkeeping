@@ -15,6 +15,10 @@ export const screenReducer = (state, action) => {
       return { ...state, showModalAlert: false };
     case "SHOW_LOADER":
       return { ...state, showLoader: true };
+    case "SHOW_MODAL_FORM":
+      return { ...state, showModalForm: true };
+    case "HIDE_MODAL_FORM":
+      return { ...state, showModalForm: false };
     default:
       return state;
   }

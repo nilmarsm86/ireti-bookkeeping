@@ -1,11 +1,9 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import Form from "../component/Form/Form";
 import Input from "../component/Form/Input";
 import { useDataField } from "../hook/form";
 
-const LiterarySubgenreForm = ({ model, nameInputRef, onSave }) => {
-  console.log("LiterarySubgenreForm");
-
+const LiterarySubgenreForm = memo(({ model, nameInputRef, onSave }) => {
   const [name, setName] = useDataField(model.name.value);
   const [num, setNum] = useDataField(model.num.value);
 
@@ -15,21 +13,23 @@ const LiterarySubgenreForm = ({ model, nameInputRef, onSave }) => {
     setNum(model.num.value);
   }, [model, setName, setNum]);
 
+  const onFormSend = () => {
+    const newModel = {
+      ...model,
+      name: { ...model.name, value: name },
+      num: { ...model.num, value: num },
+    };
+
+    onSave(newModel);
+  };
+
   return (
     <Form
       title="Datos de los géneros literarios:"
       buttons={{
         save: {
           label: "Salvar",
-          press: () => {
-            const newModel = {
-              ...model,
-              name: { ...model.name, value: name },
-              num: { ...model.num, value: num },
-            };
-
-            onSave(newModel);
-          },
+          press: onFormSend,
           icon: "content-save",
         },
         //delete: { label: 'Eliminar', icon: 'delete', press: () => console.log('eliminar') },
@@ -52,6 +52,6 @@ const LiterarySubgenreForm = ({ model, nameInputRef, onSave }) => {
       />
     </Form>
   );
-};
+});
 
 export default LiterarySubgenreForm;

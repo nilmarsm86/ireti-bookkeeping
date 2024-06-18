@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 //components
 import Table from "../component/Table/Table";
 import TitleSection from "../component/TitleSection";
@@ -30,6 +30,7 @@ import LiterarySubgenreForm from "../form/LiterarySubgenreForm";
 import { literary_subgenre_metadata } from "../config/metadata";
 import { literary_subgenre_mapping } from "../config/mapping";
 import RestElements from "../component/RestElements";
+import styles from "../style/style";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -56,17 +57,20 @@ const LiterarySubgenre = () => {
 
   useFindAll(worker, "literary_subgenre", state.literary_subgenre.data.length);
 
-  const onSaveForm = (m) => {
-    onSave(
-      worker,
-      m,
-      setModel,
-      state.literary_subgenre.data,
-      screenDispatch,
-      "literary_subgenre",
-      { name: m.name.value, num: Number(m.num.value) }
-    );
-  };
+  const onSaveForm = useCallback(
+    (m) => {
+      onSave(
+        worker,
+        m,
+        setModel,
+        state.literary_subgenre.data,
+        screenDispatch,
+        "literary_subgenre",
+        { name: m.name.value, num: Number(m.num.value) }
+      );
+    },
+    [state.literary_subgenre.data, worker]
+  );
 
   const dbToForm = useCallback((item) => {
     let m = { ...literary_subgenre_mapping };
@@ -87,11 +91,10 @@ const LiterarySubgenre = () => {
   }, [dbToForm]);
 
   const onSearch = useCallback(
-    (value) => {
-      return state.literary_subgenre.data.filter(
+    (value) =>
+      state.literary_subgenre.data.filter(
         (item) => value === item.name || Number(value) === Number(item.num)
-      );
-    },
+      ),
     [state.literary_subgenre.data]
   );
 
@@ -149,15 +152,5 @@ const LiterarySubgenre = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    gap: 10,
-  },
-});
 
 export default LiterarySubgenre;

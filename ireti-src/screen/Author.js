@@ -1,26 +1,35 @@
-import { useContext, useReducer, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import {
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import { View } from "react-native";
 //components
 import Table from "../component/Table/Table";
-import DismissAlert from "../component/DismissAlert";
-import Dialog from "../component/Dialog";
+import TitleSection from "../component/TitleSection";
+import RestElements from "../component/RestElements";
 
-import { useNativeFormModel } from "../hook/form";
-import { useFetchData, useFindAll } from "../hook/sqlite";
+import { mappingToForm } from "../hook/form";
+import { useFindAll, useManageData, useQuery } from "../hook/sqlite";
 
 import { DispatchContext } from "../context/app";
 
 import { onModalOk, applyManageAuthor, onCeateNew } from "../controller/author";
 
 import { screenReducer } from "../reducer/author";
-import Loader from "../component/Loader";
-import { FAB } from "react-native-paper";
+import { Modal, Portal } from "react-native-paper";
 import { onRowDelete } from "../controller/controller";
-import TitleSection from "../component/TitleSection";
+
 import AuthorForm from "../form/AuthorForm";
 import { author_metadata } from "../config/metadata";
 import { onModalClose, onSave } from "../controller/controller";
-import { isValid } from "../validator/author";
+import { author_mapping } from "../config/mapping";
+import { reset } from "../hook/validator";
+
+import styles from "../style/style";
 
 const Author = () => {
   //reducers
@@ -30,157 +39,196 @@ const Author = () => {
     showModalAlert: false,
     dismissMsg: "",
     showLoader: false,
+    showModalForm: false,
   });
 
-  const initialData = {
-    id: null,
-    name: "",
-    gender: "",
-    country: "",
-    province: "",
-  };
-
-  const resetForm = () => {
-    setNewAuthorData({ ...initialData });
-  };
-
+  const [model, setModel] = useState(author_mapping);
   const nameInputRef = useRef(null);
 
+  const resetForm = () => {
+    reset(author_mapping);
+    setModel({ ...author_mapping });
+  };
+
   const [provinces, setProvinces] = useState([]);
-  const [disabledProvinces, setDisabledProvinces] = useState(true);
-  const sex = [
-    { label: "Femenino", value: "f" },
-    { label: "Masculino", value: "m" },
-  ];
 
-  useFetchData(
+  useManageData(
     worker,
-    applyManageAuthor(
-      worker,
-      dispatch,
-      screenDispatch,
-      resetForm,
-      setProvinces,
-      setDisabledProvinces
-    )
+    applyManageAuthor(dispatch, screenDispatch, resetForm, setProvinces)
   );
-  useFindAll(worker, "allCountries", "country", state.country.data.length);
 
-  const [authorAttr, newAuthorData, setNewAuthorData, error, setError] =
-    useNativeFormModel({ ...initialData });
+  useFindAll(worker, "author", state.author.data.length);
+  useQuery(
+    worker,
+    "allCountries",
+    "SELECT * FROM country",
+    {},
+    state.country.data.length
+  );
 
-  const findProvinces = (value) => {
-    authorAttr.country.onChangeText(value);
-    const sql =
-      "SELECT province.id AS id, province.name AS name FROM province, country WHERE province.country_id = :country_id AND province.country_id = country.id";
-    worker.postMessage({
-      action: "findProvincesByCountry",
-      args: [sql, { country_id: value }],
+  useQuery(
+    worker,
+    "allProvinces",
+    "SELECT * FROM province",
+    {},
+    state.province.data.length
+  );
+
+  //transform data for select (country name to id)
+  const fromIdToNameCountry = useCallback(
+    (author) => {
+      let model = mappingToForm(author_mapping, author);
+
+      const country = state.country.data.find((c) => c.name === author.country);
+      const province = state.province.data.find(
+        (p) => p.name === author.province
+      );
+
+      setModel({
+        ...model,
+        country: { ...model.country, value: country.id },
+        province: { ...model.province, value: province.id }, //TODO: tener cuidado cuando la provincia esta vacia
+      });
+    },
+    [setModel, state.country.data, state.province.data]
+  );
+
+  //transform province.country_id to name
+  const fromIdToNameAuthorCountry = (authors, countries, provinces) => {
+    return authors.map((author) => {
+      const country = countries.find((c) => c.id === author.country_id);
+      const province = provinces.find((p) => p.id === author.province_id); //TODO: tener cuidado cuando la provincia esta vacia
+
+      if (country) {
+        author.country = country.name;
+      }
+
+      if (province) {
+        author.province = province.name;
+      }
+
+      return author;
     });
   };
 
-  const onSaveForm = () => {
-    //onSave(authorAttr, setError, worker, state.author.data, screenDispatch);
-    let data = {
-      name: authorAttr.name.value,
-      gender: authorAttr.gender.value,
-      country_id: authorAttr.country.value,
-      province_id: authorAttr.province.value,
+  const onSaveForm = useCallback(
+    (m) => {
+      let data = {
+        name: m.name.value,
+        gender: m.gender.value,
+        country_id: m.country.value,
+        province_id: m.province.value,
+      };
+      onSave(
+        worker,
+        m,
+        setModel,
+        state.author.data,
+        screenDispatch,
+        "author",
+        data
+      );
+    },
+    [state.author.data, worker]
+  );
+
+  const tableButtons = useMemo(() => {
+    return {
+      edit: { icon: "pencil", press: fromIdToNameCountry },
+      delete: {
+        icon: "delete",
+        press: (item) => onRowDelete(screenDispatch, fromIdToNameCountry, item),
+      },
     };
-    onSave(
-      isValid,
-      authorAttr,
-      setError,
-      worker,
-      state.author.data,
-      screenDispatch,
-      "author",
-      data
-    );
+  }, [fromIdToNameCountry, screenDispatch]);
+
+  const onSearch = useCallback(
+    (value) =>
+      state.author.data.filter(
+        (item) =>
+          value === item.name ||
+          value === item.country ||
+          value === item.province
+      ),
+    [state.author.data]
+  );
+
+  const createNew = useCallback(
+    () => onCeateNew(resetForm, nameInputRef, screenDispatch),
+    []
+  );
+
+  const onDissmisDialog = useCallback(
+    () => onModalClose(resetForm, screenDispatch),
+    []
+  );
+
+  const dialogButtons = useMemo(() => {
+    return {
+      cancel: {
+        label: "No",
+        press: () => onModalClose(resetForm, screenDispatch),
+      },
+      ok: {
+        label: "Si",
+        press: () =>
+          onModalOk(worker, model.id.value, resetForm, screenDispatch),
+      },
+    };
+  }, [model.id.value, worker]);
+
+  const onDismissModalForm = () => {
+    resetForm();
+    screenDispatch({ type: "HIDE_MODAL_FORM" });
   };
 
   return (
     <>
       <TitleSection>Autores</TitleSection>
       <View style={styles.container}>
-        <View style={{ flex: "auto", width: "59%", minWidth: "300px" }}>
+        <View style={{ flex: "auto" }}>
           <Table
             metadata={author_metadata}
-            data={[...state.author.data]}
-            buttons={{
-              edit: { icon: "pencil", press: setNewAuthorData },
-              delete: {
-                icon: "delete",
-                press: (item) =>
-                  onRowDelete(screenDispatch, setNewAuthorData, item),
-              },
-            }}
-          />
-        </View>
-        {/*TODO: poner el formulario en un modal*/}
-        <View style={{ flex: "auto", width: "39%" }}>
-          <AuthorForm
-            authorAttr={authorAttr}
-            error={error}
-            nameInputRef={nameInputRef}
-            onSaveForm={onSaveForm}
-            sex={sex}
-            countries={state.country.data}
-            provinces={provinces}
-            findProvinces={findProvinces}
-            disabledProvinces={disabledProvinces}
+            data={fromIdToNameAuthorCountry(
+              state.author.data,
+              state.country.data,
+              state.province.data
+            )}
+            buttons={tableButtons}
+            onSearch={onSearch}
           />
         </View>
       </View>
 
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => onCeateNew(resetForm, nameInputRef, setError)}
-      />
+      <Portal>
+        <Modal
+          visible={screenState.showModalForm}
+          style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}
+          onDismiss={onDismissModalForm}
+        >
+          <AuthorForm
+            model={model}
+            nameInputRef={nameInputRef}
+            onSave={onSaveForm}
+            countries={state.country.data}
+            provinces={provinces}
+            worker={worker}
+            onDismissModal={onDismissModalForm}
+          />
+        </Modal>
+      </Portal>
 
-      <DismissAlert
-        label={screenState.dismissMsg}
-        onClose={() => screenDispatch({ type: "HIDE_DISMISS_ALERT" })}
-        visible={screenState.showDismissAlert}
+      <RestElements
+        createNew={createNew}
+        screenState={screenState}
+        screenDispatch={screenDispatch}
+        dialogTitle="Borrar registro"
+        dialogLabel="Está seguro que desea borrar el registro?"
+        onDissmisDialog={onDissmisDialog}
+        dialogButtons={dialogButtons}
       />
-
-      <Dialog
-        title="Borrar registro"
-        label="Está seguro que desea borrar el registro?"
-        visible={screenState.showModalAlert}
-        onDismiss={() => onModalClose(resetForm, screenDispatch)}
-        buttons={{
-          cancel: {
-            label: "No",
-            press: () => onModalClose(resetForm, screenDispatch),
-          },
-          ok: {
-            label: "Si",
-            press: () =>
-              onModalOk(worker, newAuthorData, resetForm, screenDispatch),
-          },
-        }}
-      />
-
-      <Loader visible={screenState.showLoader} />
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    gap: 10,
-  },
-  fab: {
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-  },
-});
 
 export default Author;

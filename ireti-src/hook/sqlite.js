@@ -68,14 +68,14 @@ export const useManageData = (worker, apply) => {
  * @param {*} dataLength
  */
 export const useFindAll = (worker, table, dataLength) => {
-  //useEffect(() => {
-  if (dataLength === 0) {
-    worker.postMessage({
-      action: "select",
-      args: [table],
-    });
-  }
-  //}, [worker, action, table, dataLength]);
+  useEffect(() => {
+    if (dataLength === 0) {
+      worker.postMessage({
+        action: "select",
+        args: [table],
+      });
+    }
+  }, [worker, table, dataLength]);
 };
 
 /**
@@ -87,12 +87,12 @@ export const useFindAll = (worker, table, dataLength) => {
  * @param {*} dataLength
  */
 export const useQuery = (worker, action, sql, dataBind, dataLength) => {
-  //useEffect(() => {
-  if (dataLength === 0) {
-    worker.postMessage({
-      action: action,
-      args: [sql, dataBind],
-    });
-  }
-  //}, [worker, action, sql, dataBind, dataLength]);
+  useEffect(() => {
+    if (dataLength === 0) {
+      worker.postMessage({
+        action: action,
+        args: [sql, dataBind],
+      });
+    }
+  }, [worker, action, sql, dataBind, dataLength]);
 };

@@ -1,65 +1,114 @@
+import { useEffect } from "react";
 import Form from "../component/Form/Form";
 import Input from "../component/Form/Input";
 import RadioGroup from "../component/Form/RadioGroup";
 import Select from "../component/Form/Select";
+import { useDataField } from "../hook/form";
 
 const AuthorForm = ({
-  authorAttr,
-  error,
+  model,
   nameInputRef,
-  onSaveForm,
-  sex,
+  onSave,
   countries,
   provinces,
-  findProvinces,
-  disabledProvinces,
-}) => (
-  <Form
-    title="Datos del autor:"
-    buttons={{
-      save: {
-        label: "Salvar",
-        press: onSaveForm,
-        icon: "content-save",
-      },
-    }}
-  >
-    <Input
-      label="Nombre"
-      icon="pencil"
-      error={error.name}
-      {...authorAttr.name}
-      reference={nameInputRef}
-    />
+  worker,
+  onDismissModal,
+}) => {
+  const [name, setName] = useDataField(model.name.value);
+  const [gender, setGender] = useDataField(model.gender.value);
+  const [country, setCountry] = useDataField(model.country.value);
+  const [province, setProvince] = useDataField(model.province.value);
 
-    <RadioGroup
-      label="Sexo"
-      error={error.gender}
-      {...authorAttr.gender}
-      data={sex}
-    />
+  useEffect(() => {
+    setName(model.name.value);
+    setGender(model.gender.value);
+    setCountry(model.country.value);
+    setProvince(model.province.value);
+  }, [model, setName, setGender, setCountry, setProvince]);
 
-    <Select
-      label="Países"
-      data={countries.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }))}
-      error={error.country}
-      {...authorAttr.country}
-      onChangeText={findProvinces}
-    />
-    <Select
-      label="Provincias"
-      data={provinces.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }))}
-      disabled={disabledProvinces}
-      error={error.province}
-      {...authorAttr.province}
-    />
-  </Form>
-);
+  const onFormSend = () => {
+    const newModel = {
+      ...model,
+      name: { ...model.name, value: name },
+      gender: { ...model.gender, value: gender },
+      country: { ...model.country, value: country },
+      province: { ...model.province, value: province },
+    };
 
+    onSave(newModel);
+  };
+
+  function mapped(data) {
+    return data.map((item) => ({
+      label: item.name,
+      value: item.id,
+    }));
+  }
+
+  const onCountryChange = (value) => {
+    const sql =
+      "SELECT province.id AS id, province.name AS name FROM province, country WHERE province.country_id = :country_id AND province.country_id = country.id";
+    worker.postMessage({
+      action: "findProvincesByCountry",
+      args: [sql, { country_id: value }],
+    });
+    setCountry(value);
+  };
+
+  const sex = [
+    { label: "Femenino", value: "f" },
+    { label: "Masculino", value: "m" },
+  ];
+
+  return (
+    <Form
+      title="Datos del autor:"
+      buttons={{
+        save: {
+          label: "Salvar",
+          press: onFormSend,
+          icon: "content-save",
+        },
+        cancel: {
+          label: "Cancelar",
+          press: onDismissModal,
+          icon: "close",
+        },
+      }}
+    >
+      <Input
+        label="Nombre"
+        icon="pencil"
+        error={model.name.error}
+        value={name}
+        onChangeText={setName}
+        reference={nameInputRef}
+      />
+
+      <RadioGroup
+        label="Sexo"
+        error={model.gender.error}
+        value={gender}
+        onChangeText={setGender}
+        data={sex}
+      />
+
+      <Select
+        label="Países"
+        data={mapped(countries)}
+        error={model.country.error}
+        value={country}
+        onChangeText={onCountryChange}
+      />
+      <Select
+        label="Provincias"
+        data={mapped(provinces)}
+        disabled={mapped(provinces).length === 0 ? true : false}
+        error={model.province.error}
+        value={province}
+        onChangeText={setProvince}
+      />
+    </Form>
+  );
+};
 export default AuthorForm;

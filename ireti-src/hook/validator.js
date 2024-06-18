@@ -6,10 +6,11 @@ export function validate(field, constraint, message) {
 
 export function empty(field, message) {
   validate(field, field.value.length === 0, message);
+  validate(field, field.value[0] === " ", message);
 }
 
 export function letters(field, message) {
-  validate(field, !/^([A-Za-z])*$/.test(field.value), message);
+  validate(field, !/^([A-Za-z ])*$/.test(field.value), message);
 }
 
 export function numbers(field, message) {

@@ -7,9 +7,13 @@ import {
   app,
   window as neutrawindow,
 } from "@neutralinojs/lib";
-import { StrictMode, useCallback, useReducer } from "react";
+import { StrictMode, useCallback, useReducer, useState } from "react";
 
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import {
+  DefaultTheme,
+  Provider as PaperProvider,
+  ProgressBar,
+} from "react-native-paper";
 
 import { DispatchContext } from "./context/app";
 import { navigationReducer } from "./reducer/navigation";
@@ -146,9 +150,14 @@ INSERT INTO country (name) VALUES ('country1');
 INSERT INTO country (name) VALUES ('country2');
 INSERT INTO country (name) VALUES ('country3');
 
-INSERT INTO province (name, country_id) VALUES ('province1', 1);
+INSERT INTO province (name, country_id) VALUES ('province1 del pais actual', 1);
 INSERT INTO province (name, country_id) VALUES ('province2', 1);
 INSERT INTO province (name, country_id) VALUES ('province3', 2);
+
+INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author1 SecondName Lastname SecondLastName', 'm', 1, 1);
+INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author2', 'f', 1, 2);
+INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author3', 'm', 2, 3);
+
 PRAGMA foreign_keys = on;
 `;
 
@@ -226,8 +235,14 @@ const App = () => {
   };
 
   const [state, dispatch] = useCombinedReducers(store);
+  const [loading, setLoading] = useState(true);
 
   const onConnect = useCallback((event, worker, setConnect) => {
+    worker.onmessage = (event) => {
+      if (event.data.action === "query") {
+        setLoading(false);
+      }
+    };
     worker.postMessage({ action: "query", args: [SCHEMA] });
     setConnect(event.data.result);
   }, []);
@@ -238,14 +253,31 @@ const App = () => {
       <DispatchContext.Provider value={[state, dispatch, worker]}>
         <PaperProvider theme={theme}>
           <View style={{ flex: 1 }}>
-            <TopBar />
-            <View style={{ flex: 1, padding: 10 }}>
-              {state.navigation.screen === "accounting" && <Accounting />}
-              {state.navigation.screen === "book" && <Book />}
-              {state.navigation.screen === "author" && <Author />}
-              {state.navigation.screen === "subgenre" && <LiterarySubgenre />}
-              {state.navigation.screen === "country" && <Localization />}
-            </View>
+            {loading === true && (
+              <ProgressBar
+                indeterminate={true}
+                style={{
+                  width: "90%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginTop: "40%",
+                }}
+              />
+            )}
+            {loading === false && (
+              <>
+                <TopBar />
+                <View style={{ flex: 1, padding: 10 }}>
+                  {state.navigation.screen === "accounting" && <Accounting />}
+                  {state.navigation.screen === "book" && <Book />}
+                  {state.navigation.screen === "author" && <Author />}
+                  {state.navigation.screen === "subgenre" && (
+                    <LiterarySubgenre />
+                  )}
+                  {state.navigation.screen === "country" && <Localization />}
+                </View>
+              </>
+            )}
           </View>
         </PaperProvider>
       </DispatchContext.Provider>
