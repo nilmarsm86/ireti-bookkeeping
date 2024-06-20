@@ -37,7 +37,7 @@ const Country = ({
         screenDispatch,
         "country",
         {
-          name: m.name.value,
+          name: m.name.value.trim(),
         }
       );
     },

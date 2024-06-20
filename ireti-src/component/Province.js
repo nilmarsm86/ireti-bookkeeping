@@ -22,7 +22,7 @@ const Province = ({
 
   useManageData(
     worker,
-    applyManageProvince(worker, dispatch, screenDispatch, resetForm)
+    applyManageProvince(dispatch, screenDispatch, resetForm)
   );
 
   useFindAll(worker, "province", state.province.data.length);
@@ -73,7 +73,7 @@ const Province = ({
       screenDispatch,
       "province",
       {
-        name: m.name.value,
+        name: m.name.value.trim(),
         country_id: m.country.value,
       }
     );

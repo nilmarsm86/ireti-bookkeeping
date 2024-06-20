@@ -114,11 +114,12 @@ const Author = () => {
   const onSaveForm = useCallback(
     (m) => {
       let data = {
-        name: m.name.value,
+        name: m.name.value.trim(),
         gender: m.gender.value,
         country_id: m.country.value,
         province_id: m.province.value,
       };
+
       onSave(
         worker,
         m,

@@ -1,5 +1,5 @@
-import { onModalClose } from "./controller";
 import { onError } from "./error";
+import * as controller from "./controller";
 
 export const applyManageAuthor = (
   dispatch,
@@ -13,7 +13,7 @@ export const applyManageAuthor = (
       return;
     }
 
-    switch (e.data.action) {
+    /*switch (e.data.action) {
       case "select":
         dispatch({
           type: String(e.data.action + "_author").toUpperCase(),
@@ -64,14 +64,43 @@ export const applyManageAuthor = (
           setProvinces([]);
         }
         break;
-      case "readData":
-        dispatch({
-          type: String("select_author").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
       default:
         break;
+    }*/
+
+    if (controller[e.data.action]) {
+      controller[e.data.action](
+        e,
+        dispatch,
+        "author",
+        screenDispatch,
+        resetForm
+      );
+
+      if (e.data.action === "insert" || e.data.action === "update") {
+        screenDispatch({ type: "HIDE_MODAL_FORM" });
+      }
+    } else if (e.data.action === "delete") {
+      controller.remove(e, dispatch, "author", screenDispatch, resetForm);
+    } else {
+      //
+      switch (e.data.action) {
+        case "allCountries":
+          controller.simpleDispatch(e, dispatch, "select_country");
+          break;
+        case "allProvinces":
+          controller.simpleDispatch(e, dispatch, "select_province");
+          break;
+        case "findProvincesByCountry":
+          if (e.data.result.length > 0) {
+            setProvinces(e.data.result);
+          } else {
+            setProvinces([]);
+          }
+          break;
+        default:
+          break;
+      }
     }
   };
 };
@@ -86,7 +115,7 @@ export const onModalOk = (worker, newAuthorData, resetForm, screenDispatch) => {
     args: ["author", { id: newAuthorData.id }],
   });
   screenDispatch({ type: "SHOW_LOADER" });
-  onModalClose(resetForm, screenDispatch);
+  controller.onModalClose(resetForm, screenDispatch);
 };
 
 export const onCeateNew = (resetForm, nameInputRef, screenDispatch) => {

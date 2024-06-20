@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
-  "applicationId": "js.neutralino.sample",
+  "applicationId": "js.neutralino.ireti",
   "version": "1.0.0",
   "defaultMode": "chrome",
   "port": 0,
@@ -19,18 +19,7 @@
     "debug.log",
     "window.show"
   ],
-  "globalVariables": {
-    "TEST1": "Hello",
-    "TEST2": [
-      2,
-      4,
-      5
-    ],
-    "TEST3": {
-      "value1": 10,
-      "value2": {}
-    }
-  },
+  "globalVariables": {},
   "modes": {
     "window": {
       "title": "ireti",
@@ -50,9 +39,7 @@
       "exitProcessOnClose": true
     },
     "browser": {
-      "globalVariables": {
-        "TEST": "Test value browser"
-      },
+      "globalVariables": {},
       "nativeBlockList": [
         "filesystem.*"
       ]

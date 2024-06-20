@@ -66,7 +66,7 @@ const LiterarySubgenre = () => {
         state.literary_subgenre.data,
         screenDispatch,
         "literary_subgenre",
-        { name: m.name.value, num: Number(m.num.value) }
+        { name: m.name.value.trim(), num: Number(m.num.value) }
       );
     },
     [state.literary_subgenre.data, worker]

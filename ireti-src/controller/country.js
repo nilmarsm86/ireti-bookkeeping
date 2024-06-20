@@ -1,4 +1,5 @@
 import { onError } from "./error";
+import * as controller from "./controller";
 
 export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
@@ -7,44 +8,16 @@ export const applyManageCountry = (dispatch, screenDispatch, resetForm) => {
       return;
     }
 
-    switch (e.data.action) {
-      case "select":
-        dispatch({
-          type: String(e.data.action + "_country").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      case "insert":
-        dispatch({
-          type: String(e.data.action + "_country").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
-        resetForm();
-        break;
-      case "update":
-        dispatch({
-          type: String(e.data.action + "_country").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
-        resetForm();
-        break;
-      case "delete":
-        dispatch({
-          type: String(e.data.action + "_country").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
-        break;
-      case "allCountries":
-        dispatch({
-          type: String("select_country").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      default:
-        break;
+    if (controller[e.data.action]) {
+      controller[e.data.action](
+        e,
+        dispatch,
+        "country",
+        screenDispatch,
+        resetForm
+      );
+    } else if (e.data.action === "delete") {
+      controller.remove(e, dispatch, "country", screenDispatch, resetForm);
     }
   };
 };

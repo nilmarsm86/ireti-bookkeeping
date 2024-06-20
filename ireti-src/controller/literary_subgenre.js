@@ -1,5 +1,5 @@
-import { onModalClose } from "./controller";
 import { onError } from "./error";
+import * as controller from "./controller";
 
 export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
@@ -8,46 +8,22 @@ export const applyManageSubgenre = (dispatch, screenDispatch, resetForm) => {
       return;
     }
 
-    switch (e.data.action) {
-      case "select":
-        dispatch({
-          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      case "insert":
-        dispatch({
-          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
-        resetForm();
-        break;
-      case "update":
-        dispatch({
-          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
-        resetForm();
-        break;
-      case "delete":
-        dispatch({
-          type: String(e.data.action + "_literary_subgenre").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
-        break;
-      case "allSubgenre":
-        //setTimeout(() => {
-        dispatch({
-          type: String("select_literary_subgenre").toUpperCase(),
-          payload: e.data.result,
-        });
-        //}, 2000);
-        break;
-      default:
-        break;
+    if (controller[e.data.action]) {
+      controller[e.data.action](
+        e,
+        dispatch,
+        "literary_subgenre",
+        screenDispatch,
+        resetForm
+      );
+    } else if (e.data.action === "delete") {
+      controller.remove(
+        e,
+        dispatch,
+        "literary_subgenre",
+        screenDispatch,
+        resetForm
+      );
     }
   };
 };
@@ -62,7 +38,7 @@ export const onModalOk = (worker, id, resetForm, screenDispatch) => {
     args: ["literary_subgenre", { id: id }],
   });
   screenDispatch({ type: "SHOW_LOADER" });
-  onModalClose(resetForm, screenDispatch);
+  controller.onModalClose(resetForm, screenDispatch);
 };
 
 export const onCeateNew = (resetForm, nameInputRef) => {
