@@ -1,5 +1,9 @@
-import { onError } from "./error";
 import { isValid } from "../hook/validator";
+
+export function onError(e) {
+  alert("A ocurrido un error al salvar la informacion");
+  console.log(e);
+}
 
 //insert and update
 export const onSave = (

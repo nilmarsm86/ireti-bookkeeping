@@ -1,10 +1,9 @@
 import * as controller from "./controller";
-import { onError } from "./error";
 
 export const applyManageProvince = (dispatch, screenDispatch, resetForm) => {
   return (e) => {
     if (e.data.action === "error") {
-      onError(e);
+      controller.onError(e);
       return;
     }
 

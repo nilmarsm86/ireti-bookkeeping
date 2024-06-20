@@ -1,4 +1,3 @@
-import { onError } from "./error";
 import * as controller from "./controller";
 
 export const applyManageAuthor = (
@@ -9,7 +8,7 @@ export const applyManageAuthor = (
 ) => {
   return (e) => {
     if (e.data.action === "error") {
-      onError(e);
+      controller.onError(e);
       return;
     }
 
