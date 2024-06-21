@@ -74,9 +74,22 @@ const Author = () => {
     state.province.data.length
   );
 
+  const onSelectCountryChange = useCallback(
+    (value) => {
+      const sql =
+        "SELECT province.id AS id, province.name AS name FROM province, country WHERE province.country_id = :country_id AND province.country_id = country.id";
+      worker.postMessage({
+        action: "findProvincesByCountry",
+        args: [sql, { country_id: value }],
+      });
+    },
+    [worker]
+  );
+
   //transform data for select (country name to id)
   const fromIdToNameCountry = useCallback(
     (author) => {
+      screenDispatch({ type: "SHOW_MODAL_FORM" });
       let model = mappingToForm(author_mapping, author);
 
       const country = state.country.data.find((c) => c.name === author.country);
@@ -89,8 +102,10 @@ const Author = () => {
         country: { ...model.country, value: country.id },
         province: { ...model.province, value: province.id }, //TODO: tener cuidado cuando la provincia esta vacia
       });
+
+      onSelectCountryChange(country.id);
     },
-    [setModel, state.country.data, state.province.data]
+    [setModel, state.country.data, state.province.data, onSelectCountryChange]
   );
 
   //transform province.country_id to name
@@ -213,8 +228,8 @@ const Author = () => {
             onSave={onSaveForm}
             countries={state.country.data}
             provinces={provinces}
-            worker={worker}
             onDismissModal={onDismissModalForm}
+            onSelectCountryChange={onSelectCountryChange}
           />
         </Modal>
       </Portal>

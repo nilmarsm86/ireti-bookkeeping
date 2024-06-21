@@ -31,7 +31,7 @@ const Select = ({
 
   const inputValue = (value) => {
     if (data.length === 0 || value.length === 0) {
-      return value;
+      return "";
     }
     let item = data.find((item) => item.value === value);
 
@@ -51,7 +51,7 @@ const Select = ({
 
   return (
     <>
-      <Pressable onPress={showDialog}>
+      <Pressable onPress={disabled ? () => {} : showDialog}>
         <TextInput
           value={inputValue(value)}
           mode="outlined"

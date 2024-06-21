@@ -12,61 +12,6 @@ export const applyManageAuthor = (
       return;
     }
 
-    /*switch (e.data.action) {
-      case "select":
-        dispatch({
-          type: String(e.data.action + "_author").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      case "insert":
-        dispatch({
-          type: String(e.data.action + "_author").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos agregados" });
-        resetForm();
-        screenDispatch({ type: "HIDE_MODAL_FORM" });
-        break;
-      case "update":
-        dispatch({
-          type: String(e.data.action + "_author").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos modificados" });
-        resetForm();
-        screenDispatch({ type: "HIDE_MODAL_FORM" });
-        break;
-      case "delete":
-        dispatch({
-          type: String(e.data.action + "_author").toUpperCase(),
-          payload: e.data.result[0],
-        });
-        screenDispatch({ type: "AFTER_SAVE", payload: "Datos eliminados" });
-        break;
-      case "allCountries":
-        dispatch({
-          type: String("select_country").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      case "allProvinces":
-        dispatch({
-          type: String("select_province").toUpperCase(),
-          payload: e.data.result,
-        });
-        break;
-      case "findProvincesByCountry":
-        if (e.data.result.length > 0) {
-          setProvinces(e.data.result);
-        } else {
-          setProvinces([]);
-        }
-        break;
-      default:
-        break;
-    }*/
-
     if (controller[e.data.action]) {
       controller[e.data.action](
         e,
@@ -82,7 +27,6 @@ export const applyManageAuthor = (
     } else if (e.data.action === "delete") {
       controller.remove(e, dispatch, "author", screenDispatch, resetForm);
     } else {
-      //
       switch (e.data.action) {
         case "allCountries":
           controller.simpleDispatch(e, dispatch, "select_country");
@@ -91,11 +35,8 @@ export const applyManageAuthor = (
           controller.simpleDispatch(e, dispatch, "select_province");
           break;
         case "findProvincesByCountry":
-          if (e.data.result.length > 0) {
-            setProvinces(e.data.result);
-          } else {
-            setProvinces([]);
-          }
+          let data = e.data.result.length > 0 ? e.data.result : [];
+          setProvinces(data);
           break;
         default:
           break;

@@ -11,8 +11,8 @@ const AuthorForm = ({
   onSave,
   countries,
   provinces,
-  worker,
   onDismissModal,
+  onSelectCountryChange,
 }) => {
   const [name, setName] = useDataField(model.name.value);
   const [gender, setGender] = useDataField(model.gender.value);
@@ -46,12 +46,7 @@ const AuthorForm = ({
   }
 
   const onCountryChange = (value) => {
-    const sql =
-      "SELECT province.id AS id, province.name AS name FROM province, country WHERE province.country_id = :country_id AND province.country_id = country.id";
-    worker.postMessage({
-      action: "findProvincesByCountry",
-      args: [sql, { country_id: value }],
-    });
+    onSelectCountryChange(value);
     setCountry(value);
   };
 
@@ -100,6 +95,7 @@ const AuthorForm = ({
         value={country}
         onChangeText={onCountryChange}
       />
+
       <Select
         label="Provincias"
         data={mapped(provinces)}

@@ -31,6 +31,7 @@ import { literary_subgenre_metadata } from "../config/metadata";
 import { literary_subgenre_mapping } from "../config/mapping";
 import RestElements from "../component/RestElements";
 import styles from "../style/style";
+import { mappingToForm } from "../hook/form";
 
 const LiterarySubgenre = () => {
   //reducers
@@ -73,10 +74,7 @@ const LiterarySubgenre = () => {
   );
 
   const dbToForm = useCallback((item) => {
-    let m = { ...literary_subgenre_mapping };
-    for (const [key, value] of Object.entries(item)) {
-      m[key] = { ...m[key], value: value };
-    }
+    let m = mappingToForm(literary_subgenre_mapping, item);
     setModel(m);
   }, []);
 
