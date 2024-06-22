@@ -25,6 +25,11 @@ export const navigationReducer = (state, action) => {
         ...state,
         screen: "subgenre",
       };
+    case "GO_PUBLISHING":
+      return {
+        ...state,
+        screen: "publishing",
+      };
     case "GO_COUNTRY":
       return {
         ...state,

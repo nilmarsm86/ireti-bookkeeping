@@ -89,7 +89,6 @@ const Author = () => {
   //transform data for select (country name to id)
   const fromIdToNameCountry = useCallback(
     (author) => {
-      screenDispatch({ type: "SHOW_MODAL_FORM" });
       let model = mappingToForm(author_mapping, author);
 
       const country = state.country.data.find((c) => c.name === author.country);
@@ -97,10 +96,12 @@ const Author = () => {
         (p) => p.name === author.province
       );
 
+      let provinceValue = province ? province.id : "";
+
       setModel({
         ...model,
         country: { ...model.country, value: country.id },
-        province: { ...model.province, value: province.id }, //TODO: tener cuidado cuando la provincia esta vacia
+        province: { ...model.province, value: provinceValue },
       });
 
       onSelectCountryChange(country.id);
@@ -112,8 +113,7 @@ const Author = () => {
   const fromIdToNameAuthorCountry = (authors, countries, provinces) => {
     return authors.map((author) => {
       const country = countries.find((c) => c.id === author.country_id);
-      const province = provinces.find((p) => p.id === author.province_id); //TODO: tener cuidado cuando la provincia esta vacia
-
+      const province = provinces.find((p) => p.id === author.province_id);
       if (country) {
         author.country = country.name;
       }
@@ -132,8 +132,9 @@ const Author = () => {
         name: m.name.value.trim(),
         gender: m.gender.value,
         country_id: m.country.value,
-        province_id: m.province.value,
       };
+
+      data["province_id"] = m.province.value ? m.province.value : null;
 
       onSave(
         worker,
@@ -150,7 +151,13 @@ const Author = () => {
 
   const tableButtons = useMemo(() => {
     return {
-      edit: { icon: "pencil", press: fromIdToNameCountry },
+      edit: {
+        icon: "pencil",
+        press: (item) => {
+          screenDispatch({ type: "SHOW_MODAL_FORM" });
+          fromIdToNameCountry(item);
+        },
+      },
       delete: {
         icon: "delete",
         press: (item) => onRowDelete(screenDispatch, fromIdToNameCountry, item),
@@ -187,8 +194,10 @@ const Author = () => {
       },
       ok: {
         label: "Si",
-        press: () =>
-          onModalOk(worker, model.id.value, resetForm, screenDispatch),
+        press: () => {
+          console.log(model.id.value);
+          onModalOk(worker, model.id.value, resetForm, screenDispatch);
+        },
       },
     };
   }, [model.id.value, worker]);

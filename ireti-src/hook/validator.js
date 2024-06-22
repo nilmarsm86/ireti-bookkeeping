@@ -10,7 +10,13 @@ export function empty(field, message) {
 }
 
 export function letters(field, message) {
-  validate(field, !/^([A-Za-z ])*$/.test(field.value), message);
+  validate(
+    field,
+    !/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/.test(
+      field.value
+    ),
+    message
+  );
 }
 
 export function numbers(field, message) {

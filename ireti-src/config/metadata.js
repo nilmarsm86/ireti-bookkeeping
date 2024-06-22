@@ -103,3 +103,20 @@ export const author_metadata = [
     numeric: false,
   },
 ];
+
+export const publishing_metadata = [
+  {
+    name: "id",
+    title: "ID",
+    show: false,
+    sortDirection: "descending",
+    numeric: false,
+  },
+  {
+    name: "name",
+    title: "Nombre",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+];

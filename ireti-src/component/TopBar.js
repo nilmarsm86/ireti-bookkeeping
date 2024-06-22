@@ -7,6 +7,7 @@ import {
   onGoBook,
   onGoAuthor,
   onGoSubgenre,
+  onGoPublishing,
   onGoCountry,
 } from "../controller/topbar";
 
@@ -18,6 +19,7 @@ const TopBar = () => {
   const goBook = () => onGoBook(dispatch);
   const goAuthor = () => onGoAuthor(dispatch);
   const goSubgenre = () => onGoSubgenre(dispatch);
+  const goPublishing = () => onGoPublishing(dispatch);
   const goCountry = () => onGoCountry(dispatch);
 
   return (
@@ -49,6 +51,13 @@ const TopBar = () => {
         onPress={goSubgenre}
         active={state.navigation.screen === "subgenre"}
         amount={state.literary_subgenre.data.length}
+      />
+      <AppBarAction
+        title="Editoriales"
+        icon="office-building"
+        onPress={goPublishing}
+        active={state.navigation.screen === "publishing"}
+        amount={state.publishing.data.length}
       />
       <AppBarAction
         title="Localización"

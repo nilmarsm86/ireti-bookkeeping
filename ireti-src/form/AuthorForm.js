@@ -48,6 +48,7 @@ const AuthorForm = ({
   const onCountryChange = (value) => {
     onSelectCountryChange(value);
     setCountry(value);
+    setProvince("");
   };
 
   const sex = [

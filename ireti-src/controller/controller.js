@@ -75,6 +75,7 @@ export const update = (e, dispatch, table, screenDispatch, resetForm) => {
 };
 
 export const remove = (e, dispatch, table, screenDispatch, resetForm) => {
+  console.log(e.data.result);
   dispatch({
     type: String(e.data.action + "_" + table).toUpperCase(),
     payload: e.data.result[0],

@@ -45,14 +45,14 @@ export const applyManageAuthor = (
   };
 };
 
-export const onModalOk = (worker, newAuthorData, resetForm, screenDispatch) => {
+export const onModalOk = (worker, id, resetForm, screenDispatch) => {
   //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
   console.warn(
     "buscar si hay libros que dependen de este author en caso de que si mostrar mensaje diciendo esto"
   );
   worker.postMessage({
     action: "delete",
-    args: ["author", { id: newAuthorData.id }],
+    args: ["author", { id: id }],
   });
   screenDispatch({ type: "SHOW_LOADER" });
   controller.onModalClose(resetForm, screenDispatch);

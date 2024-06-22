@@ -14,6 +14,10 @@ export const onGoSubgenre = (dispatch) => {
   dispatch({ type: "GO_SUBGENRE" });
 };
 
+export const onGoPublishing = (dispatch) => {
+  dispatch({ type: "GO_PUBLISHING" });
+};
+
 export const onGoCountry = (dispatch) => {
   dispatch({ type: "GO_COUNTRY" });
 };

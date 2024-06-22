@@ -119,3 +119,17 @@ export const author_mapping = {
     value: "",
   },
 };
+
+export const publishing_mapping = {
+  id: { value: null },
+  name: {
+    value: "",
+    constraints: [
+      { type: empty, message: "La editorial debe tener un nombre!" },
+      {
+        type: unique,
+        message: "Ya existe una editorial con este nombre!",
+      },
+    ],
+  },
+};

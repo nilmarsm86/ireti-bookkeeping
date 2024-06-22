@@ -40,10 +40,10 @@ const TableFilter = memo(({ data, setFilterData, onSearch }) => {
               value: "search",
               icon: "text-search",
             },
-            {
+            /*{
               value: "filter",
               icon: "filter",
-            },
+            },*/
             {
               value: "",
               icon: "eye-off",
