@@ -23,6 +23,14 @@ export function numbers(field, message) {
   validate(field, !/^([0-9])*$/.test(field.value), message);
 }
 
+export function price(field, message) {
+  validate(field, !/^[0-9]+(\.[0-9]{2})$/.test(field.value), message);
+}
+
+export function float(field, message) {
+  validate(field, !/^[0-9]+(\.[0-9]+)$/.test(field.value), message);
+}
+
 export function unique(model, fieldName, message, data) {
   data.forEach((item) => {
     if (Number(item.id) !== Number(model.id.value)) {

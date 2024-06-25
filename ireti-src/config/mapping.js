@@ -1,4 +1,11 @@
-import { empty, letters, numbers, unique } from "../hook/validator";
+import {
+  empty,
+  float,
+  letters,
+  numbers,
+  price,
+  unique,
+} from "../hook/validator";
 
 export const literary_subgenre_mapping = {
   id: { value: null },
@@ -129,6 +136,117 @@ export const publishing_mapping = {
       {
         type: unique,
         message: "Ya existe una editorial con este nombre!",
+      },
+    ],
+  },
+};
+
+export const book_mapping = {
+  id: { value: null },
+  title: {
+    value: "",
+    constraints: [{ type: empty, message: "El libro debe tener un título!" }],
+  },
+  editionYear: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe establecer el año de edición del libro",
+      },
+    ],
+  },
+  editionNumber: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe establecer el número de la edición del libro",
+      },
+    ],
+  },
+  acquisitionPrice: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe establecer el precio de adquisición del libro",
+      },
+      {
+        type: price,
+        message: "Debe establecer el precio con el formato correcto",
+      },
+    ],
+  },
+  transportPrice: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe establecer el precio de transportación del libro",
+      },
+      {
+        type: price,
+        message: "Debe establecer el precio con el formato correcto",
+      },
+    ],
+  },
+  marketingMegas: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message:
+          "Debe establecer la cantidad de megas invertidos en el marqueting del libro",
+      },
+      {
+        type: float,
+        message: "Debe establecer los megas en el formato correcto",
+      },
+    ],
+  },
+  dificultPrice: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message:
+          "Debe establecer el precio de dificultad de adquisición del libro",
+      },
+      {
+        type: price,
+        message: "Debe establecer el precio con el formato correcto",
+      },
+    ],
+  },
+  amount: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe seleccionar la cantidad de libros comprados",
+      },
+      {
+        type: numbers,
+        message: "La cantidad de libros comprados debe ser un número",
+      },
+    ],
+  },
+  literarySubgenre: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe seleccionar el género literario del libro",
+      },
+    ],
+  },
+  publishing: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "Debe seleccionar la editorial del libro",
       },
     ],
   },

@@ -120,3 +120,83 @@ export const publishing_metadata = [
     numeric: false,
   },
 ];
+
+export const book_metadata = [
+  {
+    name: "id",
+    title: "ID",
+    show: false,
+    sortDirection: "descending",
+    numeric: false,
+  },
+  {
+    name: "title",
+    title: "Título",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "editionYear",
+    title: "Año de edición",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "editionNumber",
+    title: "Número de edición",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "acquisitionPrice",
+    title: "Precio de adquisición",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "transportPrice",
+    title: "Precio de transportación",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "marketingMegas",
+    title: "Megas en marketing",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "dificultPrice",
+    title: "Precio de dificultad",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "amount",
+    title: "Cantidad",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "literarySubgenre",
+    title: "Género literario",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "publishing",
+    title: "Editorial",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+];
