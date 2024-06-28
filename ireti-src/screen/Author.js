@@ -20,7 +20,7 @@ import { DispatchContext } from "../context/app";
 import { onModalOk, applyManageAuthor, onCeateNew } from "../controller/author";
 
 import { screenReducer } from "../reducer/author";
-import { Modal, Portal } from "react-native-paper";
+import { Icon, Modal, Portal } from "react-native-paper";
 import { onRowDelete } from "../controller/controller";
 
 import AuthorForm from "../form/AuthorForm";
@@ -92,6 +92,8 @@ const Author = () => {
       let model = mappingToForm(author_mapping, author);
 
       const country = state.country.data.find((c) => c.name === author.country);
+      //buscar solo las provincias de el pais encontrado
+      //me evito la busqueda global de provincias?
       const province = state.province.data.find(
         (p) => p.name === author.province
       );
@@ -121,6 +123,16 @@ const Author = () => {
       if (province) {
         author.province = province.name;
       }
+
+      author.sex = (value) => {
+        if (value === "m") {
+          return <Icon source="human-male" size={20} />;
+        }
+
+        if (value === "f") {
+          return <Icon source="human-female" size={20} />;
+        }
+      };
 
       return author;
     });

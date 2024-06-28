@@ -11,7 +11,13 @@ import { screenReducer } from "../reducer/author";
 import { book_mapping } from "../config/mapping";
 import { reset } from "../hook/validator";
 import { useFindAll, useManageData, useQuery } from "../hook/sqlite";
-import { applyManageBook, onCeateNew, onModalOk } from "../controller/book";
+import {
+  applyManageBook,
+  formatPriceToCents,
+  formatPriceFromCents,
+  onCeateNew,
+  onModalOk,
+} from "../controller/book";
 import { mappingToForm } from "../hook/form";
 import { onModalClose, onRowDelete, onSave } from "../controller/controller";
 import TitleSection from "../component/TitleSection";
@@ -20,6 +26,7 @@ import styles from "../style/style";
 import Table from "../component/Table/Table";
 import { book_metadata } from "../config/metadata";
 import RestElements from "../component/RestElements";
+import { Badge, Tooltip } from "react-native-paper";
 
 const Book = () => {
   //reducers
@@ -42,7 +49,7 @@ const Book = () => {
 
   useManageData(worker, applyManageBook(dispatch, screenDispatch, resetForm));
   useFindAll(worker, "book", state.book.data.length);
-  //buscar solo al mostrar el formulario
+  //buscar solo al mostrar el formulario?
   useQuery(
     worker,
     "allPublishings",
@@ -51,7 +58,7 @@ const Book = () => {
     state.publishing.data.length
   );
 
-  //buscar solo al mostrar el formulario
+  //buscar solo al mostrar el formulario?
   useQuery(
     worker,
     "allLiterarySubgenre",
@@ -98,6 +105,13 @@ const Book = () => {
         book.publishing = publishing.name;
       }
 
+      book.fullTitle = book.title + " ";
+      //book.fullTitle = <Badge>{book.amount}</Badge>;
+
+      book.acquisitionPrice = formatPriceFromCents(book.acquisition_price);
+      book.transportPrice = formatPriceFromCents(book.transport_price);
+      book.difficultPrice = formatPriceFromCents(book.difficult_price);
+
       return book;
     });
   };
@@ -106,12 +120,13 @@ const Book = () => {
     (m) => {
       let data = {
         title: m.title.value.trim(),
+        tag: String(m.title.value.trim()).toLowerCase(),
         edition_year: m.editionYear.value,
         edition_number: m.editionNumber.value,
-        acquisition_price: m.acquisitionPrice.value,
-        transport_price: m.transportPrice.value,
+        acquisition_price: formatPriceToCents(m.acquisitionPrice.value),
+        transport_price: formatPriceToCents(m.transportPrice.value),
         marketing_megas: m.marketingMegas.value,
-        dificult_price: m.dificultPrice.value,
+        dificult_price: formatPriceToCents(m.dificultPrice.value),
         amount: m.amount.value,
         literary_subgenre_id: m.literarySubgenre.value,
         publishing_id: m.publishing.value,
@@ -132,6 +147,13 @@ const Book = () => {
 
   const tableButtons = useMemo(() => {
     return {
+      detail: {
+        icon: "file-document",
+        press: (item) => {
+          //mostrar detalle del libro en un modal
+          alert("Que hacer para mostrar el detalle");
+        },
+      },
       edit: {
         icon: "pencil",
         press: (item) => {
@@ -151,11 +173,11 @@ const Book = () => {
       state.book.data.filter(
         (item) =>
           value === item.title ||
-          value === item.editionYear ||
-          value === item.acquisitionPrice ||
-          value === item.transportPrice ||
-          value === item.marketingMegas ||
-          value === item.dificultPrice ||
+          value === item.edition_year ||
+          //value === item.acquisitionPrice ||
+          //value === item.transportPrice ||
+          //value === item.marketingMegas ||
+          //value === item.dificultPrice ||
           value === item.literarySubgenre ||
           value === item.publishing
       ),

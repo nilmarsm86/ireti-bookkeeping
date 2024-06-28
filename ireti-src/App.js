@@ -75,11 +75,12 @@ CREATE TABLE IF NOT EXISTS author (
 -- Tabla: book
 DROP TABLE IF EXISTS book;
 
-CREATE TABLE IF NOT EXISTS book (
+CREATE TABLE book (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT
                                  UNIQUE
                                  NOT NULL,
     title                TEXT    NOT NULL,
+    tag                  TEXT    NOT NULL,
     edition_year         INTEGER,
     edition_number       INTEGER,
     acquisition_price    INTEGER NOT NULL,
@@ -93,6 +94,7 @@ CREATE TABLE IF NOT EXISTS book (
     publishing_id        INTEGER REFERENCES publishing (id) 
                                  NOT NULL
 );
+
 
 -- Tabla: book_author
 DROP TABLE IF EXISTS book_author;
@@ -185,6 +187,8 @@ INSERT INTO province (name, country_id) VALUES ('province3', 2);
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author1 SecondName Lastname SecondLastName', 'm', 1, 1);
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author2', 'f', 1, 2);
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author3', 'm', 2, 3);
+
+INSERT INTO book (title, tag, edition_year, edition_number, acquisition_price, transport_price, marketing_megas, difficult_price, amount, literary_subgenre_id, publishing_id) VALUES ('Titulo del libro', 'titulo-del-libro', 2024, 1, 500, 100, 0, 200, 1, 1, 1);
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

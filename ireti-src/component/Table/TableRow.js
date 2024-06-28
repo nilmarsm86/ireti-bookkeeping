@@ -1,7 +1,17 @@
 import { memo } from "react";
-import { DataTable, IconButton, Text } from "react-native-paper";
+import {
+  Badge,
+  DataTable,
+  IconButton,
+  Text,
+  Tooltip,
+} from "react-native-paper";
 
 const TableRow = memo(({ data, metadata, buttons }) => {
+  const itemValue = (name, value) => {
+    return typeof name === "function" ? name(value) : name;
+  };
+
   return data.length === 0 ? (
     <DataTable.Row>
       <DataTable.Cell
@@ -25,7 +35,21 @@ const TableRow = memo(({ data, metadata, buttons }) => {
                 key={meta.name + item[meta.name]}
                 numeric={meta.numeric}
               >
-                {item[meta.name]}
+                {meta.tooltip ? (
+                  <Tooltip title={item[meta.name]} leaveTouchDelay={250}>
+                    <Text>
+                      {itemValue(item[meta.name], item[meta.value])}
+                      {meta.badge && (
+                        <Badge size={25}>{item[meta.badge]}</Badge>
+                      )}
+                    </Text>
+                  </Tooltip>
+                ) : (
+                  <Text>
+                    {itemValue(item[meta.name], item[meta.value])}
+                    {meta.badge && <Badge size={25}>{item[meta.badge]}</Badge>}
+                  </Text>
+                )}
               </DataTable.Cell>
             )
         )}
