@@ -19,14 +19,16 @@ import {
   onModalOk,
 } from "../controller/book";
 import { mappingToForm } from "../hook/form";
-import { onModalClose, onRowDelete, onSave } from "../controller/controller";
+import { onModalClose, onRowDelete } from "../controller/controller";
 import TitleSection from "../component/TitleSection";
 import { View } from "react-native";
 import styles from "../style/style";
 import Table from "../component/Table/Table";
 import { book_metadata } from "../config/metadata";
 import RestElements from "../component/RestElements";
-import { Badge, Tooltip } from "react-native-paper";
+import { Modal, Portal } from "react-native-paper";
+import BookForm from "../form/BookForm";
+import { onSave } from "../controller/book";
 
 const Book = () => {
   //reducers
@@ -85,6 +87,24 @@ const Book = () => {
           value: literarySubgenre.id,
         },
         publishing: { ...model.publishing, value: publishing.id },
+        editionYear: { ...model.editionYear, value: book.edition_year },
+        editionNumber: { ...model.editionNumber, value: book.edition_number },
+        marketingMegas: {
+          ...model.marketingMegas,
+          value: book.marketing_megas,
+        },
+        acquisitionPrice: {
+          ...model.acquisitionPrice,
+          value: Number(book.acquisition_price / 100).toFixed(2),
+        },
+        transportPrice: {
+          ...model.acquisitionPrice,
+          value: Number(book.transport_price / 100).toFixed(2),
+        },
+        difficultPrice: {
+          ...model.difficultPrice,
+          value: Number(book.difficult_price / 100).toFixed(2),
+        },
       });
     },
     [setModel, state.literary_subgenre.data, state.publishing.data]
@@ -120,14 +140,14 @@ const Book = () => {
     (m) => {
       let data = {
         title: m.title.value.trim(),
-        tag: String(m.title.value.trim()).toLowerCase(),
+        tag: String(m.title.value.trim()).toLowerCase().replace(/ /g, "-"),
         edition_year: m.editionYear.value,
         edition_number: m.editionNumber.value,
         acquisition_price: formatPriceToCents(m.acquisitionPrice.value),
         transport_price: formatPriceToCents(m.transportPrice.value),
-        marketing_megas: m.marketingMegas.value,
-        dificult_price: formatPriceToCents(m.dificultPrice.value),
-        amount: m.amount.value,
+        marketing_megas: Number(m.marketingMegas.value),
+        difficult_price: formatPriceToCents(m.difficultPrice.value),
+        amount: Number(m.amount.value),
         literary_subgenre_id: m.literarySubgenre.value,
         publishing_id: m.publishing.value,
       };
@@ -169,18 +189,20 @@ const Book = () => {
   }, [tableActions, screenDispatch]);
 
   const onSearch = useCallback(
-    (value) =>
-      state.book.data.filter(
-        (item) =>
+    (value) => {
+      return state.book.data.filter((item) => {
+        return (
           value === item.title ||
           value === item.edition_year ||
-          //value === item.acquisitionPrice ||
+          Number(value) * 100 >= Number(item.acquisition_price) ||
           //value === item.transportPrice ||
           //value === item.marketingMegas ||
           //value === item.dificultPrice ||
           value === item.literarySubgenre ||
           value === item.publishing
-      ),
+        );
+      });
+    },
     [state.book.data]
   );
 
@@ -202,10 +224,8 @@ const Book = () => {
       },
       ok: {
         label: "Si",
-        press: () => {
-          console.log(model.id.value);
-          onModalOk(worker, model.id.value, resetForm, screenDispatch);
-        },
+        press: () =>
+          onModalOk(worker, model.id.value, resetForm, screenDispatch),
       },
     };
   }, [model.id.value, worker]);
@@ -233,23 +253,31 @@ const Book = () => {
         </View>
       </View>
 
-      {/*<Portal>
-        <Modal
-          visible={screenState.showModalForm}
-          style={{ width: "50%", marginLeft: "auto", marginRight: "auto" }}
-          onDismiss={onDismissModalForm}
-        >
-          <AuthorForm
-            model={model}
-            nameInputRef={nameInputRef}
-            onSave={onSaveForm}
-            countries={state.country.data}
-            provinces={provinces}
-            onDismissModal={onDismissModalForm}
-            onSelectCountryChange={onSelectCountryChange}
-          />
-        </Modal>
-      </Portal>*/}
+      {
+        <Portal>
+          <Modal
+            visible={screenState.showModalForm}
+            style={{
+              width: "70%",
+              marginLeft: "auto",
+              marginRight: "auto",
+              /*height: "50%",
+              marginTop: "auto",
+              marginBottom: "auto",*/
+            }}
+            onDismiss={onDismissModalForm}
+          >
+            <BookForm
+              model={model}
+              titleInputRef={titleInputRef}
+              onSave={onSaveForm}
+              literarysSubgenres={state.literary_subgenre.data}
+              publishings={state.publishing.data}
+              onDismissModal={onDismissModalForm}
+            />
+          </Modal>
+        </Portal>
+      }
 
       <RestElements
         createNew={createNew}

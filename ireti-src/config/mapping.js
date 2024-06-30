@@ -200,12 +200,12 @@ export const book_mapping = {
           "Debe establecer la cantidad de megas invertidos en el marqueting del libro",
       },
       {
-        type: float,
+        type: numbers,
         message: "Debe establecer los megas en el formato correcto",
       },
     ],
   },
-  dificultPrice: {
+  difficultPrice: {
     value: "",
     constraints: [
       {

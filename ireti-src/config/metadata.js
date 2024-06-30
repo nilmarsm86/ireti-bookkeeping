@@ -158,9 +158,10 @@ export const book_metadata = [
   {
     name: "acquisitionPrice",
     title: "Precio de adquisición",
-    show: false,
+    show: true,
     sortDirection: "",
     numeric: false,
+    style: { justifyContent: "center" },
   },
   {
     name: "transportPrice",

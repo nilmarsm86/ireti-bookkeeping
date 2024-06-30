@@ -61,7 +61,7 @@ const Select = ({
           editable={false}
           right={
             <TextInput.Icon
-              icon="chevron-down"
+              icon={visibleDialog ? "chevron-up" : "chevron-down"}
               disabled={disabled}
               onPress={showDialog}
               color={Boolean(error) ? "#b3261e" : ""}

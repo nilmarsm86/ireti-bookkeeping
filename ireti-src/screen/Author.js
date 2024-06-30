@@ -206,10 +206,8 @@ const Author = () => {
       },
       ok: {
         label: "Si",
-        press: () => {
-          console.log(model.id.value);
-          onModalOk(worker, model.id.value, resetForm, screenDispatch);
-        },
+        press: () =>
+          onModalOk(worker, model.id.value, resetForm, screenDispatch),
       },
     };
   }, [model.id.value, worker]);

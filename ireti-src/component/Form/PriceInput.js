@@ -1,29 +1,26 @@
 import { memo } from "react";
 import { HelperText, TextInput } from "react-native-paper";
 
-const Input = memo(
-  ({
-    label,
-    style,
-    icon,
-    value,
-    onChangeText,
-    error,
-    right = null,
-    reference = null,
-  }) => (
+const PriceInput = memo(
+  ({ label, style, value, onChangeText, error, reference = null }) => (
     <>
       <TextInput
         label={label}
         mode="outlined"
         style={style}
-        left={<TextInput.Icon icon={icon} />}
+        left={<TextInput.Icon icon="currency-usd" />}
         error={Boolean(error)}
         value={value}
         onChangeText={onChangeText}
         ref={reference}
         name={label}
-        right={right}
+        onBlur={() => {
+          let number = Number(value);
+          if (isNaN(number)) {
+            number = 0;
+          }
+          onChangeText(number.toFixed(2));
+        }}
       />
       {Boolean(error) && (
         <HelperText type="error" visible={Boolean(error)} padding="none">
@@ -34,4 +31,4 @@ const Input = memo(
   )
 );
 
-export default Input;
+export default PriceInput;
