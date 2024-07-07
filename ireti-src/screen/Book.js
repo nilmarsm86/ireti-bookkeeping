@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { screenReducer } from "../reducer/author";
+import { screenReducer } from "../reducer/book";
 import { book_mapping } from "../config/mapping";
 import { reset } from "../hook/validator";
 import { useFindAll, useManageData, useQuery } from "../hook/sqlite";
@@ -17,18 +17,22 @@ import {
   formatPriceFromCents,
   onCeateNew,
   onModalOk,
+  findAutorsBook,
+  onListDelete,
+  findAuthors,
 } from "../controller/book";
 import { mappingToForm } from "../hook/form";
 import { onModalClose, onRowDelete } from "../controller/controller";
 import TitleSection from "../component/TitleSection";
 import { View } from "react-native";
 import styles from "../style/style";
-import Table from "../component/Table/Table";
+import Table from "../import/Table/Table";
 import { book_metadata } from "../config/metadata";
 import RestElements from "../component/RestElements";
 import { Modal, Portal } from "react-native-paper";
 import BookForm from "../form/BookForm";
 import { onSave } from "../controller/book";
+import BookDetail from "../component/BookDetail";
 
 const Book = () => {
   //reducers
@@ -39,17 +43,30 @@ const Book = () => {
     dismissMsg: "",
     showLoader: false,
     showModalForm: false,
+    showDetail: false,
   });
 
   const [model, setModel] = useState(book_mapping);
   const titleInputRef = useRef(null);
+  const [writers, setWriters] = useState([]);
 
   const resetForm = () => {
     reset(book_mapping);
     setModel({ ...book_mapping });
   };
 
-  useManageData(worker, applyManageBook(dispatch, screenDispatch, resetForm));
+  useManageData(
+    worker,
+    applyManageBook(
+      worker,
+      dispatch,
+      screenDispatch,
+      resetForm,
+      setModel,
+      model,
+      setWriters
+    )
+  );
   useFindAll(worker, "book", state.book.data.length);
   //buscar solo al mostrar el formulario?
   useQuery(
@@ -106,8 +123,53 @@ const Book = () => {
           value: Number(book.difficult_price / 100).toFixed(2),
         },
       });
+
+      findAutorsBook(worker, book.id);
     },
-    [setModel, state.literary_subgenre.data, state.publishing.data]
+    [setModel, state.literary_subgenre.data, state.publishing.data, worker]
+  );
+
+  const tableActionsDetail = useCallback(
+    (book) => {
+      let model = mappingToForm(book_mapping, book);
+
+      const literarySubgenre = state.literary_subgenre.data.find(
+        (ls) => ls.name === book.literarySubgenre
+      );
+      const publishing = state.publishing.data.find(
+        (p) => p.name === book.publishing
+      );
+
+      setModel({
+        ...model,
+        literarySubgenre: {
+          ...model.literarySubgenre,
+          value: literarySubgenre.name,
+        },
+        publishing: { ...model.publishing, value: publishing.name },
+        editionYear: { ...model.editionYear, value: book.edition_year },
+        editionNumber: { ...model.editionNumber, value: book.edition_number },
+        marketingMegas: {
+          ...model.marketingMegas,
+          value: book.marketing_megas,
+        },
+        acquisitionPrice: {
+          ...model.acquisitionPrice,
+          value: Number(book.acquisition_price / 100).toFixed(2),
+        },
+        transportPrice: {
+          ...model.acquisitionPrice,
+          value: Number(book.transport_price / 100).toFixed(2),
+        },
+        difficultPrice: {
+          ...model.difficultPrice,
+          value: Number(book.difficult_price / 100).toFixed(2),
+        },
+      });
+
+      findAutorsBook(worker, book.id);
+    },
+    [setModel, state.literary_subgenre.data, state.publishing.data, worker]
   );
 
   //transform province.country_id to name
@@ -126,12 +188,9 @@ const Book = () => {
       }
 
       book.fullTitle = book.title + " ";
-      //book.fullTitle = <Badge>{book.amount}</Badge>;
-
       book.acquisitionPrice = formatPriceFromCents(book.acquisition_price);
       book.transportPrice = formatPriceFromCents(book.transport_price);
       book.difficultPrice = formatPriceFromCents(book.difficult_price);
-
       return book;
     });
   };
@@ -159,39 +218,17 @@ const Book = () => {
         state.book.data,
         screenDispatch,
         "book",
-        data
+        data,
+        state.setting.data
       );
     },
-    [state.book.data, worker]
+    [state.book.data, worker, state.setting.data]
   );
 
-  const tableButtons = useMemo(() => {
-    return {
-      detail: {
-        icon: "file-document",
-        press: (item) => {
-          //mostrar detalle del libro en un modal
-          alert("Que hacer para mostrar el detalle");
-        },
-      },
-      edit: {
-        icon: "pencil",
-        press: (item) => {
-          screenDispatch({ type: "SHOW_MODAL_FORM" });
-          tableActions(item);
-        },
-      },
-      delete: {
-        icon: "delete",
-        press: (item) => onRowDelete(screenDispatch, tableActions, item),
-      },
-    };
-  }, [tableActions, screenDispatch]);
-
   const onSearch = useCallback(
-    (value) => {
-      return state.book.data.filter((item) => {
-        return (
+    (value) =>
+      state.book.data.filter(
+        (item) =>
           value === item.title ||
           value === item.edition_year ||
           Number(value) * 100 >= Number(item.acquisition_price) ||
@@ -200,21 +237,54 @@ const Book = () => {
           //value === item.dificultPrice ||
           value === item.literarySubgenre ||
           value === item.publishing
-        );
-      });
-    },
+      ),
     [state.book.data]
   );
 
-  const createNew = useCallback(
-    () => onCeateNew(resetForm, titleInputRef, screenDispatch),
-    []
-  );
+  const createNew = useCallback(() => {
+    onCeateNew(resetForm, titleInputRef, screenDispatch);
+    findAuthors(worker);
+  }, [worker]);
+
+  /*************************************Dissmis**********************/
 
   const onDissmisDialog = useCallback(
     () => onModalClose(resetForm, screenDispatch),
     []
   );
+
+  const onDismissModalForm = useCallback(() => {
+    resetForm();
+    screenDispatch({ type: "HIDE_MODAL_FORM" });
+  }, []);
+
+  /*************************************BUTTONS**********************/
+
+  const tableButtons = useMemo(() => {
+    return {
+      detail: {
+        icon: "file-document",
+        press: (item) => {
+          findAuthors(worker);
+          tableActionsDetail(item);
+          screenDispatch({ type: "SHOW_MODAL_DETAIL_AUTHOR" });
+          //console.log(item);
+        },
+      },
+      edit: {
+        icon: "pencil",
+        press: (item) => {
+          screenDispatch({ type: "SHOW_MODAL_FORM" });
+          findAuthors(worker);
+          tableActions(item);
+        },
+      },
+      delete: {
+        icon: "delete",
+        press: (item) => onRowDelete(screenDispatch, tableActions, item),
+      },
+    };
+  }, [tableActions, screenDispatch, worker, tableActionsDetail]);
 
   const dialogButtons = useMemo(() => {
     return {
@@ -229,11 +299,6 @@ const Book = () => {
       },
     };
   }, [model.id.value, worker]);
-
-  const onDismissModalForm = () => {
-    resetForm();
-    screenDispatch({ type: "HIDE_MODAL_FORM" });
-  };
 
   return (
     <>
@@ -252,7 +317,6 @@ const Book = () => {
           />
         </View>
       </View>
-
       {
         <Portal>
           <Modal
@@ -261,9 +325,6 @@ const Book = () => {
               width: "70%",
               marginLeft: "auto",
               marginRight: "auto",
-              /*height: "50%",
-              marginTop: "auto",
-              marginBottom: "auto",*/
             }}
             onDismiss={onDismissModalForm}
           >
@@ -274,11 +335,13 @@ const Book = () => {
               literarysSubgenres={state.literary_subgenre.data}
               publishings={state.publishing.data}
               onDismissModal={onDismissModalForm}
+              onListDelete={onListDelete}
+              worker={worker}
+              writers={writers}
             />
           </Modal>
         </Portal>
       }
-
       <RestElements
         createNew={createNew}
         screenState={screenState}
@@ -288,6 +351,14 @@ const Book = () => {
         onDissmisDialog={onDissmisDialog}
         dialogButtons={dialogButtons}
       />
+
+      {screenState.showDetail && (
+        <BookDetail
+          book={model}
+          visible={screenState.showDetail}
+          setVisible={screenDispatch}
+        />
+      )}
     </>
   );
 };

@@ -19,6 +19,14 @@ export const screenReducer = (state, action) => {
       return { ...state, showModalForm: true };
     case "HIDE_MODAL_FORM":
       return { ...state, showModalForm: false };
+    case "SHOW_MODAL_DETAIL_AUTHOR":
+      return { ...state, showDetail: true };
+    case "HIDE_MODAL_DETAIL_AUTHOR":
+      return { ...state, showDetail: false };
+    /*case "SHOW_MODAL_CONFIRM_DELETE_AUTHOR":
+      return { ...state, showModalConfirmDeleteAuthor: true };
+    case "HIDE_MODAL_CONFIRM_DELETE_AUTHOR":
+      return { ...state, showModalConfirmDeleteAuthor: false };*/
     default:
       return state;
   }

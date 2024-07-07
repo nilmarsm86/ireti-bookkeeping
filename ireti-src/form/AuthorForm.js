@@ -4,6 +4,7 @@ import Input from "../component/Form/Input";
 import RadioGroup from "../component/Form/RadioGroup";
 import Select from "../component/Form/Select";
 import { useDataField } from "../hook/form";
+import CheckGroup from "../component/Form/CheckGroup";
 
 const AuthorForm = ({
   model,

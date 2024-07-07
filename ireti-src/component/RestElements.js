@@ -1,8 +1,8 @@
 import { memo, useCallback } from "react";
-import Dialog from "./Dialog";
-import DismissAlert from "./DismissAlert";
+import Dialog from "../import/Dialog";
+import DismissAlert from "../import/DismissAlert";
 import FabNew from "./FabNew";
-import Loader from "./Loader";
+import Loader from "../import/Loader";
 
 const RestElements = memo(
   ({

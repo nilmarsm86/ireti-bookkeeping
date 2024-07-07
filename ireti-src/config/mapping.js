@@ -250,4 +250,13 @@ export const book_mapping = {
       },
     ],
   },
+  authors: {
+    value: [],
+    constraints: [
+      {
+        type: empty,
+        message: "Un libro debe tener al menos un autor.",
+      },
+    ],
+  },
 };

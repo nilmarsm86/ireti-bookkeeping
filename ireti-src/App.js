@@ -20,7 +20,7 @@ import { navigationReducer } from "./reducer/navigation";
 
 //hooks
 import { useCombinedReducers } from "./hook/reducer";
-import { useConnectDb } from "./hook/sqlite";
+import { useConnectDb, useFindAll, useQuery } from "./hook/sqlite";
 
 //reducers
 import { sqlReducer } from "./reducer/sqlite";
@@ -41,6 +41,9 @@ import { sqlReducerAuthor } from "./reducer/author";
 import { sqlReducerPublishing } from "./reducer/publishing";
 import Publishing from "./screen/Publishing";
 import { sqlReducerBook } from "./reducer/book";
+import { sqlReducerSetting } from "./reducer/setting";
+
+import * as controller from "./controller/controller";
 
 const theme = {
   ...DefaultTheme,
@@ -166,15 +169,27 @@ CREATE TABLE IF NOT EXISTS sale (
                     NOT NULL
 );
 
+CREATE TABLE setting (
+    id    INTEGER PRIMARY KEY AUTOINCREMENT
+                  UNIQUE
+                  NOT NULL,
+    key   TEXT    UNIQUE
+                  NOT NULL,
+    value TEXT
+);
+
 -- Example data
+
+INSERT INTO setting (key, value) VALUES ('number_books_purchased', 0);
+INSERT INTO setting (key, value) VALUES ('number_books_sold', 0);
 
 INSERT INTO publishing (name) VALUES ('editorial1');
 INSERT INTO publishing (name) VALUES ('editorial2');
 INSERT INTO publishing (name) VALUES ('editorial3');
 
-INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre1',1);
-INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre2',2);
-INSERT INTO literary_subgenre (name,num) VALUES ('literary_subgenre3',3);
+INSERT INTO literary_subgenre (name, num) VALUES ('literary_subgenre1',1);
+INSERT INTO literary_subgenre (name, num) VALUES ('literary_subgenre2',2);
+INSERT INTO literary_subgenre (name, num) VALUES ('literary_subgenre3',3);
 
 INSERT INTO country (name) VALUES ('country1');
 INSERT INTO country (name) VALUES ('country2');
@@ -188,7 +203,10 @@ INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author1 Sec
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author2', 'f', 1, 2);
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author3', 'm', 2, 3);
 
-INSERT INTO book (title, tag, edition_year, edition_number, acquisition_price, transport_price, marketing_megas, difficult_price, amount, literary_subgenre_id, publishing_id) VALUES ('Titulo del libro', 'titulo-del-libro', 2024, 1, 500, 100, 0, 200, 1, 1, 1);
+INSERT INTO book (title, tag, edition_year, edition_number, acquisition_price, transport_price, marketing_megas, difficult_price, amount, literary_subgenre_id, publishing_id) VALUES ('Titulo del libro', 'titulo-del-libro', 2024, 1, 500, 100, 1, 200, 1, 1, 1);
+
+INSERT INTO book_author (book_id, author_id) VALUES (1, 1);
+INSERT INTO book_author (book_id, author_id) VALUES (1, 2);
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
@@ -266,21 +284,37 @@ const App = () => {
     country: useReducer(sqlReducerCountry, { data: [] }),
     province: useReducer(sqlReducerProvince, { data: [] }),
     publishing: useReducer(sqlReducerPublishing, { data: [] }),
+    setting: useReducer(sqlReducerSetting, { data: [] }),
   };
 
   const [state, dispatch] = useCombinedReducers(store);
   const [loading, setLoading] = useState(true);
 
-  const onConnect = useCallback((event, worker, setConnect) => {
-    worker.onmessage = (event) => {
-      if (event.data.action === "query") {
-        setLoading(false);
-      }
-    };
-    worker.postMessage({ action: "query", args: [SCHEMA] });
-    setConnect(event.data.result);
-  }, []);
+  const onConnect = useCallback(
+    (event, worker, setConnect) => {
+      worker.onmessage = (event) => {
+        if (event.data.action === "query") {
+          setLoading(false);
+        }
+
+        if (event.data.action === "allSettings") {
+          controller.simpleDispatch(event, dispatch, "select_setting");
+        }
+      };
+      worker.postMessage({ action: "query", args: [SCHEMA] });
+      setConnect(event.data.result);
+    },
+    [dispatch]
+  );
   const worker = useConnectDb("/mydb.sqlite3", "db.js", onConnect);
+
+  useQuery(
+    worker,
+    "allSettings",
+    "SELECT * FROM setting",
+    {},
+    state.setting.data.length
+  );
 
   return (
     <StrictMode>
