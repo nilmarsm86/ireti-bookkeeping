@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import Form from "../component/Form/Form";
-import Input from "../component/Form/Input";
-import RadioGroup from "../component/Form/RadioGroup";
-import Select from "../component/Form/Select";
+import Form from "../import/Form/Form";
+import Input from "../import/Form/Input";
+import RadioGroup from "../import/Form/RadioGroup";
+import Select from "../import/Form/Select";
 import { useDataField } from "../hook/form";
-import CheckGroup from "../component/Form/CheckGroup";
 
 const AuthorForm = ({
   model,

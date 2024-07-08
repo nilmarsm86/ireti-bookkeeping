@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo } from "react";
 import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useManageData, useFindAll, useQuery } from "../hook/sqlite";
-import Table from "./Table/Table";
+import Table from "../import/Table/Table";
 import { applyManageProvince } from "../controller/province";
 import ProvinceForm from "../form/ProvinceForm";
 import { province_metadata } from "../config/metadata";

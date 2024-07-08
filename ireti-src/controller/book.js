@@ -67,6 +67,21 @@ export const applyManageBook = (
 export const onModalOk = (worker, id, resetForm, screenDispatch) => {
   //TODO: buscar si hay libros que dependen de este genero literario en caso de que si mostrar mensaje diciendo esto
   console.warn("porque es que no se debe borrar un libros del sistema");
+  //borrar de la tabla book_author
+  worker.postMessage({
+    action: "removeBookAuthor",
+    args: [
+      `DELETE FROM book_author
+      WHERE book_id = :book;
+;
+`,
+      { book: id },
+    ],
+  });
+  //deberia ser borrado solo cuando se haya confirmado el borrado de book_author
+  //para ello se debe establecer el RETURNNING * en el borrado de book_author
+  //con en la confirmacion de borrado de book_author, sacar el id del libro
+  //con el id del libro borrar el libro
   worker.postMessage({
     action: "delete",
     args: ["book", { id: id }],

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Form from "../component/Form/Form";
-import Input from "../component/Form/Input";
-import Select from "../component/Form/Select";
+import Form from "../import/Form/Form";
+import Input from "../import/Form/Input";
+import Select from "../import/Form/Select";
 import { useDataField } from "../hook/form";
 
 const ProvinceForm = ({ model, nameInputRef, onSave, countries }) => {

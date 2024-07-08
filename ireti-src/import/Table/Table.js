@@ -3,7 +3,6 @@ import { Card, DataTable } from "react-native-paper";
 import TableHeader from "./TableHeader";
 import TablePagination from "./TablePagination";
 import TableRow from "./TableRow";
-
 import TableFilter from "./TableFilter";
 
 const Table = memo(({ metadata, data, buttons = {}, onSearch = () => {} }) => {

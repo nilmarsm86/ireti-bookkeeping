@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { DispatchContext } from "../context/app";
 import { useFindAll, useManageData } from "../hook/sqlite";
 import { applyManageCountry } from "../controller/country";
-import Table from "./Table/Table";
+import Table from "../import/Table/Table";
 import CountryForm from "../form/CountryForm";
 import { country_metadata } from "../config/metadata";
 import { onRowDelete, onSave } from "../controller/controller";

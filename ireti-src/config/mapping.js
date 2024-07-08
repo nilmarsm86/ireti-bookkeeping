@@ -1,11 +1,4 @@
-import {
-  empty,
-  float,
-  letters,
-  numbers,
-  price,
-  unique,
-} from "../hook/validator";
+import { empty, letters, numbers, price, unique } from "../hook/validator";
 
 export const literary_subgenre_mapping = {
   id: { value: null },

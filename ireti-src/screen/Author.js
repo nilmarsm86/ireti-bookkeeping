@@ -8,7 +8,7 @@ import {
 } from "react";
 import { View } from "react-native";
 //components
-import Table from "../component/Table/Table";
+import Table from "../import/Table/Table";
 import TitleSection from "../component/TitleSection";
 import RestElements from "../component/RestElements";
 

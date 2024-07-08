@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
-import Form from "../component/Form/Form";
-import Input from "../component/Form/Input";
+import Form from "../import/Form/Form";
+import Input from "../import/Form/Input";
 import { useDataField } from "../hook/form";
 
 const LiterarySubgenreForm = memo(({ model, nameInputRef, onSave }) => {

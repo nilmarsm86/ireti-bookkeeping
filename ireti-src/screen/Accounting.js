@@ -1,4 +1,3 @@
-import { Text } from "react-native";
 import TitleSection from "../component/TitleSection";
 
 const Accounting = () => {
