@@ -20,7 +20,7 @@ export const sqlReducerSetting = (state, action) => {
   }
 };
 
-/*export const screenReducer = (state, action) => {
+export const screenReducer = (state, action) => {
   switch (action.type) {
     case "AFTER_SAVE":
       return {
@@ -40,4 +40,4 @@ export const sqlReducerSetting = (state, action) => {
     default:
       return state;
   }
-};*/
+};

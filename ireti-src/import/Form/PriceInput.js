@@ -2,7 +2,15 @@ import { memo } from "react";
 import { HelperText, TextInput } from "react-native-paper";
 
 const PriceInput = memo(
-  ({ label, style, value, onChangeText, error, reference = null }) => (
+  ({
+    label,
+    style,
+    value,
+    onChangeText,
+    error,
+    reference = null,
+    editable = true,
+  }) => (
     <>
       <TextInput
         label={label}
@@ -21,6 +29,7 @@ const PriceInput = memo(
           }
           onChangeText(number.toFixed(2));
         }}
+        editable={editable}
       />
       {Boolean(error) && (
         <HelperText type="error" visible={Boolean(error)} padding="none">

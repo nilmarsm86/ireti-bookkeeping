@@ -15,7 +15,7 @@ import {
   applyManageBook,
   formatPriceToCents,
   formatPriceFromCents,
-  onCeateNew,
+  onCreateNew,
   onModalOk,
   findAutorsBook,
   onListDelete,
@@ -33,6 +33,7 @@ import { Modal, Portal } from "react-native-paper";
 import BookForm from "../form/BookForm";
 import { onSave } from "../controller/book";
 import BookDetail from "../component/BookDetail";
+import Alert from "../import/Dialog/Alert";
 
 const Book = () => {
   //reducers
@@ -44,7 +45,11 @@ const Book = () => {
     showLoader: false,
     showModalForm: false,
     showDetail: false,
+    showExistenceAlert: false,
+    alertMsg: "",
   });
+
+  console.log(state.book.data);
 
   const [model, setModel] = useState(book_mapping);
   const titleInputRef = useRef(null);
@@ -84,6 +89,14 @@ const Book = () => {
     "SELECT * FROM literary_subgenre",
     {},
     state.literary_subgenre.data.length
+  );
+
+  useQuery(
+    worker,
+    "allSetting",
+    "SELECT * FROM setting",
+    {},
+    state.setting.data.length
   );
 
   const tableActions = useCallback(
@@ -153,12 +166,16 @@ const Book = () => {
           ...model.marketingMegas,
           value: book.marketing_megas,
         },
+        marketingPrice: {
+          ...model.marketingPrice,
+          value: Number(book.marketing_price / 100).toFixed(2),
+        },
         acquisitionPrice: {
           ...model.acquisitionPrice,
           value: Number(book.acquisition_price / 100).toFixed(2),
         },
         transportPrice: {
-          ...model.acquisitionPrice,
+          ...model.transportPrice,
           value: Number(book.transport_price / 100).toFixed(2),
         },
         difficultPrice: {
@@ -197,6 +214,10 @@ const Book = () => {
 
   const onSaveForm = useCallback(
     (m) => {
+      const megasToMoneySetting = state.setting.data.find(
+        (s) => s.key === "megas_to_money"
+      );
+
       let data = {
         title: m.title.value.trim(),
         tag: String(m.title.value.trim()).toLowerCase().replace(/ /g, "-"),
@@ -205,6 +226,8 @@ const Book = () => {
         acquisition_price: formatPriceToCents(m.acquisitionPrice.value),
         transport_price: formatPriceToCents(m.transportPrice.value),
         marketing_megas: Number(m.marketingMegas.value),
+        marketing_price:
+          Number(m.marketingMegas.value) * Number(megasToMoneySetting.value),
         difficult_price: formatPriceToCents(m.difficultPrice.value),
         amount: Number(m.amount.value),
         literary_subgenre_id: m.literarySubgenre.value,
@@ -242,9 +265,21 @@ const Book = () => {
   );
 
   const createNew = useCallback(() => {
-    onCeateNew(resetForm, titleInputRef, screenDispatch);
+    /*const transportPriceSetting = state.setting.data.find(
+      (s) => s.key === "transport_price"
+    );*/
+
+    /*setModel({
+      ...model,
+      transportPrice: {
+        ...model.transportPrice,
+        value: Number(transportPriceSetting.value / 100).toFixed(2), //el valor del setting de transporte
+      },
+    });*/
+
+    onCreateNew(resetForm, titleInputRef, screenDispatch);
     findAuthors(worker);
-  }, [worker]);
+  }, [worker, state.setting.data]);
 
   /*************************************Dissmis**********************/
 
@@ -338,6 +373,7 @@ const Book = () => {
               onListDelete={onListDelete}
               worker={worker}
               writers={writers}
+              settings={state.setting.data}
             />
           </Modal>
         </Portal>
@@ -357,8 +393,19 @@ const Book = () => {
           book={model}
           visible={screenState.showDetail}
           setVisible={screenDispatch}
+          settings={state.setting.data}
         />
       )}
+
+      <Alert
+        title="Alerta"
+        label={screenState.alertMsg}
+        visible={screenState.showExistenceAlert}
+        button={{
+          label: "Aceptar",
+          press: () => screenDispatch({ type: "HIDE_ALERT" }),
+        }}
+      />
     </>
   );
 };

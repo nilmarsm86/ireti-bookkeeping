@@ -35,6 +35,11 @@ export const navigationReducer = (state, action) => {
         ...state,
         screen: "country",
       };
+    case "GO_SETTING":
+      return {
+        ...state,
+        screen: "setting",
+      };
     default:
       return state;
   }

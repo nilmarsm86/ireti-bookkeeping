@@ -57,6 +57,9 @@ export const applyManageBook = (
             payload: e.data.result[0],
           });
           break;
+        case "allSetting":
+          controller.simpleDispatch(e, dispatch, "select_setting");
+          break;
         default:
           break;
       }
@@ -90,7 +93,7 @@ export const onModalOk = (worker, id, resetForm, screenDispatch) => {
   controller.onModalClose(resetForm, screenDispatch);
 };
 
-export const onCeateNew = (resetForm, titleInputRef, screenDispatch) => {
+export const onCreateNew = (resetForm, titleInputRef, screenDispatch) => {
   screenDispatch({ type: "SHOW_MODAL_FORM" });
   resetForm();
   if (titleInputRef.current) {
@@ -119,9 +122,10 @@ export const onSave = (
   if (isValid(model, setModel, existData)) {
     try {
       let hasId = model.id.value;
+      let existence = null;
 
       if (model.id.value === null) {
-        const existence = existData.find((item) => {
+        existence = existData.find((item) => {
           return (
             data.tag === item.tag &&
             data.edition_year === item.edition_year &&
@@ -132,6 +136,10 @@ export const onSave = (
         });
 
         if (existence) {
+          //aumentar el setting number_books_purchased
+          //tener en cuenta que esta cantidad puede haber disminuido
+          increaseNumberBooksPurchased(setting, data, worker);
+
           data.amount = Number(data.amount) + Number(existence.amount);
           data.acquisition_price =
             Number(data.acquisition_price) +
@@ -143,10 +151,11 @@ export const onSave = (
           data.marketing_megas =
             Number(data.marketing_megas) + Number(existence.marketing_megas);
           hasId = existence.id;
-
-          alert(
-            "Ya existe en el sistema un libro con estas catacterísticas, se incrementará su cantidad."
-          );
+          screenDispatch({
+            type: "SHOW_ALERT",
+            payload:
+              "Ya existe en el sistema un libro con estas catacterísticas, se incrementará su cantidad.",
+          });
         }
       }
 
@@ -159,12 +168,22 @@ export const onSave = (
         //aumentar el setting number_books_purchased
         increaseNumberBooksPurchased(setting, data, worker);
       } else {
+        /*if (
+          existence === null &&
+          Number(oldModel.amount.value) > Number(data.amount)
+        ) {
+          screenDispatch({
+            type: "SHOW_ALERT",
+            payload:
+              "La cantidad de libros establecida no debe ser menor a la anterior.",
+          });
+          return;
+        }*/
+
         worker.postMessage({
           action: "update",
           args: [table, { ...data, id: hasId }, { id: hasId }],
         });
-        //aumentar el setting number_books_purchased solo si la cantidad a cambiado
-        //tener en cuenta que esta cantidad puede haber disminuido
       }
       screenDispatch({ type: "SHOW_LOADER" });
     } catch (e) {
@@ -173,12 +192,14 @@ export const onSave = (
   }
 };
 
+//incremetar cantidad de libros comprados
 function increaseNumberBooksPurchased(setting, data, worker) {
   let numberBooksPurchased = setting.find((item) => {
     return item.key === "number_books_purchased";
   });
 
   let newAmount = Number(numberBooksPurchased.value) + data.amount;
+  console.log(newAmount);
 
   worker.postMessage({
     action: "increaseNumberBooksPurchased",
@@ -278,7 +299,7 @@ function update(screenDispatch, model, e, worker) {
     let data = { book_id: e.data.result[0].id };
     if (!author.author_id) {
       data["author_id"] = author.id;
-      addAuthorBook(worker, data);
+      //addAuthorBook(worker, data);
     }
   });
 }

@@ -20,10 +20,9 @@ import { navigationReducer } from "./reducer/navigation";
 
 //hooks
 import { useCombinedReducers } from "./hook/reducer";
-import { useConnectDb, useFindAll, useQuery } from "./hook/sqlite";
+import { useConnectDb, useQuery } from "./hook/sqlite";
 
 //reducers
-import { sqlReducer } from "./reducer/sqlite";
 
 //components
 import TopBar from "./component/TopBar";
@@ -44,6 +43,7 @@ import { sqlReducerBook } from "./reducer/book";
 import { sqlReducerSetting } from "./reducer/setting";
 
 import * as controller from "./controller/controller";
+import Setting from "./screen/Setting";
 
 const theme = {
   ...DefaultTheme,
@@ -89,6 +89,7 @@ CREATE TABLE book (
     acquisition_price    INTEGER NOT NULL,
     transport_price      INTEGER NOT NULL,
     marketing_megas      REAL    NOT NULL,
+    marketing_price      INTEGER NOT NULL,
     difficult_price      INTEGER NOT NULL,
     amount                       NOT NULL
                                  DEFAULT (1),
@@ -182,6 +183,8 @@ CREATE TABLE setting (
 
 INSERT INTO setting (key, value) VALUES ('number_books_purchased', 0);
 INSERT INTO setting (key, value) VALUES ('number_books_sold', 0);
+INSERT INTO setting (key, value) VALUES ('transport_price', 100);
+INSERT INTO setting (key, value) VALUES ('megas_to_money', 200);
 
 INSERT INTO publishing (name) VALUES ('editorial1');
 INSERT INTO publishing (name) VALUES ('editorial2');
@@ -203,7 +206,7 @@ INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author1 Sec
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author2', 'f', 1, 2);
 INSERT INTO author (name, gender, country_id,  province_id) VALUES ('Author3', 'm', 2, 3);
 
-INSERT INTO book (title, tag, edition_year, edition_number, acquisition_price, transport_price, marketing_megas, difficult_price, amount, literary_subgenre_id, publishing_id) VALUES ('Titulo del libro', 'titulo-del-libro', 2024, 1, 500, 100, 1, 200, 1, 1, 1);
+INSERT INTO book (title, tag, edition_year, edition_number, acquisition_price, transport_price, marketing_megas, marketing_price, difficult_price, amount, literary_subgenre_id, publishing_id) VALUES ('Titulo del libro', 'titulo-del-libro', 2024, 1, 500, 100, 1, 2, 200, 1, 1, 1);
 
 INSERT INTO book_author (book_id, author_id) VALUES (1, 1);
 INSERT INTO book_author (book_id, author_id) VALUES (1, 2);
@@ -335,6 +338,7 @@ const App = () => {
             {loading === false && (
               <>
                 <TopBar />
+
                 <View style={{ flex: 1, padding: 10 }}>
                   {state.navigation.screen === "accounting" && <Accounting />}
                   {state.navigation.screen === "book" && <Book />}
@@ -344,6 +348,7 @@ const App = () => {
                   )}
                   {state.navigation.screen === "publishing" && <Publishing />}
                   {state.navigation.screen === "country" && <Localization />}
+                  {state.navigation.screen === "setting" && <Setting />}
                 </View>
               </>
             )}

@@ -5,7 +5,7 @@ import TablePagination from "./TablePagination";
 import TableRow from "./TableRow";
 import TableFilter from "./TableFilter";
 
-const Table = memo(({ metadata, data, buttons = {}, onSearch = () => {} }) => {
+const Table = memo(({ metadata, data, buttons = {}, onSearch = null }) => {
   const [filterData, setFilterData] = useState(data);
   const [page, setPage] = useState(0);
   const numberOfItemsPerPageList = [5, 10, 15, 20, 50, 100];
@@ -30,11 +30,14 @@ const Table = memo(({ metadata, data, buttons = {}, onSearch = () => {} }) => {
 
   return (
     <>
-      <TableFilter
-        data={data}
-        setFilterData={setFilterData}
-        onSearch={onSearch}
-      />
+      {onSearch !== null && (
+        <TableFilter
+          data={data}
+          setFilterData={setFilterData}
+          onSearch={onSearch}
+        />
+      )}
+
       <Card>
         <DataTable>
           <TableHeader metadata={metadata} buttons={buttons} />

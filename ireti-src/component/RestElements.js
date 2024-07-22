@@ -6,7 +6,7 @@ import Loader from "../import/Loader";
 
 const RestElements = memo(
   ({
-    createNew,
+    createNew = null,
     screenState,
     screenDispatch,
     dialogTitle,
@@ -20,7 +20,7 @@ const RestElements = memo(
     );
     return (
       <>
-        <FabNew onPress={createNew} />
+        {createNew !== null && <FabNew onPress={createNew} />}
 
         <DismissAlert
           label={screenState.dismissMsg}
@@ -28,13 +28,15 @@ const RestElements = memo(
           visible={screenState.showDismissAlert}
         />
 
-        <Dialog
-          title={dialogTitle}
-          label={dialogLabel}
-          visible={screenState.showModalAlert}
-          onDismiss={onDissmisDialog}
-          buttons={dialogButtons}
-        />
+        {dialogTitle && dialogLabel && onDissmisDialog && dialogButtons && (
+          <Dialog
+            title={dialogTitle}
+            label={dialogLabel}
+            visible={screenState.showModalAlert}
+            onDismiss={onDissmisDialog}
+            buttons={dialogButtons}
+          />
+        )}
 
         <Loader visible={screenState.showLoader} />
       </>

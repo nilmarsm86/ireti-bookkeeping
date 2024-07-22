@@ -21,3 +21,7 @@ export const onGoPublishing = (dispatch) => {
 export const onGoCountry = (dispatch) => {
   dispatch({ type: "GO_COUNTRY" });
 };
+
+export const onGoSetting = (dispatch) => {
+  dispatch({ type: "GO_SETTING" });
+};

@@ -43,6 +43,14 @@ export function unique(model, fieldName, message, data) {
   });
 }
 
+export function biggerThan(field, message, compareValue) {
+  validate(
+    field,
+    Number(field.value <= Number(compareValue)),
+    message.replace(/%compareValue%/g, compareValue)
+  );
+}
+
 export function reset(model) {
   Object.keys(model).forEach((item) => {
     model[item].error = false;
@@ -52,9 +60,15 @@ export function reset(model) {
 function apply(item, model, key, data) {
   if (item.type.name === "unique") {
     item.type(model, key, item["message"], data);
-  } else {
-    item.type(model[key], item["message"]);
+    return;
   }
+
+  if (item.type.name === "biggerThan") {
+    item.type(model[key], item["message"], item.compareValue);
+    return;
+  }
+
+  item.type(model[key], item["message"]);
 }
 
 //validacion de modelo

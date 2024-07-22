@@ -178,6 +178,13 @@ export const book_metadata = [
     numeric: false,
   },
   {
+    name: "marketing_price",
+    title: "Precio en marketing",
+    show: false,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
     name: "difficultPrice",
     title: "Precio de dificultad",
     show: false,
@@ -202,6 +209,30 @@ export const book_metadata = [
   {
     name: "publishing",
     title: "Editorial",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+];
+
+export const setting_metadata = [
+  {
+    name: "id",
+    title: "ID",
+    show: false,
+    sortDirection: "descending",
+    numeric: false,
+  },
+  {
+    name: "label",
+    title: "Clave",
+    show: true,
+    sortDirection: "",
+    numeric: false,
+  },
+  {
+    name: "valueTransform",
+    title: "Valor",
     show: true,
     sortDirection: "",
     numeric: false,

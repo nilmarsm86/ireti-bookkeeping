@@ -1,5 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Button, Card, Dialog, Portal, Text } from "react-native-paper";
+import PriceCard from "./PriceCard";
+import Info from "./Info";
 
 const OWNER_BENEFIT = 50;
 const LITTLE_BOX_BENEFIT = 30;
@@ -7,38 +9,7 @@ const BENEFIT = 80; //% de ganancia (50% de ganancia vendedora y 30% para la caj
 //fondo de la libreria es el 20%?
 const ONAT = 15; //%
 
-function Info({ label, content }) {
-  return (
-    <View style={styles.view}>
-      <Text variant="titleMedium" style={styles.label}>
-        {label}:
-      </Text>
-
-      <Text variant="bodyMedium" style={styles.content}>
-        {content}
-      </Text>
-    </View>
-  );
-}
-
-function PriceCard({ label, value, book }) {
-  return (
-    <View style={{ flex: "auto", width: "20%", gap: 10 }}>
-      <Card mode="elevated">
-        <Card.Title
-          subtitleStyle={
-            book.amount.value > 0 ? { color: "green" } : { color: "red" }
-          }
-          title={String(label + ":").toUpperCase()}
-          subtitle={"$ " + Number(value / 100).toFixed(2)}
-        />
-      </Card>
-    </View>
-  );
-}
-
-const BookDetail = ({ book, visible, setVisible }) => {
-  console.log(book);
+const BookDetail = ({ book, visible, setVisible, settings }) => {
   /**
    * 15%
    * @returns
@@ -85,7 +56,7 @@ const BookDetail = ({ book, visible, setVisible }) => {
     return (
       book.acquisition_price.value +
       book.transport_price.value +
-      /*this.#megasToMoney()*/ 0 +
+      megasToMoney(book) +
       book.difficult_price.value
     );
   }
@@ -95,8 +66,9 @@ const BookDetail = ({ book, visible, setVisible }) => {
    * @returns Number
    */
   function megasToMoney(book) {
-    //TODO: definir como transformar los megas en dinero
-    return book.marketing_megas.value;
+    const megasToMoney = settings.find((s) => s.key === "megas_to_money");
+
+    return megasToMoney.value * book.marketing_megas.value;
   }
 
   return (
@@ -153,7 +125,12 @@ const BookDetail = ({ book, visible, setVisible }) => {
               <Info label="Editorial" content={book.publishing.value} />
               <Info
                 label="Megas en marketing"
-                content={book.marketingMegas.value}
+                content={
+                  book.marketingMegas.value +
+                  "Mb ($ " +
+                  book.marketingPrice.value +
+                  ")"
+                }
               />
               <Info
                 label="Precio de adquisición"

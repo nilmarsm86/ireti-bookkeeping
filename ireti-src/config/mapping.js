@@ -1,4 +1,11 @@
-import { empty, letters, numbers, price, unique } from "../hook/validator";
+import {
+  biggerThan,
+  empty,
+  letters,
+  numbers,
+  price,
+  unique,
+} from "../hook/validator";
 
 export const literary_subgenre_mapping = {
   id: { value: null },
@@ -196,7 +203,16 @@ export const book_mapping = {
         type: numbers,
         message: "Debe establecer los megas en el formato correcto",
       },
+      {
+        type: biggerThan,
+        message: "El valor debe ser mayor que %compareValue%",
+        compareValue: 0,
+      },
     ],
+  },
+  marketingPrice: {
+    value: "",
+    constraints: [],
   },
   difficultPrice: {
     value: "",
@@ -249,6 +265,28 @@ export const book_mapping = {
       {
         type: empty,
         message: "Un libro debe tener al menos un autor.",
+      },
+    ],
+  },
+};
+
+export const setting_mapping = {
+  id: { value: null },
+  key: {
+    value: "",
+    constraints: [
+      {
+        type: unique,
+        message: "Ya una clave d configuración con este nombre!",
+      },
+    ],
+  },
+  value: {
+    value: "",
+    constraints: [
+      {
+        type: empty,
+        message: "El género literario debe tener un número identificador!",
       },
     ],
   },

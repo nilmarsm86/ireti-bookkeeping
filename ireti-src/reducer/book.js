@@ -23,10 +23,10 @@ export const screenReducer = (state, action) => {
       return { ...state, showDetail: true };
     case "HIDE_MODAL_DETAIL_AUTHOR":
       return { ...state, showDetail: false };
-    /*case "SHOW_MODAL_CONFIRM_DELETE_AUTHOR":
-      return { ...state, showModalConfirmDeleteAuthor: true };
-    case "HIDE_MODAL_CONFIRM_DELETE_AUTHOR":
-      return { ...state, showModalConfirmDeleteAuthor: false };*/
+    case "SHOW_ALERT":
+      return { ...state, showExistenceAlert: true, alertMsg: action.payload };
+    case "HIDE_ALERT":
+      return { ...state, showExistenceAlert: false };
     default:
       return state;
   }

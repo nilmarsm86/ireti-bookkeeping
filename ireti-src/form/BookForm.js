@@ -7,7 +7,7 @@ import { useDataField } from "../hook/form";
 import PriceInput from "../import/Form/PriceInput";
 import { ScrollView, View } from "react-native";
 import styles from "../style/style";
-import { List, TextInput } from "react-native-paper";
+import { HelperText, List, TextInput } from "react-native-paper";
 import ManageableList from "../import/Form/ManageableList/ManageableList";
 import Alert from "../import/Dialog/Alert";
 import DialogCheckGroup from "../import/Form/DialogCheckGroup";
@@ -22,7 +22,15 @@ const BookForm = ({
   onListDelete,
   worker,
   writers,
+  settings,
 }) => {
+  //modificar el valor de la validacion dinamicamente
+  model.marketingMegas.constraints.forEach((item) => {
+    if (item.type.name === "biggerThan") {
+      item.compareValue = 5;
+    }
+  });
+
   const [showAlertDeleteAuthor, setShowAlertDeleteAuthor] = useState(false);
   const [showConfirmDeleteAuthor, setShowConfirmDeleteAuthor] = useState(false);
   const [showDialogAddAuthor, setshowDialogAddAuthor] = useState(false);
@@ -37,6 +45,17 @@ const BookForm = ({
   const [acquisitionPrice, setAcquisitionPrice] = useDataField(
     model.acquisitionPrice.value
   );
+
+  if (model.id.value === null) {
+    const transportPriceSetting = settings.find(
+      (s) => s.key === "transport_price"
+    );
+
+    model.transportPrice.value = Number(
+      transportPriceSetting.value / 100
+    ).toFixed(2);
+  }
+
   const [transportPrice, setTransportPrice] = useDataField(
     model.transportPrice.value
   );
@@ -127,7 +146,7 @@ const BookForm = ({
   }
 
   const amounts = [];
-  for (let i = 0; i <= 10; i++) {
+  for (let i = amount ? amount : 0; i <= 10; i++) {
     amounts.push({ label: String(i), value: Number(i) });
   }
 
@@ -240,11 +259,15 @@ const BookForm = ({
               />
 
               <PriceInput
-                label="Precio de transportación"
+                label="Precio de transportación (*)"
                 error={model.transportPrice.error}
                 value={transportPrice}
                 onChangeText={setTransportPrice}
+                editable={false}
               />
+              <HelperText type="info" visible={true} padding="none">
+                (*) Este valor viene de la configuración
+              </HelperText>
 
               <PriceInput
                 label="Precio de dificultad"
