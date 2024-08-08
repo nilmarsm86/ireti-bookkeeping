@@ -37,6 +37,10 @@ export const screenReducer = (state, action) => {
       return { ...state, showModalAlert: false };
     case "SHOW_LOADER":
       return { ...state, showLoader: true };
+    case "SHOW_MODIFICATION_ALERT":
+      return { ...state, showModificationAlert: true };
+    case "HIDE_MODIFICATION_ALERT":
+      return { ...state, showModificationAlert: false };
     default:
       return state;
   }

@@ -49,8 +49,6 @@ const Book = () => {
     alertMsg: "",
   });
 
-  console.log(state.book.data);
-
   const [model, setModel] = useState(book_mapping);
   const titleInputRef = useRef(null);
   const [writers, setWriters] = useState([]);

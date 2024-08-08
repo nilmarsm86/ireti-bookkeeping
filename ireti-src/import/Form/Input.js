@@ -11,6 +11,7 @@ const Input = memo(
     error,
     right = null,
     reference = null,
+    editable = true,
   }) => (
     <>
       <TextInput
@@ -24,6 +25,7 @@ const Input = memo(
         ref={reference}
         name={label}
         right={right}
+        editable={editable}
       />
       {Boolean(error) && (
         <HelperText type="error" visible={Boolean(error)} padding="none">

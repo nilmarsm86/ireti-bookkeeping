@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useContext, useMemo, useReducer, useState } from "react";
 import TitleSection from "../component/TitleSection";
 import { DispatchContext } from "../context/app";
 import { screenReducer } from "../reducer/setting";
@@ -19,7 +12,9 @@ import { View } from "react-native";
 import styles from "../style/style";
 import Table from "../import/Table/Table";
 import { setting_metadata } from "../config/metadata";
-import RestElements from "../component/RestElements";
+import SettingForm from "../form/SettingForm";
+import Alert from "../import/Dialog/Alert";
+import { Text } from "react-native-paper";
 
 const Setting = () => {
   //reducers
@@ -29,10 +24,10 @@ const Setting = () => {
     showModalAlert: false,
     dismissMsg: "",
     showLoader: false,
+    showModificationAlert: false,
   });
 
   const [model, setModel] = useState(setting_mapping);
-  const keyInputRef = useRef(null);
 
   const resetForm = () => {
     reset(setting_mapping);
@@ -62,6 +57,14 @@ const Setting = () => {
   );
 
   const dbToForm = useCallback((item) => {
+    if (
+      item.key === "number_books_purchased" ||
+      item.key === "number_books_sold"
+    ) {
+      screenDispatch({ type: "SHOW_MODIFICATION_ALERT" });
+      return;
+    }
+
     let m = mappingToForm(setting_mapping, item);
     setModel(m);
   }, []);
@@ -75,12 +78,12 @@ const Setting = () => {
   const mapData = (settings) => {
     return settings.map((setting) => {
       if (setting.key === "number_books_purchased") {
-        setting.label = "Cantidad de libros comprados";
+        setting.label = "* Cantidad de libros comprados";
         setting.valueTransform = setting.value;
       }
 
       if (setting.key === "number_books_sold") {
-        setting.label = "Cantidad de libros vendidos";
+        setting.label = "* Cantidad de libros vendidos";
         setting.valueTransform = setting.value;
       }
 
@@ -108,18 +111,26 @@ const Setting = () => {
             data={mapData(state.setting.data)}
             buttons={tableButtons}
           />
+
+          <Text variant="bodySmall" style={{ marginTop: 20 }}>
+            * Valores de configuración no modificables.
+          </Text>
         </View>
 
         <View style={{ flex: "auto", width: "39%" }}>
-          {/*<LiterarySubgenreForm
-            model={model}
-            nameInputRef={nameInputRef}
-            onSave={onSaveForm}
-          />*/}
+          <SettingForm model={model} onSave={onSaveForm} />
         </View>
       </View>
 
-      <RestElements screenState={screenState} screenDispatch={screenDispatch} />
+      <Alert
+        title="Alerta"
+        label="Esta configuración no es modificable."
+        visible={screenState.showModificationAlert}
+        button={{
+          label: "Aceptar",
+          press: () => screenDispatch({ type: "HIDE_MODIFICATION_ALERT" }),
+        }}
+      />
     </>
   );
 };

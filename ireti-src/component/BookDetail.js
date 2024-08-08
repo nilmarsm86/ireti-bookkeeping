@@ -66,9 +66,10 @@ const BookDetail = ({ book, visible, setVisible, settings }) => {
    * @returns Number
    */
   function megasToMoney(book) {
-    const megasToMoney = settings.find((s) => s.key === "megas_to_money");
+    //const megasToMoney = settings.find((s) => s.key === "megas_to_money");
 
-    return megasToMoney.value * book.marketing_megas.value;
+    //return megasToMoney.value * book.marketing_megas.value;
+    return book.marketing_price.value;
   }
 
   return (
